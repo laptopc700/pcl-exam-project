@@ -31,66 +31,7 @@
 
 using namespace std;
 
-/*
-void
-changeColor (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-             int r,
-             int g,
-             int b);
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr voxelCloud ( pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-                                                   double leafSize,
-                                                   int verbosity
-                                                   );
-
-void segmentation ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
-                   pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented,
-                   int verbosity
-                   );
-
-void detectKeypoints ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input,
-                       pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints,
-                       int verbosity
-                       );
-
-void extractDescriptors ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input,
-                          pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints,
-                          pcl::PointCloud<pcl::FPFHSignature33>::Ptr features,
-                          int verbosity
-                          );
-
-void findCorrespondences ( pcl::PointCloud<pcl::FPFHSignature33>::Ptr source,
-                           pcl::PointCloud<pcl::FPFHSignature33>::Ptr target,
-                           vector<int>& correspondences,
-                           int verbosity
-                           );
-
-void filterCorrespondences ( pcl::PointCloud<pcl::PointXYZI>::Ptr source_keypoints_,
-                             pcl::PointCloud<pcl::PointXYZI>::Ptr target_keypoints_ ,
-                             vector<int>& source2target_ , vector<int>& target2source_ ,
-                             pcl::CorrespondencesPtr correspondences_,
-                             int verbosity
-                             );
-
-Eigen::Matrix4f determineInitialTransformation ( pcl::PointCloud<pcl::PointXYZI>::Ptr source_keypoints_ ,
-                                                 pcl::PointCloud<pcl::PointXYZI>::Ptr target_keypoints_ ,
-                                                 pcl::CorrespondencesPtr correspondences_,
-                                                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_segmented_ ,
-                                                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_segmented_ ,
-                                                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_transformed_,
-                                                 int verbosity
-                                                );
-
-Eigen::Matrix4f determineFinalTransformation ( pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_transformed_ ,
-                                               pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_registered_,
-                                               pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_segmented_,
-                                               int verbosity
-                                               );
-
-//#################################################################################################
-//##############################################################   R E G I S T E R   ##############
-//#################################################################################################
-*/
 int
 registerSourceToTarget ( pcl::PointCloud<pcl::PointXYZRGB>::Ptr source ,
                          pcl::PointCloud<pcl::PointXYZRGB>::Ptr target,
