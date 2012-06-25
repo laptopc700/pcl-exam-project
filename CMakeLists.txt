@@ -16,5 +16,5 @@ SET(pcl-exam-project_HEADERS mainwindow.h registration.h ui_mainwindow.h)
 
 QT4_WRAP_CPP(pcl-exam-project_HEADERS_MOC ${qtpcl_HEADERS})
 
-add_executable (qtpcl ${qtpcl_SOURCES} ${qtpcl_HEADERS_MOC})
-target_link_libraries (qtpcl ${PCL_LIBRARIES} ${QT_LIBRARIES})
+add_executable (pcl-exam-project ${qtpcl_SOURCES} ${qtpcl_HEADERS_MOC})
+target_link_libraries (pcl-exam-project ${PCL_LIBRARIES} ${QT_LIBRARIES})
