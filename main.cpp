@@ -5,11 +5,11 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+//    QApplication a(argc, argv);
+//    MainWindow w;
+//    w.show();
     
-    return a.exec();
+//    return a.exec();
 
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr source (new pcl::PointCloud<pcl::PointXYZRGB>);
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -22,7 +22,6 @@ int verbosity=1,compute=1;
 scanf ("%d",&verbosity);
 cout << "Compute target? "<<flush;
 scanf ("%d",&compute);*/
-
 registerSourceToTarget(source, target, registered, verbosity, compute);
 
 
