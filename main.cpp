@@ -22,6 +22,7 @@ int verbosity=1,compute=1;
 scanf ("%d",&verbosity);
 cout << "Compute target? "<<flush;
 scanf ("%d",&compute);*/
+
 registerSourceToTarget(source, target, registered, verbosity, compute);
 
 
