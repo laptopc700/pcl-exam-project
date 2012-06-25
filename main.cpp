@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
   pcl::io::loadPCDFile ("source.pcd", *source);
   pcl::io::loadPCDFile ("target.pcd", *target);
-int verbosity=1,compute=1;
+int verbosity=1,compute=0;
 /*cout << "Be verbose? "<<flush;
 scanf ("%d",&verbosity);
 cout << "Compute target? "<<flush;
