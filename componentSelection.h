@@ -1,6 +1,7 @@
 #ifndef COMPONENTSELECTION_H
 #define COMPONENTSELECTION_H
 
+#include <cmath>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -38,7 +39,7 @@ segmentComponent (
         double threshold
         );
 
-/*CROPBOX DA VEDERE
+/*CROPBOX E BOXCLIPPER3D DA VEDERE
 vector<int>
 segmentVolume (
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
@@ -54,7 +55,7 @@ vector<int>
 segmentColor (
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
         int selectedPointIndex,
-        double threshold
+        int threshold
         );
 
 
