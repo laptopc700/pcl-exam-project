@@ -32,15 +32,16 @@
 
 using namespace std;
 
-vector<int>
+void
 segmentComponent (
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+        pcl::PointIndices::Ptr output,
         int selectedPointIndex,
         double threshold
         );
 
 
-vector<int>
+pcl::PointIndices
 segmentVolume (
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
         float positionX,
@@ -52,9 +53,10 @@ segmentVolume (
         float rotation
         );
 
-vector<int>
+void
 segmentColor (
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+        pcl::PointIndices::Ptr output,
         int selectedPointIndex,
         int threshold
         );
