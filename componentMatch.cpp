@@ -1,11 +1,13 @@
-/*
+#include "componentMatch.h"
 
-input:
-source cloud REGISTRATA
-target cloud
-target component indices
+void
+matchComponent
+(
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredSource,
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud,
+    pcl::PointIndices::Ptr inputTargetIndices,
+    pcl::PointIndices::Ptr outputSourceIndices
+)
+{
 
-output:
-source component indices
-
-*/
+}
