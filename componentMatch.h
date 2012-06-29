@@ -2,9 +2,10 @@
 
 input:
 source cloud REGISTRATA
-target component
+target cloud
+target component indices
 
 output:
-source component
+source component indices
 
 */

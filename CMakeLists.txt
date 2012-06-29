@@ -11,8 +11,8 @@ include(${QT_USE_FILE})
 link_directories(${PCL_LIBRARY_DIRS} ${QT_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS} ${QT_DEFINITIONS})
 
-SET(qtpcl_SOURCES main.cpp mainwindow.cpp registration.cpp)
-SET(qtpcl_HEADERS mainwindow.h registration.h ui_mainwindow.h)
+SET(qtpcl_SOURCES main.cpp mainwindow.cpp registration.cpp componentMatch.cpp componentSelection.cpp)
+SET(qtpcl_HEADERS mainwindow.h registration.h ui_mainwindow.h componentMatch.h componentSelection.h)
 
 QT4_WRAP_CPP(qtpcl_HEADERS_MOC ${qtpcl_HEADERS})
 

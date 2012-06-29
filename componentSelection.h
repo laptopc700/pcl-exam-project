@@ -1,6 +1,9 @@
 /*
-component selection:
+input:
+target cloud
+descrittore del pezzo (da decidere se con un'area o altro)
 
-selects and outputs the indices of the points
-of the input cloud that correspond to the selected object
+output:
+target component cloud indices
+
 */
