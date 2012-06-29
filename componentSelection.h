@@ -33,33 +33,36 @@
 using namespace std;
 
 void
-segmentComponent (
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-        pcl::PointIndices::Ptr output,
-        int selectedPointIndex,
-        double threshold
-        );
+segmentComponent
+(
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+    pcl::PointIndices::Ptr output,
+    int selectedPointIndex,
+    double threshold
+);
 
 
-pcl::PointIndices
-segmentVolume (
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-        float positionX,
-        float positionY,
-        float positionZ,
-        float sizeX,
-        float sizeY,
-        float sizeZ,
-        float rotation
-        );
+//pcl::PointIndices
+//segmentVolume
+//(
+//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+//    float positionX,
+//    float positionY,
+//    float positionZ,
+//    float sizeX,
+//    float sizeY,
+//    float sizeZ,
+//    float rotation
+//);
 
 void
-segmentColor (
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-        pcl::PointIndices::Ptr output,
-        int selectedPointIndex,
-        int threshold
-        );
+segmentColor
+(
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+    pcl::PointIndices::Ptr output,
+    int selectedPointIndex,
+    int threshold
+);
 
 
 #endif // REGISTRATION_H
