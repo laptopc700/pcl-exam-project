@@ -22,7 +22,7 @@ segmentColor (
 
 {
     vector<int> indexes;
-    pcl::PointXYZRGB selectedPoint = input[selectedPointIndex];
+    pcl::PointXYZRGB selectedPoint = (*input)[selectedPointIndex];
     int r = selectedPoint.r;
     int g = selectedPoint.g;
     int b = selectedPoint.b;
