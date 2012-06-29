@@ -43,13 +43,13 @@ segmentComponent (
 vector<int>
 segmentVolume (
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-        double positionX,
-        double positionY,
-        double positionZ,
-        double sizeX,
-        double sizeY,
-        double sizeZ,
-        double rotation
+        float positionX,
+        float positionY,
+        float positionZ,
+        float sizeX,
+        float sizeY,
+        float sizeZ,
+        float rotation
         );
 
 vector<int>
