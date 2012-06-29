@@ -1,7 +1,8 @@
 #include <QtGui/QApplication>
 #include "mainwindow.h"
 #include "registration.h"
-
+#include "componentSelection.h"
+#include "componentMatch.h"
 
 int main(int argc, char *argv[])
 {
