@@ -39,17 +39,18 @@ segmentComponent (
         double threshold
         );
 
-/*CROPBOX E BOXCLIPPER3D DA VEDERE
+
 vector<int>
 segmentVolume (
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
         double positionX,
         double positionY,
+        double positionZ,
         double sizeX,
         double sizeY,
         double sizeZ,
         double rotation
-        );*/
+        );
 
 vector<int>
 segmentColor (
