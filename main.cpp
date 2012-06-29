@@ -3,6 +3,21 @@
 #include "registration.h"
 #include "componentSelection.h"
 #include "componentMatch.h"
+#include <pcl/visualization/pcl_visualizer.h>
+
+//DEBUG POINT PICK CALLBACK FUNCTION
+void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie)
+{
+    float x,y,z;
+    if (event.getPointIndex() == -1)
+        printf("No point was clicked\n");
+    else
+    {
+        event.getPoint(x,y,z);
+    }
+    printf("Point Clicked index: %d x: %f y: %f z: %f \n", event.getPointIndex(), x, y, z);
+
+}
 
 int main(int argc, char *argv[])
 {

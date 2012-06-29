@@ -19,9 +19,9 @@ segmentComponent
     ec.extract (cluster_indices_out);
 
 
-//    i indice che scorre i cluster trovati
-//    j indice che scorre i punti dentro il cluster i-esimo
-//    se il punto j-esimo e' quello selezionato in input, il cluster selezionato e' quello i-esimo
+//    i cluster index
+//    j index of the point in the i-th cluster
+//    if the j-th point is the one selected the cluster selected is the i-th
 
     int selectedClusterIndex;
     for (int i=0;i<cluster_indices_out.size();i++)
