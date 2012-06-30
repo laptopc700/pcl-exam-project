@@ -1,9 +1,17 @@
 #include <QtGui/QApplication>
+//PROJECT INCLUDES
 #include "mainwindow.h"
 #include "registration.h"
 #include "componentSelection.h"
 #include "componentMatch.h"
+
+//TESTING INCLUDES
 #include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/common/common.h>
+#include <pcl/visualization/interactor.h>
+#include <vtkSmartPointer.h>
+#include <QVTKWidget.h>
 
 //DEBUG POINT PICK CALLBACK FUNCTION
 //Attraverso il cookie bisogna passare un riferimento alla cloud(input)
@@ -19,26 +27,23 @@ void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void*
         event.getPoint(x,y,z);
     }
     printf("Point Clicked index: %d x: %f y: %f z: %f \n", event.getPointIndex(), x, y, z);
-//    workaround che non si può vedere, sistemerò al più presto
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud ((pcl::PointCloud<pcl::PointXYZRGB>*)cookie);
-    pcl::PointIndices::Ptr clusterPoints;
-    segmentComponent(cloud, clusterPoints, event.getPointIndex(), 500);//troppo lento blocca tutto
-    printf("Cluster size: %d \n", clusterPoints->indices.size());
+//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud ((pcl::PointCloud<pcl::PointXYZRGB>*)cookie);
+//    pcl::PointIndices::Ptr clusterPoints;
+//    segmentComponent(cloud, clusterPoints, event.getPointIndex(), 500);//troppo lento blocca tutto
+//    printf("Cluster size: %d \n", clusterPoints->indices.size());
 }
 
 int main(int argc, char *argv[])
 {
-//    WINDOW TEST
-//    QApplication a(argc, argv);
-//    MainWindow w;
-//    w.show();
-//    return a.exec();
+
+//    EMBED VISUALIZER IN WIDGET TEST (da spostare in mainwindow.h quando funzionerà a dovere)
+    QApplication app(argc, argv);
+    QVTKWidget widget;
+    widget.resize(640, 480);
 
 //    REGISTRATION TEST
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr source (new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::PointCloud<pcl::PointXYZRGB> *pippo = new pcl::PointCloud<pcl::PointXYZRGB>;//    workaround che non si può vedere, sistemerò al più presto
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (pippo);//    workaround che non si può vedere, sistemerò al più presto
-//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (new pcl::PointCloud<pcl::PointXYZRGB>);//   condice "corretto"
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr registered (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::io::loadPCDFile ("source.pcd", *source);
     pcl::io::loadPCDFile ("target.pcd", *target);
@@ -50,14 +55,20 @@ int main(int argc, char *argv[])
     registerSourceToTarget(source, target, registered, verbosity, compute);
 
 //    VISUALIZATION
-    pcl::visualization::PCLVisualizer viewer("PCL Viewer");
+    pcl::visualization::PCLVisualizer viewer("PCL Viewer", false);//    don't display in the vtk visualizer, render it on a qt widget
+    widget.SetRenderWindow(viewer.getRenderWindow());
+    viewer.setupInteractor(widget.GetInteractor(), widget.GetRenderWindow());//     tells the viewer what interactor and what window is using now
+    viewer.getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);//    ripristina input system of original visualizer (shift+click for points)
+
     viewer.setBackgroundColor (0, 0, 0);
     viewer.initCameraParameters ();
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(registered);
     viewer.addPointCloud<pcl::PointXYZRGB> (registered, rgb, "source_registered");
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb2(target);
     viewer.addPointCloud<pcl::PointXYZRGB> (target, rgb2, "target_reference");
-    viewer.registerPointPickingCallback (&pointPickCallback, pippo);
-    viewer.spin();
+    viewer.registerPointPickingCallback (&pointPickCallback);
+
+    widget.show();
+    return app.exec();
 }
 
