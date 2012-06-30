@@ -1,6 +1,7 @@
 #include <QtGui/QApplication>
+
 //PROJECT INCLUDES
-#include "mainwindow.h"
+#include "ui.h"
 #include "registration.h"
 #include "componentSelection.h"
 #include "componentMatch.h"
@@ -31,44 +32,51 @@ void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void*
 //    pcl::PointIndices::Ptr clusterPoints;
 //    segmentComponent(cloud, clusterPoints, event.getPointIndex(), 500);//troppo lento blocca tutto
 //    printf("Cluster size: %d \n", clusterPoints->indices.size());
+
 }
 
 int main(int argc, char *argv[])
 {
 
-//    EMBED VISUALIZER IN WIDGET TEST (da spostare in mainwindow.h quando funzionerà a dovere)
     QApplication app(argc, argv);
-    QVTKWidget widget;
-    widget.resize(640, 480);
+    //Q_INIT_RESOURCE(dockwidgets);
+    Ui ui;
+    ui.show();
+    return app.exec();
+
+//    EMBED VISUALIZER IN WIDGET TEST (da spostare in mainwindow.h quando funzionerà a dovere)
+//    QApplication app(argc, argv);
+//    QVTKWidget widget;
+//    widget.resize(640, 480);
 
 //    REGISTRATION TEST
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr source (new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr registered (new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::io::loadPCDFile ("source.pcd", *source);
-    pcl::io::loadPCDFile ("target.pcd", *target);
-    int verbosity=1,compute=1;
-    cout << "Be verbose? "<<flush;
-    scanf ("%d",&verbosity);
-    cout << "Compute target? "<<flush;
-    scanf ("%d",&compute);
-    registerSourceToTarget(source, target, registered, verbosity, compute);
+//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr source (new pcl::PointCloud<pcl::PointXYZRGB>);
+//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (new pcl::PointCloud<pcl::PointXYZRGB>);
+//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr registered (new pcl::PointCloud<pcl::PointXYZRGB>);
+//    pcl::io::loadPCDFile ("source.pcd", *source);
+//    pcl::io::loadPCDFile ("target.pcd", *target);
+//    int verbosity=1,compute=1;
+//    cout << "Be verbose? "<<flush;
+//    scanf ("%d",&verbosity);
+//    cout << "Compute target? "<<flush;
+//    scanf ("%d",&compute);
+//    registerSourceToTarget(source, target, registered, verbosity, compute);
 
 //    VISUALIZATION
-    pcl::visualization::PCLVisualizer viewer("PCL Viewer", false);//    don't display in the vtk visualizer, render it on a qt widget
-    widget.SetRenderWindow(viewer.getRenderWindow());
-    viewer.setupInteractor(widget.GetInteractor(), widget.GetRenderWindow());//     tells the viewer what interactor and what window is using now
-    viewer.getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);//    ripristina input system of original visualizer (shift+click for points)
+//    pcl::visualization::PCLVisualizer viewer("PCL Viewer", false);//    don't display in the vtk visualizer, render it on a qt widget
+//    widget.SetRenderWindow(viewer.getRenderWindow());
+//    viewer.setupInteractor(widget.GetInteractor(), widget.GetRenderWindow());//     tells the viewer what interactor and what window is using now
+//    viewer.getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);//    ripristina input system of original visualizer (shift+click for points)
 
-    viewer.setBackgroundColor (0, 0, 0);
-    viewer.initCameraParameters ();
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(registered);
-    viewer.addPointCloud<pcl::PointXYZRGB> (registered, rgb, "source_registered");
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb2(target);
-    viewer.addPointCloud<pcl::PointXYZRGB> (target, rgb2, "target_reference");
-    viewer.registerPointPickingCallback (&pointPickCallback);
+//    viewer.setBackgroundColor (0, 0, 0);
+//    viewer.initCameraParameters ();
+//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(registered);
+//    viewer.addPointCloud<pcl::PointXYZRGB> (registered, rgb, "source_registered");
+//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb2(target);
+//    viewer.addPointCloud<pcl::PointXYZRGB> (target, rgb2, "target_reference");
+//    viewer.registerPointPickingCallback (&pointPickCallback);
 
-    widget.show();
-    return app.exec();
+//    widget.show();
+//    return app.exec();
 }
 
