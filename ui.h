@@ -22,20 +22,56 @@ private slots:
     void aboutPCL();
 
 private:
+    // UI functions
     void createActions(); // create all the actions of the ui
+    void createQVTKWidget();
     void setupMenuBar();
-    void setupMainWidget();
-    void setupDockWidgets();
     void setupStatusBar();
+    void setupBoxAndLayout();
+
+    // Motor functions
     static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie);
 
+    // Menu bar elements
     QMenu *fileMenu;
     QMenu *helpMenu;
+
+    // Action placeholders
     QAction *quitAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
     QAction *aboutPCLAct;
 
+    // Widgets
+    QPushButton *browseButton;
+    QLineEdit *pathField;
+    QPushButton *loadButton;
+    QPushButton *addComponentButton;
+    QPushButton *delComponentButton;
+    QListWidget *componentList;
+
+    // Group Boxes
+    QGroupBox *loadTBox;
+    QGroupBox *componentBox;
+    QGroupBox *checkBox;
+    QGroupBox *loadSBox;
+    QGroupBox *resultsBox;
+    QGroupBox *viewerControlsBox;
+
+    // Layout handlers
+    QHBoxLayout *mainLayout;
+    QVBoxLayout *commandLayout;
+    QVBoxLayout *viewerLayout;
+    QHBoxLayout *loadTargetLayout;
+    QVBoxLayout *componentLayout;
+    QHBoxLayout *componentButtonsLayout;
+    QVBoxLayout *checkLayout;
+    QHBoxLayout *loadSourceLayout;
+    QHBoxLayout *resultsLayout;
+    QHBoxLayout *showTargetComponent;
+    QHBoxLayout *showSourceComponent;
+
+    // Visualization widget
     QVTKWidget *qvtkVisualizer;
     pcl::visualization::PCLVisualizer *viewer;
 
