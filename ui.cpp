@@ -10,6 +10,7 @@ Ui::Ui()
     resize(1024,768);
 }
 
+// SLOT FUNCTIONS
 void Ui::about()
 {
    QMessageBox::about(this, tr("About pcl-exam-project"), tr("The <b>pcl-exam-project</b> is super awesome") );
@@ -21,7 +22,7 @@ void Ui::aboutPCL()
                                                 "open project for 3D point cloud processing.") );
 }
 
-// TO DO: functions ofr every action (every button)
+// TO DO: create slot functions for every action (every button)
 
 void Ui::createActions()
 {
@@ -46,6 +47,7 @@ void Ui::createActions()
     //TO DO: actions for every button.
 }
 
+// LAYOUT FUNCTIONS
 void Ui::setupMenuBar()
 {
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -127,7 +129,7 @@ void Ui::setupVisualizer()
     viewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);// ripristina input system of original visualizer (shift+click for points)
     viewer->setBackgroundColor(0, 0, 0);
     viewer->initCameraParameters();
-    viewer->registerPointPickingCallback(&pointPickCallback, this); // callback function for interaction with the mous on the visualizer
+    viewer->registerPointPickingCallback(&pointPickCallback, this); // callback function for interaction with the mouse on the visualizer
 }
 
 void Ui::setupResultsBox()

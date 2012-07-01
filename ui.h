@@ -34,9 +34,10 @@ private:
     void setupResultsBox();
     void setupVisualizerCommands();
     void setupMainLayout();
+    static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie); // callback function for the visualizer to interact with the mouse
 
-// Motor functions
-    static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie);
+// Motor object
+    // TO DO: Creare classe che gestisca le cloud e fornisca metodi da utilizzare nella Ui per elaborare le point cloud (ancora da progettare),
 
 // Menu bar elements
     QMenu *fileMenu;
