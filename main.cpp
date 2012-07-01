@@ -15,9 +15,6 @@
 #include <QVTKWidget.h>
 
 //DEBUG POINT PICK CALLBACK FUNCTION
-//Attraverso il cookie bisogna passare un riferimento alla cloud(input)
-//Bisognerà passare fouri in qualche modo gli indici del cluster per visualizzarli, bisognerà usare una classe con variabili condivise
-//è una bestemmia fare tutto attraverso sto cookie. Oppure si passa dentro il viewer e si aggiunge la cloud da dentro qua boh...
 void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie)
 {
     float x,y,z;
