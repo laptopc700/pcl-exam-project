@@ -4,9 +4,10 @@
 #include <QtGui>
 #include <QVTKWidget.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/visualization/point_picking_event.h>
+#include <pcl/visualization/interactor.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/common/common.h>
-#include <pcl/visualization/interactor.h>
 #include <vtkSmartPointer.h>
 
 class Ui : public QMainWindow
@@ -26,6 +27,7 @@ private:
     void setupMainWidget();
     void setupDockWidgets();
     void setupStatusBar();
+    static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie);
 
     QMenu *fileMenu;
     QMenu *helpMenu;

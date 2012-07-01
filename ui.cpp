@@ -62,7 +62,7 @@ void Ui::setupMainWidget()
     viewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);// ripristina input system of original visualizer (shift+click for points)
     viewer->setBackgroundColor(0, 0, 0);
     viewer->initCameraParameters();
-//    viewer.registerPointPickingCallback(&pointPickCallback);
+    viewer->registerPointPickingCallback(&pointPickCallback, this);
     qvtkVisualizer->resize(640, 480);
     setCentralWidget(qvtkVisualizer);
 }
@@ -74,5 +74,23 @@ void Ui::setupDockWidgets()
 
 void Ui::setupStatusBar()
 {
+    statusBar()->showMessage(tr("Ready"));
+}
 
+void Ui::pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie)
+{
+    Ui *ui = (Ui*)cookie;
+    float x,y,z;
+    if (event.getPointIndex() == -1)
+        ui->statusBar()->showMessage(tr("No point was clicked"));
+    else
+    {
+        event.getPoint(x,y,z);
+        ui->statusBar()->showMessage(QString("Point Clicked index: %1 x: %2 y: %3 z: %4")
+                                 .arg(event.getPointIndex())
+                                 .arg(x)
+                                 .arg(y)
+                                 .arg(z)
+                                 );
+    }
 }

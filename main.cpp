@@ -32,22 +32,16 @@ void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void*
 //    pcl::PointIndices::Ptr clusterPoints;
 //    segmentComponent(cloud, clusterPoints, event.getPointIndex(), 500);//troppo lento blocca tutto
 //    printf("Cluster size: %d \n", clusterPoints->indices.size());
-
 }
 
 int main(int argc, char *argv[])
 {
 
     QApplication app(argc, argv);
-    //Q_INIT_RESOURCE(dockwidgets);
+    //Q_INIT_RESOURCE(dockwidgets); // per ora non uso risorse
     Ui ui;
     ui.show();
     return app.exec();
-
-//    EMBED VISUALIZER IN WIDGET TEST (da spostare in mainwindow.h quando funzionerà a dovere)
-//    QApplication app(argc, argv);
-//    QVTKWidget widget;
-//    widget.resize(640, 480);
 
 //    REGISTRATION TEST
 //    pcl::PointCloud<pcl::PointXYZRGB>::Ptr source (new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -63,11 +57,7 @@ int main(int argc, char *argv[])
 //    registerSourceToTarget(source, target, registered, verbosity, compute);
 
 //    VISUALIZATION
-//    pcl::visualization::PCLVisualizer viewer("PCL Viewer", false);//    don't display in the vtk visualizer, render it on a qt widget
-//    widget.SetRenderWindow(viewer.getRenderWindow());
-//    viewer.setupInteractor(widget.GetInteractor(), widget.GetRenderWindow());//     tells the viewer what interactor and what window is using now
-//    viewer.getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);//    ripristina input system of original visualizer (shift+click for points)
-
+//    pcl::visualization::PCLVisualizer viewer("PCL Viewer");
 //    viewer.setBackgroundColor (0, 0, 0);
 //    viewer.initCameraParameters ();
 //    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(registered);
