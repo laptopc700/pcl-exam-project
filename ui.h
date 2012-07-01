@@ -43,33 +43,62 @@ private:
     QAction *aboutPCLAct;
 
     // Widgets
-    QPushButton *browseButton;
-    QLineEdit *pathField;
-    QPushButton *loadButton;
+    QWidget *mainWidget;
+
+    QPushButton *browseTButton;
+    QLineEdit *pathTField;
+    QPushButton *loadTButton;
+
     QPushButton *addComponentButton;
     QPushButton *delComponentButton;
-    QListWidget *componentList;
+    QListWidget *componentsList;
+
+    QPushButton *addCheckButton;
+    QPushButton *delCheckButton;
+    QListWidget *checksList;
+
+    QPushButton *browseSButton;
+    QLineEdit *pathSField;
+    QPushButton *loadSButton;
+
+    QPushButton *startButton;
+    QListWidget *resultsList;
+
+    QPushButton *showTButton;
+    QPushButton *showSButton;
+    QPushButton *showTComponentButton;
+    QComboBox *targetComponentsList;
+    QPushButton *showSComponentButton;
+    QComboBox *sourceComponentsList;
+    QPushButton *clearAll;
 
     // Group Boxes
     QGroupBox *loadTBox;
-    QGroupBox *componentBox;
-    QGroupBox *checkBox;
+    QGroupBox *componentsBox;
+    QGroupBox *checksBox;
     QGroupBox *loadSBox;
     QGroupBox *resultsBox;
     QGroupBox *viewerControlsBox;
 
     // Layout handlers
     QHBoxLayout *mainLayout;
-    QVBoxLayout *commandLayout;
+    QVBoxLayout *commandsLayout;
     QVBoxLayout *viewerLayout;
+
     QHBoxLayout *loadTargetLayout;
-    QVBoxLayout *componentLayout;
+
+    QVBoxLayout *componentsLayout;
     QHBoxLayout *componentButtonsLayout;
-    QVBoxLayout *checkLayout;
+
+    QVBoxLayout *checksLayout;
+    QHBoxLayout *checkButtonsLayout;
+
     QHBoxLayout *loadSourceLayout;
+
     QHBoxLayout *resultsLayout;
-    QHBoxLayout *showTargetComponent;
-    QHBoxLayout *showSourceComponent;
+
+    QHBoxLayout *showTargetComponentLayout;
+    QHBoxLayout *showSourceComponentLayout;
 
     // Visualization widget
     QVTKWidget *qvtkVisualizer;

@@ -2,7 +2,6 @@
 
 Ui::Ui()
 {
-    this->resize(1024, 768);
     createActions();
     createQVTKWidget();
     setupMenuBar();
@@ -54,8 +53,6 @@ void Ui::createQVTKWidget()
     viewer->setBackgroundColor(0, 0, 0);
     viewer->initCameraParameters();
     viewer->registerPointPickingCallback(&pointPickCallback, this);
-//    qvtkVisualizer->resize(640, 480);
-//    setCentralWidget(qvtkVisualizer);
 }
 
 void Ui::setupMenuBar()
@@ -74,50 +71,97 @@ void Ui::setupStatusBar()
     statusBar()->showMessage(tr("Ready"));
 }
 
-void Ui::setupBoxAndLayout
-()
+void Ui::setupBoxAndLayout()
 {
     loadTBox = new QGroupBox(QString("Load Target Cloud"));
-    browseButton = new QPushButton(QString("Browse..."));
-    pathField = new QLineEdit();
-    loadButton = new QPushButton(QString("LOAD!"));
+    browseTButton = new QPushButton(QString("Browse..."));
+    pathTField = new QLineEdit();
+    loadTButton = new QPushButton(QString("LOAD!"));
     loadTargetLayout = new QHBoxLayout;
-    loadTargetLayout->addWidget(browseButton);
-    loadTargetLayout->addWidget(pathField);
-    loadTargetLayout->addWidget(loadButton);
+    loadTargetLayout->addWidget(browseTButton);
+    loadTargetLayout->addWidget(pathTField);
+    loadTargetLayout->addWidget(loadTButton);
     loadTBox->setLayout(loadTargetLayout);
 
-    componentBox = new QGroupBox(QString("Components definition"));
+    componentsBox = new QGroupBox(QString("Components Definition"));
     componentButtonsLayout = new QHBoxLayout;
     addComponentButton = new QPushButton(QString("Add..."));
     delComponentButton = new QPushButton(QString("Delete"));
     componentButtonsLayout->addWidget(addComponentButton);
     componentButtonsLayout->addWidget(delComponentButton);
-    componentLayout = new QVBoxLayout;
-    componentLayout->addLayout(componentButtonsLayout);
-    componentList = new QListWidget;
-    componentLayout->addWidget(componentList);
+    componentsLayout = new QVBoxLayout;
+    componentsList = new QListWidget;
+    componentsLayout->addLayout(componentButtonsLayout);
+    componentsLayout->addWidget(componentsList);
+    componentsBox->setLayout(componentsLayout);
 
-    checkLayout = new QVBoxLayout;
-    //hlayout+list
+    checksBox = new QGroupBox(QString("Checks Definition"));
+    checkButtonsLayout = new QHBoxLayout;
+    addCheckButton = new QPushButton(QString("Add..."));
+    delCheckButton = new QPushButton(QString("Delete"));
+    checkButtonsLayout->addWidget(addCheckButton);
+    checkButtonsLayout->addWidget(delCheckButton);
+    checksLayout = new QVBoxLayout;
+    checksList = new QListWidget;
+    checksLayout->addLayout(checkButtonsLayout);
+    checksLayout->addWidget(checksList);
+    checksBox->setLayout(checksLayout);
+
+    loadSBox = new QGroupBox(QString("Load Source Cloud"));
+    browseSButton = new QPushButton(QString("Browse..."));
+    pathSField = new QLineEdit();
+    loadSButton = new QPushButton(QString("LOAD!"));
     loadSourceLayout = new QHBoxLayout;
-    //buttons+text
+    loadSourceLayout->addWidget(browseSButton);
+    loadSourceLayout->addWidget(pathSField);
+    loadSourceLayout->addWidget(loadSButton);
+    loadSBox->setLayout(loadSourceLayout);
+
+    resultsBox = new QGroupBox(QString("Analysis Results"));
+    startButton = new QPushButton(QString("START!"));
+    resultsList = new QListWidget;
     resultsLayout = new QHBoxLayout;
-    //button+list
+    resultsLayout->addWidget(startButton);
+    resultsLayout->addWidget(resultsList);
+    resultsBox->setLayout(resultsLayout);
 
+    showTButton = new QPushButton(QString("Show/Hide Target Cloud"));
+    showSButton = new QPushButton(QString("Show/Hide Source Cloud"));
+    clearAll = new QPushButton(QString("Clear All Clouds"));
 
-    showTargetComponent = new QHBoxLayout;
-    //button+menu a tendina
-    showSourceComponent = new QHBoxLayout;
-    //button+menu a tendina
+    showTComponentButton = new QPushButton(QString("Show/Hide Target Component"));
+    targetComponentsList = new QComboBox;
+    showTargetComponentLayout = new QHBoxLayout;
+    showTargetComponentLayout->addWidget(showTComponentButton);
+    showTargetComponentLayout->addWidget(targetComponentsList);
 
-    commandLayout = new QVBoxLayout;
+    showSComponentButton = new QPushButton(QString("Show/Hide Source Component"));
+    sourceComponentsList = new QComboBox;
+    showSourceComponentLayout = new QHBoxLayout;
+    showSourceComponentLayout->addWidget(showSComponentButton);
+    showSourceComponentLayout->addWidget(sourceComponentsList);
+
+    commandsLayout = new QVBoxLayout;
+    commandsLayout->addWidget(loadTBox);
+    commandsLayout->addWidget(componentsBox);
+    commandsLayout->addWidget(checksBox);
+    commandsLayout->addWidget(loadSBox);
+//    commandsLayout->addWidget(resultsBox);
+
     viewerLayout = new QVBoxLayout;
-
+    viewerLayout->addWidget(qvtkVisualizer);
+    viewerLayout->addWidget(resultsBox);
+    viewerLayout->addWidget(showTButton);
+    viewerLayout->addWidget(showSButton);
+    viewerLayout->addLayout(showTargetComponentLayout);
+    viewerLayout->addLayout(showSourceComponentLayout);
 
     mainLayout = new QHBoxLayout;
-    mainLayout->addLayout(commandLayout);
+    mainLayout->addLayout(commandsLayout);
     mainLayout->addLayout(viewerLayout);
+    mainWidget = new QWidget;
+    mainWidget->setLayout(mainLayout);
+    setCentralWidget(mainWidget);
 }
 
 void Ui::pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie)
