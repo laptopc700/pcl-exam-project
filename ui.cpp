@@ -3,11 +3,11 @@
 Ui::Ui()
 {
     createActions();
-    createQVTKWidget();
     setupMenuBar();
     setupStatusBar();
-    setupBoxAndLayout();
+    setupMainLayout();
     setWindowTitle(tr("PCQC - Point Cloud Quality Control"));
+    resize(1024,768);
 }
 
 void Ui::about()
@@ -21,8 +21,11 @@ void Ui::aboutPCL()
                                                 "open project for 3D point cloud processing.") );
 }
 
+// TO DO: functions ofr every action (every button)
+
 void Ui::createActions()
 {
+    // Menu Bar Actions
     quitAct = new QAction(tr("&Quit"), this);
     quitAct->setShortcuts(QKeySequence::Quit);
     quitAct->setStatusTip(tr("Quit the application"));
@@ -39,20 +42,8 @@ void Ui::createActions()
     aboutPCLAct = new QAction(tr("About &PCL"), this);
     aboutPCLAct->setStatusTip(tr("Show the PCL library's About box"));
     connect(aboutPCLAct, SIGNAL(triggered()), this, SLOT(aboutPCL()));
-}
 
-void Ui::createQVTKWidget()
-{
-    // setup widget
-    qvtkVisualizer = new QVTKWidget();
-    viewer = new pcl::visualization::PCLVisualizer("3DViewer", false);// don't display in the vtk visualizer, render it on a qt window
-    qvtkVisualizer->SetRenderWindow(viewer->getRenderWindow());
-    // setup pcl visualizer
-    viewer->setupInteractor(qvtkVisualizer->GetInteractor(), qvtkVisualizer->GetRenderWindow());// tells the viewer what interactor and what window is using now
-    viewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);// ripristina input system of original visualizer (shift+click for points)
-    viewer->setBackgroundColor(0, 0, 0);
-    viewer->initCameraParameters();
-    viewer->registerPointPickingCallback(&pointPickCallback, this);
+    //TO DO: actions for every button.
 }
 
 void Ui::setupMenuBar()
@@ -71,7 +62,7 @@ void Ui::setupStatusBar()
     statusBar()->showMessage(tr("Ready"));
 }
 
-void Ui::setupBoxAndLayout()
+void Ui::setupLoadTBox()
 {
     loadTBox = new QGroupBox(QString("Load Target Cloud"));
     browseTButton = new QPushButton(QString("Browse..."));
@@ -82,7 +73,10 @@ void Ui::setupBoxAndLayout()
     loadTargetLayout->addWidget(pathTField);
     loadTargetLayout->addWidget(loadTButton);
     loadTBox->setLayout(loadTargetLayout);
+}
 
+void Ui::setupComponentsBox()
+{
     componentsBox = new QGroupBox(QString("Components Definition"));
     componentButtonsLayout = new QHBoxLayout;
     addComponentButton = new QPushButton(QString("Add..."));
@@ -94,7 +88,10 @@ void Ui::setupBoxAndLayout()
     componentsLayout->addLayout(componentButtonsLayout);
     componentsLayout->addWidget(componentsList);
     componentsBox->setLayout(componentsLayout);
+}
 
+void Ui::setupChecksBox()
+{
     checksBox = new QGroupBox(QString("Checks Definition"));
     checkButtonsLayout = new QHBoxLayout;
     addCheckButton = new QPushButton(QString("Add..."));
@@ -106,7 +103,10 @@ void Ui::setupBoxAndLayout()
     checksLayout->addLayout(checkButtonsLayout);
     checksLayout->addWidget(checksList);
     checksBox->setLayout(checksLayout);
+}
 
+void Ui::setupLoadSBox()
+{
     loadSBox = new QGroupBox(QString("Load Source Cloud"));
     browseSButton = new QPushButton(QString("Browse..."));
     pathSField = new QLineEdit();
@@ -116,7 +116,22 @@ void Ui::setupBoxAndLayout()
     loadSourceLayout->addWidget(pathSField);
     loadSourceLayout->addWidget(loadSButton);
     loadSBox->setLayout(loadSourceLayout);
+}
 
+void Ui::setupVisualizer()
+{
+    qvtkVisualizer = new QVTKWidget();// create qvtk widget
+    viewer = new pcl::visualization::PCLVisualizer("3DViewer", false);// don't display in the vtk visualizer, render it on a qt window
+    qvtkVisualizer->SetRenderWindow(viewer->getRenderWindow());// set as render window the render window of the pcl visualizer
+    viewer->setupInteractor(qvtkVisualizer->GetInteractor(), qvtkVisualizer->GetRenderWindow());// tells the visualizer what interactor is using now and for what window
+    viewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);// ripristina input system of original visualizer (shift+click for points)
+    viewer->setBackgroundColor(0, 0, 0);
+    viewer->initCameraParameters();
+    viewer->registerPointPickingCallback(&pointPickCallback, this); // callback function for interaction with the mous on the visualizer
+}
+
+void Ui::setupResultsBox()
+{
     resultsBox = new QGroupBox(QString("Analysis Results"));
     startButton = new QPushButton(QString("START!"));
     resultsList = new QListWidget;
@@ -124,29 +139,40 @@ void Ui::setupBoxAndLayout()
     resultsLayout->addWidget(startButton);
     resultsLayout->addWidget(resultsList);
     resultsBox->setLayout(resultsLayout);
+}
 
+void Ui::setupVisualizerCommands()
+{
     showTButton = new QPushButton(QString("Show/Hide Target Cloud"));
     showSButton = new QPushButton(QString("Show/Hide Source Cloud"));
     clearAll = new QPushButton(QString("Clear All Clouds"));
-
     showTComponentButton = new QPushButton(QString("Show/Hide Target Component"));
     targetComponentsList = new QComboBox;
     showTargetComponentLayout = new QHBoxLayout;
     showTargetComponentLayout->addWidget(showTComponentButton);
     showTargetComponentLayout->addWidget(targetComponentsList);
-
     showSComponentButton = new QPushButton(QString("Show/Hide Source Component"));
     sourceComponentsList = new QComboBox;
     showSourceComponentLayout = new QHBoxLayout;
     showSourceComponentLayout->addWidget(showSComponentButton);
     showSourceComponentLayout->addWidget(sourceComponentsList);
+}
+
+void Ui::setupMainLayout()
+{
+    setupLoadTBox();
+    setupComponentsBox();
+    setupChecksBox();
+    setupLoadSBox();
+    setupVisualizer();
+    setupResultsBox();
+    setupVisualizerCommands();
 
     commandsLayout = new QVBoxLayout;
     commandsLayout->addWidget(loadTBox);
     commandsLayout->addWidget(componentsBox);
     commandsLayout->addWidget(checksBox);
     commandsLayout->addWidget(loadSBox);
-//    commandsLayout->addWidget(resultsBox);
 
     viewerLayout = new QVBoxLayout;
     viewerLayout->addWidget(qvtkVisualizer);
