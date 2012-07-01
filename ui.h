@@ -14,16 +14,28 @@ class Ui : public QMainWindow
     Q_OBJECT
 
 public:
-    Ui();//    constructor
+    Ui();// constructor
+
+private slots:
+    void about();
+    void aboutPCL();
 
 private:
+    void createActions(); // create all the actions of the ui
+    void setupMenuBar();
     void setupMainWidget();
     void setupDockWidgets();
-    void setupVisualizer();
     void setupStatusBar();
 
-    QVTKWidget* qvtkVisualizer;
-    pcl::visualization::PCLVisualizer* viewer;
+    QMenu *fileMenu;
+    QMenu *helpMenu;
+    QAction *quitAct;
+    QAction *aboutAct;
+    QAction *aboutQtAct;
+    QAction *aboutPCLAct;
+
+    QVTKWidget *qvtkVisualizer;
+    pcl::visualization::PCLVisualizer *viewer;
 
 };
 
