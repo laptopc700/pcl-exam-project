@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 {
 
     QApplication app(argc, argv);
-    //Q_INIT_RESOURCE(dockwidgets); // per ora non uso risorse
+    //Q_INIT_RESOURCE(dockwidgets); // per ora non uso risorse (icone&immagini)
     Ui ui;
     ui.show();
     return app.exec();

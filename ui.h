@@ -16,6 +16,7 @@ class Ui : public QMainWindow
 
 public:
     Ui();// constructor
+    void setMotor();// funzione per settare il puntatore all'oggetto che elabora le point cloud, esterno alla UI
 
 private slots:
     void about();
@@ -37,7 +38,7 @@ private:
     static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie); // callback function for the visualizer to interact with the mouse
 
 // Motor object
-    // TO DO: Creare classe che gestisca le cloud e fornisca metodi da utilizzare nella Ui per elaborare le point cloud (ancora da progettare),
+    // TO DO: Creare classe che gestisca le cloud e fornisca metodi da utilizzare nella Ui per elaborare le point cloud (ancora da progettare)
 
 // Menu bar elements
     QMenu *fileMenu;
