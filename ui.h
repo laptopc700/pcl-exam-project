@@ -6,21 +6,30 @@
 #include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/visualization/point_picking_event.h>
 #include <pcl/visualization/interactor.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/common/common.h>
 #include <vtkSmartPointer.h>
+#include "pcqc.h"
 
 class Ui : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    Ui();// constructor
-    void setMotor();// funzione per settare il puntatore all'oggetto che elabora le point cloud, esterno alla UI
+    Ui(Pcqc *pcqc);// constructor, also creates puntatore all'oggetto che elabora le point cloud, esterno alla UI (motor)
+    // destructor is not needed for the gui elements because everything is parented in the QObjects tree.
+    //They are deleted when the parent (main window->mainWidget) is deleted.
+    ~Ui(); //The only thing to delete is the viewer (i guess), the motor is allocated in the stack
+    void setMotor(Pcqc *pcqc);// to set another motor if we want the ui work with different pcqc instances.
 
 private slots:
     void about();
     void aboutPCL();
+    void browseTarget();
+    void loadTarget();
+    void browseSource();
+    void loadSource();
+    void showTarget();
+    void showSource();
+    void clearAll();
 
 private:
 // UI functions
@@ -38,19 +47,19 @@ private:
     static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie); // callback function for the visualizer to interact with the mouse
 
 // Motor object
-    // TO DO: Creare classe che gestisca le cloud e fornisca metodi da utilizzare nella Ui per elaborare le point cloud (ancora da progettare)
+    Pcqc *motor;
 
-// Menu bar elements
+// Main UI Menu bar elements
     QMenu *fileMenu;
     QMenu *helpMenu;
 
-// Action placeholders
+// Main UI action placeholders
     QAction *quitAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
     QAction *aboutPCLAct;
 
-// Widgets
+// Main UI Widgets
     QWidget *mainWidget;
     // load target widgets
     QPushButton *browseTButton;
@@ -78,12 +87,12 @@ private:
     QComboBox *targetComponentsList;
     QPushButton *showSComponentButton;
     QComboBox *sourceComponentsList;
-    QPushButton *clearAll;
+    QPushButton *clearAllButton;
     // visualization widget
     QVTKWidget *qvtkVisualizer;
     pcl::visualization::PCLVisualizer *viewer;
 
-// Group Boxes
+// Main UI Group Boxes
     QGroupBox *loadTBox;
     QGroupBox *componentsBox;
     QGroupBox *checksBox;
@@ -91,7 +100,7 @@ private:
     QGroupBox *resultsBox;
     QGroupBox *viewerControlsBox;
 
-// Layout handlers
+// Main UI Layout handlers
     QHBoxLayout *mainLayout;
     QVBoxLayout *commandsLayout;
     QVBoxLayout *viewerLayout;
@@ -104,6 +113,9 @@ private:
     QHBoxLayout *resultsLayout;
     QHBoxLayout *showTargetComponentLayout;
     QHBoxLayout *showSourceComponentLayout;
+
+// Dialog UIs
+
 };
 
 #endif // UI_H

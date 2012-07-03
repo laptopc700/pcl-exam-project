@@ -1,13 +1,19 @@
 #include "ui.h"
 
-Ui::Ui()
+Ui::Ui(Pcqc *pcqc)
 {
+    motor = pcqc;
     createActions();
     setupMenuBar();
     setupStatusBar();
     setupMainLayout();
     setWindowTitle(tr("PCQC - Point Cloud Quality Control"));
     resize(1024,768);
+}
+
+Ui::~Ui()
+{
+    delete viewer;
 }
 
 // SLOT FUNCTIONS
@@ -22,8 +28,62 @@ void Ui::aboutPCL()
                                                 "open project for 3D point cloud processing.") );
 }
 
+void Ui::browseTarget()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Load Target Point Cloud"), "/home", tr("Point Clouds *.pcd (*.pcd);;All Files (*.*)"));
+    pathTField->setText(fileName);
+}
+
+void Ui::loadTarget()
+{
+    if(motor->loadTargetCloud(pathTField->displayText()))
+        statusBar()->showMessage(pathTField->displayText()+QString(" successfully loaded!"));
+    else statusBar()->showMessage(QString("couldn't load the target point cloud, maybe the path or the filename are not correct."));
+}
+
+void Ui::browseSource()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Load Source Point Cloud"), "/home", tr("Point Clouds *.pcd (*.pcd);;All Files (*.*)"));
+    pathSField->setText(fileName);
+}
+
+void Ui::loadSource()
+{
+    if(motor->loadSourceCloud(pathSField->displayText()))
+        statusBar()->showMessage(pathSField->displayText()+QString(" successfully loaded!"));
+    else statusBar()->showMessage(QString("couldn't load the source point cloud, maybe the path or the filename are not correct."));
+}
+
+void Ui::showTarget()
+{
+    if(!viewer->removePointCloud("target"))
+    {
+        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), "target");
+        statusBar()->showMessage(QString("Target point cloud added to the visualizer."));
+    }
+    else statusBar()->showMessage(QString("Target point cloud removed from the visualizer."));
+    qvtkVisualizer->update();
+}
+
+void Ui::showSource()
+{
+    if(!viewer->removePointCloud("source"))
+    {
+        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getSourceCloud(), "source");
+        statusBar()->showMessage(QString("Source point cloud added to the visualizer."));
+    }
+    else statusBar()->showMessage(QString("Source point cloud removed from the visualizer."));
+    qvtkVisualizer->update();
+}
+
+void Ui::clearAll()
+{
+    viewer->removeAllPointClouds();
+}
+
 // TO DO: create slot functions for every action (every button)
 
+// MAIN UI MENU ACTIONS
 void Ui::createActions()
 {
     // Menu Bar Actions
@@ -43,8 +103,6 @@ void Ui::createActions()
     aboutPCLAct = new QAction(tr("About &PCL"), this);
     aboutPCLAct->setStatusTip(tr("Show the PCL library's About box"));
     connect(aboutPCLAct, SIGNAL(triggered()), this, SLOT(aboutPCL()));
-
-    //TO DO: actions for every button.
 }
 
 // LAYOUT FUNCTIONS
@@ -68,8 +126,10 @@ void Ui::setupLoadTBox()
 {
     loadTBox = new QGroupBox(QString("Load Target Cloud"));
     browseTButton = new QPushButton(QString("Browse..."));
+    connect(browseTButton, SIGNAL(clicked()), this, SLOT(browseTarget()));
     pathTField = new QLineEdit();
     loadTButton = new QPushButton(QString("LOAD!"));
+    connect(loadTButton, SIGNAL(clicked()), this, SLOT(loadTarget()));
     loadTargetLayout = new QHBoxLayout;
     loadTargetLayout->addWidget(browseTButton);
     loadTargetLayout->addWidget(pathTField);
@@ -111,8 +171,10 @@ void Ui::setupLoadSBox()
 {
     loadSBox = new QGroupBox(QString("Load Source Cloud"));
     browseSButton = new QPushButton(QString("Browse..."));
+    connect(browseSButton, SIGNAL(clicked()), this, SLOT(browseSource()));
     pathSField = new QLineEdit();
     loadSButton = new QPushButton(QString("LOAD!"));
+    connect(loadSButton, SIGNAL(clicked()), this, SLOT(loadSource()));
     loadSourceLayout = new QHBoxLayout;
     loadSourceLayout->addWidget(browseSButton);
     loadSourceLayout->addWidget(pathSField);
@@ -127,7 +189,16 @@ void Ui::setupVisualizer()
     qvtkVisualizer->SetRenderWindow(viewer->getRenderWindow());// set as render window the render window of the pcl visualizer
     viewer->setupInteractor(qvtkVisualizer->GetInteractor(), qvtkVisualizer->GetRenderWindow());// tells the visualizer what interactor is using now and for what window
     viewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);// ripristina input system of original visualizer (shift+click for points)
+
+    // workaround per posizionare la camera sulla zona delle cloud :D
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr prova (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::io::loadPCDFile ("target.pcd", *prova);
+    viewer->addPointCloud<pcl::PointXYZRGB>(prova, "prova");
+//    viewer->removeAllPointClouds();
+    //delete prova
+
     viewer->setBackgroundColor(0, 0, 0);
+    viewer->addCoordinateSystem(1.0);
     viewer->initCameraParameters();
     viewer->registerPointPickingCallback(&pointPickCallback, this); // callback function for interaction with the mouse on the visualizer
 }
@@ -146,8 +217,11 @@ void Ui::setupResultsBox()
 void Ui::setupVisualizerCommands()
 {
     showTButton = new QPushButton(QString("Show/Hide Target Cloud"));
+    connect(showTButton, SIGNAL(clicked()), this, SLOT(showTarget()));
     showSButton = new QPushButton(QString("Show/Hide Source Cloud"));
-    clearAll = new QPushButton(QString("Clear All Clouds"));
+    connect(showSButton, SIGNAL(clicked()), this, SLOT(showSource()));
+    clearAllButton = new QPushButton(QString("Clear All Clouds"));
+    connect(clearAllButton, SIGNAL(clicked()), this, SLOT(clearAll()));
     showTComponentButton = new QPushButton(QString("Show/Hide Target Component"));
     targetComponentsList = new QComboBox;
     showTargetComponentLayout = new QHBoxLayout;
@@ -162,6 +236,11 @@ void Ui::setupVisualizerCommands()
 
 void Ui::setupMainLayout()
 {
+    mainWidget = new QWidget;
+    mainLayout = new QHBoxLayout;
+    viewerLayout = new QVBoxLayout;
+    commandsLayout = new QVBoxLayout;
+
     setupLoadTBox();
     setupComponentsBox();
     setupChecksBox();
@@ -170,24 +249,22 @@ void Ui::setupMainLayout()
     setupResultsBox();
     setupVisualizerCommands();
 
-    commandsLayout = new QVBoxLayout;
     commandsLayout->addWidget(loadTBox);
     commandsLayout->addWidget(componentsBox);
     commandsLayout->addWidget(checksBox);
     commandsLayout->addWidget(loadSBox);
 
-    viewerLayout = new QVBoxLayout;
     viewerLayout->addWidget(qvtkVisualizer);
     viewerLayout->addWidget(resultsBox);
     viewerLayout->addWidget(showTButton);
     viewerLayout->addWidget(showSButton);
     viewerLayout->addLayout(showTargetComponentLayout);
     viewerLayout->addLayout(showSourceComponentLayout);
+    viewerLayout->addWidget(clearAllButton);
 
-    mainLayout = new QHBoxLayout;
     mainLayout->addLayout(commandsLayout);
     mainLayout->addLayout(viewerLayout);
-    mainWidget = new QWidget;
+
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
 }

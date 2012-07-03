@@ -2,17 +2,7 @@
 
 //PROJECT INCLUDES
 #include "ui.h"
-#include "registration.h"
-#include "componentSelection.h"
-#include "componentMatch.h"
-
-//TESTING INCLUDES
-#include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/common/common.h>
-#include <pcl/visualization/interactor.h>
-#include <vtkSmartPointer.h>
-#include <QVTKWidget.h>
+#include "pcqc.h"
 
 //DEBUG POINT PICK CALLBACK FUNCTION
 void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie)
@@ -36,7 +26,8 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     //Q_INIT_RESOURCE(dockwidgets); // per ora non uso risorse (icone&immagini)
-    Ui ui;
+    Pcqc pcqc;
+    Ui ui(&pcqc);
     ui.show();
     return app.exec();
 
@@ -62,8 +53,7 @@ int main(int argc, char *argv[])
 //    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb2(target);
 //    viewer.addPointCloud<pcl::PointXYZRGB> (target, rgb2, "target_reference");
 //    viewer.registerPointPickingCallback (&pointPickCallback);
-
-//    widget.show();
-//    return app.exec();
+//    viewer.spin();
 }
+
 
