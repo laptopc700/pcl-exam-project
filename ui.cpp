@@ -14,6 +14,7 @@ Ui::Ui(Pcqc *pcqc)
 Ui::~Ui()
 {
     delete viewer;
+    delete mainWidget;
 }
 
 // SLOT FUNCTIONS
