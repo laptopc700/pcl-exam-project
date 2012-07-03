@@ -30,6 +30,8 @@ private slots:
     void showTarget();
     void showSource();
     void clearAll();
+    void openComponentDialog();
+    void openCheckDialog();
 
 private:
 // UI functions
@@ -115,6 +117,8 @@ private:
     QHBoxLayout *showSourceComponentLayout;
 
 // Dialog UIs
+    QDialog *addComponentDialog;
+    QDialog *addCheckDialog;
 
 };
 

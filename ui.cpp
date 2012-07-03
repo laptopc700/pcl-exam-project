@@ -14,13 +14,15 @@ Ui::Ui(Pcqc *pcqc)
 Ui::~Ui()
 {
     delete viewer;
-    delete mainWidget;
+    delete mainWidget; // maybe a redundant delete
+    delete fileMenu; // maybe a redundant delete
+    delete helpMenu; // maybe a redundant delete
 }
 
 // SLOT FUNCTIONS
 void Ui::about()
 {
-   QMessageBox::about(this, tr("About pcl-exam-project"), tr("The <b>pcl-exam-project</b> is super awesome") );
+   QMessageBox::about(this, tr("About pcl-exam-project"), tr("The <b>PCQC</b> is super awesome") );
 }
 
 void Ui::aboutPCL()
@@ -80,6 +82,65 @@ void Ui::showSource()
 void Ui::clearAll()
 {
     viewer->removeAllPointClouds();
+}
+
+void Ui::openComponentDialog()
+{
+    addComponentDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
+//    QVBoxLayout *dialogLayout = new QVBoxLayout; // create vertical layout
+//    QVTKWidget *dialogVisualizer = new QVTKWidget; // create qvtk widget
+//    pcl::visualization::PCLVisualizer *dialogViewer = new pcl::visualization::PCLVisualizer("Dialog Viewer", false);
+//    dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
+//    dialogViewer->setupInteractor(dialogVisualizer->GetInteractor(), dialogVisualizer->GetRenderWindow()); // tells the visualizer what interactor is using now and for what window
+//    dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
+//    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), "target");
+//    dialogViewer->setBackgroundColor(0, 0, 0);
+//    dialogViewer->initCameraParameters();
+////    dialogViewer->registerPointPickingCallback(&pointPickCallback, this); // TO DO: IMPOSTARE NUOVA CALLBACK DEDICATA PER GESTIRE L'AGGIUNTA DI UN COMPONENTE
+//    QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
+//    QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
+//    QPushButton *selectPointSegButton = new QPushButton(QString("Select Point"));
+//    //connect
+//    QSlider *setSegThresholdBar = new QSlider(Qt::Horizontal);
+//    //connect
+//    QPushButton *showSegButton = new QPushButton(QString("Segment!"));
+//    //connect
+//    QHBoxLayout *addComponentDialogColLayout = new QHBoxLayout;
+//    QPushButton *selectPointColButton = new QPushButton(QString("Select Point"));
+//    //connect
+//    QTableWidget *colorBox = new QTableWidget(1, 1);
+//    QColor *selectedColor = new QColor(255, 0, 0, 255); // initializer color at black
+//    colorBox->item(0,0)->setBackgroundColor(*selectedColor);
+//    QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
+//    //connect
+//    QPushButton *showColButton = new QPushButton(QString("Segment!"));
+//    //connect
+//    QPushButton *saveComponent = new QPushButton(QString("Add component to component list"));
+//    saveComponent->setDefault(true); //default button, pressed if enter is pressed
+//    //connect
+
+//    addComponentDialogSegLayout->addWidget(selectPointSegButton);
+//    addComponentDialogSegLayout->addWidget(setSegThresholdBar);
+//    addComponentDialogSegLayout->addWidget(showSegButton);
+//    addComponentDialogColLayout->addWidget(selectPointColButton);
+//    addComponentDialogColLayout->addWidget(colorBox);
+//    addComponentDialogColLayout->addWidget(setColThresholdBar);
+//    addComponentDialogColLayout->addWidget(showColButton);
+//    dialogLayout->addWidget(dialogVisualizer);
+//    dialogLayout->addWidget(addComponentDialogName);
+//    dialogLayout->addLayout(addComponentDialogSegLayout);
+//    dialogLayout->addLayout(addComponentDialogColLayout);
+//    dialogLayout->addWidget(saveComponent);
+//    addComponentDialog->setLayout(dialogLayout);
+    addComponentDialog->deleteLater(); // delete dialog whet it is closed
+    addComponentDialog->exec(); // se Ui rimane bloccato non solo nell'interfaccia usare show() che è non bloccante
+    // finita l'esecuzione, deleta tutto (forse non serve?!)
+
+}
+
+void Ui::openCheckDialog()
+{
+
 }
 
 // TO DO: create slot functions for every action (every button)
@@ -143,7 +204,9 @@ void Ui::setupComponentsBox()
     componentsBox = new QGroupBox(QString("Components Definition"));
     componentButtonsLayout = new QHBoxLayout;
     addComponentButton = new QPushButton(QString("Add..."));
+    connect(addComponentButton, SIGNAL(clicked()), this, SLOT(openComponentDialog()));
     delComponentButton = new QPushButton(QString("Delete"));
+    connect(delComponentButton, SIGNAL(clicked()), this, SLOT(openCheckDialog()));
     componentButtonsLayout->addWidget(addComponentButton);
     componentButtonsLayout->addWidget(delComponentButton);
     componentsLayout = new QVBoxLayout;
@@ -199,7 +262,6 @@ void Ui::setupVisualizer()
     //delete prova
 
     viewer->setBackgroundColor(0, 0, 0);
-    viewer->addCoordinateSystem(1.0);
     viewer->initCameraParameters();
     viewer->registerPointPickingCallback(&pointPickCallback, this); // callback function for interaction with the mouse on the visualizer
 }
