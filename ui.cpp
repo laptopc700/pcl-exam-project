@@ -14,6 +14,7 @@ Ui::Ui(Pcqc *pcqc)
 Ui::~Ui()
 {
     delete viewer;
+    delete mainLayout; // maybe a redundant delete
     delete mainWidget; // maybe a redundant delete
     delete fileMenu; // maybe a redundant delete
     delete helpMenu; // maybe a redundant delete
@@ -301,7 +302,7 @@ void Ui::setupVisualizerCommands()
 void Ui::setupMainLayout()
 {
     mainWidget = new QWidget;
-    mainLayout = new QHBoxLayout;
+    mainLayout = new QHBoxLayout(this);
     viewerLayout = new QVBoxLayout;
     commandsLayout = new QVBoxLayout;
 
