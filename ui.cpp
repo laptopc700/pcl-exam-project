@@ -302,7 +302,7 @@ void Ui::setupVisualizerCommands()
 void Ui::setupMainLayout()
 {
     mainWidget = new QWidget;
-    mainLayout = new QHBoxLayout(this);
+    mainLayout = new QHBoxLayout;
     viewerLayout = new QVBoxLayout;
     commandsLayout = new QVBoxLayout;
 
