@@ -40,4 +40,7 @@ registerSourceToTarget ( pcl::PointCloud<pcl::PointXYZRGB>::Ptr source ,
                          int compute_target
                          );
 
+
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr
+voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize, int verbosity);
 #endif // REGISTRATION_H

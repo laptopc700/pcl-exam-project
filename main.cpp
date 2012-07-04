@@ -21,6 +21,26 @@ void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void*
 //    printf("Cluster size: %d \n", clusterPoints->indices.size());
 }
 
+/* PROVA FUNZIONI DENTRO CALLBACK
+void pointPickCallback2(const pcl::visualization::PointPickingEvent& event, void* cookie)
+{
+    float x,y,z;
+    if (event.getPointIndex() == -1)
+    {
+        cout << "No point was clicked" <<endl;
+        return;
+     }
+    int clicked= event.getPointIndex();
+    cout <<clicked <<endl;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud((pcl::PointCloud<pcl::PointXYZRGB>*)cookie);
+    cout << cloud->size()<<endl;
+    pcl::PointIndices::Ptr clusterPoints;
+cloud=voxelCloud(cloud, 1,1); QUESTA NON VA, IL POINTER NON E' UN BOOST FATTO BENE
+    segmentComponent(cloud, clusterPoints, clicked, 1);
+    cout<< "Cluster size: " << clusterPoints->indices.size() <<endl;
+}
+*/
+
 int main(int argc, char *argv[])
 {
 
@@ -54,6 +74,20 @@ int main(int argc, char *argv[])
 //    viewer.addPointCloud<pcl::PointXYZRGB> (target, rgb2, "target_reference");
 //    viewer.registerPointPickingCallback (&pointPickCallback);
 //    viewer.spin();
+
+
+    /* PROVA FUNZIONI DENTRO CALLBACK
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (new pcl::PointCloud<pcl::PointXYZRGB>);
+   pcl::io::loadPCDFile ("target.pcd", *target);
+    pcl::visualization::PCLVisualizer viewer("PCL Viewer");
+    viewer.setBackgroundColor (0, 0, 0);
+    viewer.initCameraParameters ();
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb2(target);
+    viewer.addPointCloud<pcl::PointXYZRGB> (target, rgb2, "target_reference");
+    viewer.resetCamera();
+    viewer.registerPointPickingCallback (&pointPickCallback2,target.get());//PASSO IL POINTER DELLA CLOUD, E' UGUALE A &(*target));
+    viewer.spin();
+*/
 }
 
 
