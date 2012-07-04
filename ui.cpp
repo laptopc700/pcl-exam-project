@@ -142,7 +142,132 @@ void Ui::openComponentDialog()
 
 void Ui::openCheckDialog()
 {
+    addCheckDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
+    QVBoxLayout *dialogLayout = new QVBoxLayout;
+    QTabWidget *tabWidget = new QTabWidget();
 
+    QWidget *presence = new QWidget();
+    QVBoxLayout *presenceLayout = new QVBoxLayout();
+    QLineEdit *presenceName = new QLineEdit(QString("Insert check name"));
+    QComboBox *presenceComp = new QComboBox();
+    QLineEdit *presenceThreshold = new QLineEdit(QString("Insert error threshold (number of points difference)"));
+    QPushButton *presenceAdd = new QPushButton(QString("Add Check"));
+    //connect
+    presenceLayout->addWidget(presenceName);
+    presenceLayout->addWidget(presenceComp);
+    presenceLayout->addWidget(presenceThreshold);
+    presenceLayout->addWidget(presenceAdd);
+    presence->setLayout(presenceLayout);
+
+    QWidget *planarity = new QWidget();
+    QVBoxLayout *planarityLayout = new QVBoxLayout();
+    QLineEdit *planarityName = new QLineEdit(QString("Insert check name"));
+    QComboBox *planarityComp = new QComboBox();
+    QLineEdit *planarityThreshold = new QLineEdit(QString("Insert error threshold (angular inclination)"));
+    QPushButton *planarityAdd = new QPushButton(QString("Add Check"));
+    //connect
+    planarityLayout->addWidget(planarityName);
+    planarityLayout->addWidget(planarityComp);
+    planarityLayout->addWidget(planarityThreshold);
+    planarityLayout->addWidget(planarityAdd);
+    planarity->setLayout(planarityLayout);
+
+    QWidget *pose = new QWidget();
+    QVBoxLayout *poseLayout = new QVBoxLayout();
+    QLineEdit *poseName = new QLineEdit(QString("Insert check name"));
+    QComboBox *poseComp = new QComboBox();
+    QLineEdit *poseThreshold = new QLineEdit(QString("Insert error threshold (angular inclination)"));
+    QPushButton *poseAdd = new QPushButton(QString("Add Check"));
+    //connect
+    poseLayout->addWidget(poseName);
+    poseLayout->addWidget(poseComp);
+    poseLayout->addWidget(poseThreshold);
+    poseLayout->addWidget(poseAdd);
+    pose->setLayout(poseLayout);
+
+    QWidget *color = new QWidget();
+    QVBoxLayout *colorLayout = new QVBoxLayout();
+    QLineEdit *colorName = new QLineEdit(QString("Insert check name"));
+    QComboBox *colorComp = new QComboBox();
+    QLineEdit *colorThreshold = new QLineEdit(QString("Insert error threshold (color difference in r g b values)"));
+    QPushButton *colorAdd = new QPushButton(QString("Add Check"));
+    //connect
+    colorLayout->addWidget(colorName);
+    colorLayout->addWidget(colorComp);
+    colorLayout->addWidget(colorThreshold);
+    colorLayout->addWidget(colorAdd);
+    color->setLayout(colorLayout);
+
+    QWidget *distance = new QWidget();
+    QVBoxLayout *distanceLayout = new QVBoxLayout();
+    QLineEdit *distanceName = new QLineEdit(QString("Insert check name"));
+    QComboBox *distanceComp = new QComboBox();
+    QComboBox *distanceComp2 = new QComboBox();
+    QLineEdit *distanceThreshold = new QLineEdit(QString("Insert error threshold (distance difference)"));
+    QPushButton *distanceAdd = new QPushButton(QString("Add Check"));
+    //connect
+    distanceLayout->addWidget(distanceName);
+    distanceLayout->addWidget(distanceComp);
+    distanceLayout->addWidget(distanceComp2);
+    distanceLayout->addWidget(distanceThreshold);
+    distanceLayout->addWidget(distanceAdd);
+    distance->setLayout(distanceLayout);
+
+    QWidget *height = new QWidget();
+    QVBoxLayout *heightLayout = new QVBoxLayout();
+    QLineEdit *heightName = new QLineEdit(QString("Insert check name"));
+    QComboBox *heightComp = new QComboBox();
+    QLineEdit *heightThreshold = new QLineEdit(QString("Insert error threshold (height difference)"));
+    QPushButton *heightAdd = new QPushButton(QString("Add Check"));
+    //connect
+    heightLayout->addWidget(heightName);
+    heightLayout->addWidget(heightComp);
+    heightLayout->addWidget(heightThreshold);
+    heightLayout->addWidget(heightAdd);
+    height->setLayout(heightLayout);
+
+    QWidget *circleRadius = new QWidget();
+    QVBoxLayout *circleLayout = new QVBoxLayout();
+    QLineEdit *circleRadiusName = new QLineEdit(QString("Insert check name"));
+    QComboBox *circleRadiusComp = new QComboBox();
+    QLineEdit *circleRadiusThreshold = new QLineEdit(QString("Insert error threshold (circle radius difference)"));
+    QPushButton *circleRadiusAdd = new QPushButton(QString("Add Check"));
+    //connect
+    circleLayout->addWidget(circleRadiusName);
+    circleLayout->addWidget(circleRadiusComp);
+    circleLayout->addWidget(circleRadiusThreshold);
+    circleLayout->addWidget(circleRadiusAdd);
+    circleRadius->setLayout(circleLayout);
+
+    QWidget *cable = new QWidget();
+    QVBoxLayout *cableLayout = new QVBoxLayout();
+    QLineEdit *cableName = new QLineEdit(QString("Insert check name"));
+    QComboBox *cableComp = new QComboBox();
+    QLineEdit *cableLengthThreshold = new QLineEdit(QString("Insert error threshold (cable length difference)"));
+    //definire punti di routing e connessione, forse servirebbe un visualizzatore in questo caso
+    QPushButton *cableAdd = new QPushButton(QString("Add Check"));
+    //connect
+    cableLayout->addWidget(cableName);
+    cableLayout->addWidget(cableComp);
+    cableLayout->addWidget(cableLengthThreshold);
+    cableLayout->addWidget(cableAdd);
+    cable->setLayout(cableLayout);
+
+    tabWidget->addTab(presence, QString("Presence"));
+    tabWidget->addTab(planarity, QString("Planarity"));
+    tabWidget->addTab(pose, QString("Pose"));
+    tabWidget->addTab(color, QString("Color"));
+    tabWidget->addTab(distance, QString("Distance"));
+    tabWidget->addTab(height, QString("Height"));
+    tabWidget->addTab(circleRadius, QString("Circle Radius"));
+    tabWidget->addTab(cable, QString("Cable"));
+
+    dialogLayout->addWidget(tabWidget);
+    addCheckDialog->setLayout(dialogLayout);
+    addCheckDialog->deleteLater(); // delete dialog when the control returns to the event loop from which deleteLater() was called (after exec i guess)
+    dialogLayout->deleteLater(); // delete dialog layout when the control returns to the event loop from which deleteLater() was called (after exec i guess)
+    addCheckDialog->resize(640, 240);
+    addCheckDialog->exec();
 }
 
 // TO DO: create slot functions for every action (every button)
@@ -208,7 +333,7 @@ void Ui::setupComponentsBox()
     addComponentButton = new QPushButton(QString("Add..."));
     connect(addComponentButton, SIGNAL(clicked()), this, SLOT(openComponentDialog()));
     delComponentButton = new QPushButton(QString("Delete"));
-    connect(delComponentButton, SIGNAL(clicked()), this, SLOT(openCheckDialog()));
+    //connect
     componentButtonsLayout->addWidget(addComponentButton);
     componentButtonsLayout->addWidget(delComponentButton);
     componentsLayout = new QVBoxLayout;
@@ -223,7 +348,9 @@ void Ui::setupChecksBox()
     checksBox = new QGroupBox(QString("Checks Definition"));
     checkButtonsLayout = new QHBoxLayout;
     addCheckButton = new QPushButton(QString("Add..."));
+    connect(addCheckButton, SIGNAL(clicked()), this, SLOT(openCheckDialog()));
     delCheckButton = new QPushButton(QString("Delete"));
+    //connect
     checkButtonsLayout->addWidget(addCheckButton);
     checkButtonsLayout->addWidget(delCheckButton);
     checksLayout = new QVBoxLayout;
