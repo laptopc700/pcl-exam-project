@@ -21,7 +21,7 @@ void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void*
 //    printf("Cluster size: %d \n", clusterPoints->indices.size());
 }
 
-/* PROVA FUNZIONI DENTRO CALLBACK
+// PROVA FUNZIONI DENTRO CALLBACK
 void pointPickCallback2(const pcl::visualization::PointPickingEvent& event, void* cookie)
 {
     float x,y,z;
@@ -35,19 +35,19 @@ void pointPickCallback2(const pcl::visualization::PointPickingEvent& event, void
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud((pcl::PointCloud<pcl::PointXYZRGB>*)cookie);
     cout << cloud->size()<<endl;
     pcl::PointIndices::Ptr clusterPoints;
-cloud=voxelCloud(cloud, 1,1); QUESTA NON VA, IL POINTER NON E' UN BOOST FATTO BENE
+cloud=voxelCloud(cloud, 1,1); // QUESTA NON VA, IL POINTER NON E' UN BOOST FATTO BENE
     segmentComponent(cloud, clusterPoints, clicked, 1);
     cout<< "Cluster size: " << clusterPoints->indices.size() <<endl;
 }
-*/
+
 
 int main(int argc, char *argv[])
 {
 
     QApplication app(argc, argv);
     //Q_INIT_RESOURCE(dockwidgets); // per ora non uso risorse (icone&immagini)
-    Pcqc pcqc;
-    Ui ui(&pcqc);
+    Pcqc *pcqc = new Pcqc();
+    Ui ui(pcqc);
     ui.show();
     return app.exec();
 
@@ -75,19 +75,17 @@ int main(int argc, char *argv[])
 //    viewer.registerPointPickingCallback (&pointPickCallback);
 //    viewer.spin();
 
-
-    /* PROVA FUNZIONI DENTRO CALLBACK
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (new pcl::PointCloud<pcl::PointXYZRGB>);
-   pcl::io::loadPCDFile ("target.pcd", *target);
-    pcl::visualization::PCLVisualizer viewer("PCL Viewer");
-    viewer.setBackgroundColor (0, 0, 0);
-    viewer.initCameraParameters ();
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb2(target);
-    viewer.addPointCloud<pcl::PointXYZRGB> (target, rgb2, "target_reference");
-    viewer.resetCamera();
-    viewer.registerPointPickingCallback (&pointPickCallback2,target.get());//PASSO IL POINTER DELLA CLOUD, E' UGUALE A &(*target));
-    viewer.spin();
-*/
+//    PROVA FUNZIONI DENTRO CALLBACK
+//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr target (new pcl::PointCloud<pcl::PointXYZRGB>);
+//    pcl::io::loadPCDFile ("target.pcd", *target);
+//    pcl::visualization::PCLVisualizer viewer("PCL Viewer");
+//    viewer.setBackgroundColor (0, 0, 0);
+//    viewer.initCameraParameters ();
+//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb2(target);
+//    viewer.addPointCloud<pcl::PointXYZRGB> (target, rgb2, "target_reference");
+//    viewer.resetCamera();
+//    viewer.registerPointPickingCallback (&pointPickCallback2,target.get());//PASSO IL POINTER DELLA CLOUD, E' UGUALE A &(*target));
+//    viewer.spin();
 }
 
 
