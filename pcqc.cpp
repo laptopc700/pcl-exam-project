@@ -10,16 +10,18 @@ Pcqc::Pcqc()
 bool Pcqc::loadTargetCloud(QString path)
 {
     const std::string stdpath = path.toStdString();
-    if(pcl::io::loadPCDFile(stdpath, *targetCloud) == 0 )
-            return true;
+    if(pcl::io::loadPCDFile(stdpath, *targetCloud) == 0 ){
+        targetCloud=voxelCloud(targetCloud,1,1);
+            return true;}
     else return false;
 }
 
 bool Pcqc::loadSourceCloud(QString path)
 {
     const std::string stdpath = path.toStdString();
-    if(pcl::io::loadPCDFile(stdpath, *sourceCloud) == 0)
-            return true;
+    if(pcl::io::loadPCDFile(stdpath, *sourceCloud) == 0){
+        sourceCloud=voxelCloud(sourceCloud,1,1);
+            return true;}
     else return false;
 }
 
