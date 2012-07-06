@@ -124,8 +124,9 @@ void Ui::openComponentDialog()
     dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
     dialogViewer->setupInteractor(dialogVisualizer->GetInteractor(), dialogVisualizer->GetRenderWindow()); // tells the visualizer what interactor is using now and for what window
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getTargetCloud());
-    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "target");
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getTargetCloudTemp();
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(temp);
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(temp, rgb, "target");
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
@@ -523,11 +524,20 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(z)
                                  );
     // CHECK SU MODALITA' DI SEGMENTAZIONE (se per colore o per cluster)
+        //backup original cloud
+//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp(new pcl::PointCloud<pcl::PointXYZRGB>);
+//        pcl::PointIndices::Ptr tempIndices(new pcl::PointIndices);
+//        pcl::copyPointCloud(*ui->getMotor()->getTargetCloud(),*tempIndices,*temp);
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = ui->getMotor()->getTargetCloudTemp();
+
         pcl::PointIndices::Ptr clusterPoints(new pcl::PointIndices);
-        segmentColor (ui->getMotor()->getTargetCloud(), clusterPoints, event.getPointIndex(), 50 );
-        colorIndices (ui->getMotor()->getTargetCloud(),clusterPoints );
-        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloud(),"target");
-//        ui->getComponentDialog()->findChild<QVTKWidget *>("dialogVisualizer")->update();
+        segmentColor (temp, clusterPoints, event.getPointIndex(), 50 );
+        colorIndices (temp,clusterPoints );
+        ui->getDialogViewer()->updatePointCloud(temp,"target");
+
+        //restore cloud
+//        *ui->getMotor()->getTargetCloud()=temp.get();
     }
 }
 

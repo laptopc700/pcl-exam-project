@@ -77,7 +77,6 @@ colorIndices
 )
 {
     cout << "colorIndices..." << flush;
-    cout << indices->indices.back()<<endl;
     while (! indices->indices.empty())
     {
         int pointN= indices->indices.back();
