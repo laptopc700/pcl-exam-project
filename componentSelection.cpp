@@ -36,13 +36,14 @@ segmentComponent
     pcl::PointIndicesPtr temp(&cluster_indices_out[selectedClusterIndex]);
     output = temp;
 //    *output=cluster_indices_out[selectedClusterIndex];
-                cout << "OK!"<<endl;
+    cout << "OK!"<<endl;
 }
 
 
 
 void
-segmentColor(
+segmentColor
+(
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
     pcl::PointIndices::Ptr output,
     int selectedPointIndex,
@@ -56,34 +57,39 @@ segmentColor(
     int b = selectedPoint.b;
 //fin qui ok
     int i = 0;
-    for (i = 0; i < input->size(); i++){
+    for (i = 0; i < input->size(); i++)
+    {
         if
         (
-                abs(input->at(i).r-r)<threshold &&
-                abs(input->at(i).g-g)<threshold &&
-                abs(input->at(i).b-b)<threshold
+             abs(input->at(i).r-r)<threshold &&
+             abs(input->at(i).g-g)<threshold &&
+             abs(input->at(i).b-b)<threshold
         )
-                   { cout << "Do" << flush;
+        {
+            cout << "Do" << flush;
             output->indices.push_back(i);//SCRIVE SOLO Do QUANDO ZIO CAN SI INCHIODA: PUSH BACK DA CONTROLLARE
         }
         cout << i<<" - " << flush;
     }
-            cout << "OK!"<<endl;
+    cout << "OK!"<<endl;
 }
 
 void
-colorIndices(
+colorIndices
+(
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
     pcl::PointIndices::Ptr indices
 )
-{cout << "colorIndices..." << flush;
+{
+    cout << "colorIndices..." << flush;
     cout << indices->indices.back()<<endl;
-            while (! indices->indices.empty()){
-      int pointN= indices->indices.back();
-    (*input)[pointN].r=0;
-    (*input)[pointN].g=255;
-    (*input)[pointN].b=0;
-      indices->indices.pop_back();
+    while (! indices->indices.empty())
+    {
+        int pointN= indices->indices.back();
+        (*input)[pointN].r=0;
+        (*input)[pointN].g=255;
+        (*input)[pointN].b=0;
+        indices->indices.pop_back();
     }
-            cout << "OK!"<<endl;
+    cout << "OK!"<<endl;
 }
