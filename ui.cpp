@@ -62,7 +62,9 @@ void Ui::showTarget()
 {
     if(!viewer->removePointCloud("target"))
     {
-        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), "target");
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getTargetCloud());
+        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "target");
+        viewer->resetCamera();
         statusBar()->showMessage(QString("Target point cloud added to the visualizer."));
     }
     else statusBar()->showMessage(QString("Target point cloud removed from the visualizer."));
@@ -73,7 +75,9 @@ void Ui::showSource()
 {
     if(!viewer->removePointCloud("source"))
     {
-        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getSourceCloud(), "source");
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getSourceCloud());
+        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getSourceCloud(), rgb, "source");
+            viewer->resetCamera();
         statusBar()->showMessage(QString("Source point cloud added to the visualizer."));
     }
     else statusBar()->showMessage(QString("Source point cloud removed from the visualizer."));
@@ -94,10 +98,14 @@ void Ui::openComponentDialog()
     dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
     dialogViewer->setupInteractor(dialogVisualizer->GetInteractor(), dialogVisualizer->GetRenderWindow()); // tells the visualizer what interactor is using now and for what window
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
-    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), "target");
+pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getTargetCloud());
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "target");
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
-//    dialogViewer->registerPointPickingCallback(&pointPickCallback, this); // TO DO: IMPOSTARE NUOVA CALLBACK DEDICATA PER GESTIRE L'AGGIUNTA DI UN COMPONENTE
+    dialogViewer->resetCamera();
+
+    //CALLBACK!!
+    dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // TO DO: IMPOSTARE NUOVA CALLBACK DEDICATA PER GESTIRE L'AGGIUNTA DI UN COMPONENTE
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
     QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
     QPushButton *selectPointSegButton = new QPushButton(QString("Select Point"));
@@ -384,9 +392,10 @@ void Ui::setupVisualizer()
     viewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);// ripristina input system of original visualizer (shift+click for points)
 
     // workaround per posizionare la camera sulla zona delle cloud :D
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr prova (new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::io::loadPCDFile ("target.pcd", *prova);
-    viewer->addPointCloud<pcl::PointXYZRGB>(prova, "prova");
+//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr prova (new pcl::PointCloud<pcl::PointXYZRGB>);
+//    pcl::io::loadPCDFile ("target.pcd", *prova);
+//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(prova);
+//    viewer->addPointCloud<pcl::PointXYZRGB>(prova, rgb, "prova");
 //    viewer->removeAllPointClouds();
     //delete prova
 
@@ -476,6 +485,28 @@ void Ui::pointPickCallback(const pcl::visualization::PointPickingEvent& event, v
                                  .arg(y)
                                  .arg(z)
                                  );
+    }
+}
+
+void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingEvent& event, void* cookie)
+{
+    Ui *ui = (Ui*)cookie;
+    float x,y,z;
+    if (event.getPointIndex() == -1)
+        ui->statusBar()->showMessage(tr("No point was clicked"));
+    else
+    {
+        event.getPoint(x,y,z);
+        ui->statusBar()->showMessage(QString("Point Clicked index: %1 x: %2 y: %3 z: %4")
+                                 .arg(event.getPointIndex())
+                                 .arg(x)
+                                 .arg(y)
+                                 .arg(z)
+                                 );
+
+//   QUESTE NON VANNO PERCHE' SONO RIFERITE A UN CONTESTO NON STATICO
+//        motor->getTargetCloud()=voxelCloud(motor->getTargetCloud(), 1,1);
+//        viewer->updatePointCloud(motor->getTargetCloud(),"target");
     }
 }
 
