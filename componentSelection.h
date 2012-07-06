@@ -64,6 +64,12 @@ segmentColor
     int threshold
 );
 
+void
+colorIndices
+(
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+    pcl::PointIndices::Ptr indices
+);
 
 #endif // REGISTRATION_H
 

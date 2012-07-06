@@ -11,6 +11,8 @@ bool Pcqc::loadTargetCloud(QString path)
 {
     const std::string stdpath = path.toStdString();
     if(pcl::io::loadPCDFile(stdpath, *targetCloud) == 0 ){
+        vector<int> indices;
+        pcl::removeNaNFromPointCloud(*targetCloud, *targetCloud, indices);
         targetCloud=voxelCloud(targetCloud,1,1);
             return true;}
     else return false;
@@ -20,6 +22,8 @@ bool Pcqc::loadSourceCloud(QString path)
 {
     const std::string stdpath = path.toStdString();
     if(pcl::io::loadPCDFile(stdpath, *sourceCloud) == 0){
+        vector<int> indices;
+        pcl::removeNaNFromPointCloud(*sourceCloud, *sourceCloud, indices);
         sourceCloud=voxelCloud(sourceCloud,1,1);
             return true;}
     else return false;

@@ -9,7 +9,7 @@ segmentComponent
     double threshold
 )
 {
-
+    cout << "segmentComponent..." << flush;
     vector<pcl::PointIndices> cluster_indices_out;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
     ec.setClusterTolerance (threshold);
@@ -36,33 +36,52 @@ segmentComponent
     pcl::PointIndicesPtr temp(&cluster_indices_out[selectedClusterIndex]);
     output = temp;
 //    *output=cluster_indices_out[selectedClusterIndex];
+                cout << "OK!"<<endl;
 }
 
 
 
 void
-segmentColor
-(
+segmentColor(
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
     pcl::PointIndices::Ptr output,
     int selectedPointIndex,
     int threshold
 )
-
 {
+    cout << "segmentColor..." << flush;
     pcl::PointXYZRGB selectedPoint = (*input)[selectedPointIndex];
     int r = selectedPoint.r;
     int g = selectedPoint.g;
     int b = selectedPoint.b;
-
+//fin qui ok
     for (int i = 0; i < input->size(); i++){
         if
         (
-                abs((*input)[i].r-r)<threshold &&
-                abs((*input)[i].g-g)<threshold &&
-                abs((*input)[i].b-b)<threshold
+                abs(input->at(i).r-r)<threshold &&
+                abs(input->at(i).g-g)<threshold &&
+                abs(input->at(i).b-b)<threshold
         )
-        output->indices.push_back(i);
+                   { cout << "Do" << flush;
+            output->indices.push_back(i);//SCRIVE SOLO Do QUANDO ZIO CAN SI INCHIODA: PUSH BACK DA CONTROLLARE}
+        cout << i<<" - " << flush;
     }
+            cout << "OK!"<<endl;
+}
 
+void
+colorIndices(
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+    pcl::PointIndices::Ptr indices
+)
+{cout << "colorIndices..." << flush;
+    cout << indices->indices.back()<<endl;
+            while (! indices->indices.empty()){
+      int pointN= indices->indices.back();
+    (*input)[pointN].r=0;
+    (*input)[pointN].g=255;
+    (*input)[pointN].b=0;
+      indices->indices.pop_back();
+    }
+            cout << "OK!"<<endl;
 }

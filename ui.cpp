@@ -518,7 +518,12 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(y)
                                  .arg(z)
                                  );
-        ui->getMotor()->getTargetCloud() = voxelCloud(ui->getMotor()->getTargetCloud(), 1,1);
+
+        pcl::PointIndices::Ptr clusterPoints;
+
+        segmentColor (  ui->getMotor()->getTargetCloud(), clusterPoints, event.getPointIndex(),  50 );
+        colorIndices (ui->getMotor()->getTargetCloud(),clusterPoints );
+
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloud(),"target");
     }
 }
