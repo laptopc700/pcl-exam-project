@@ -522,7 +522,7 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(y)
                                  .arg(z)
                                  );
-
+    // CHECK SU MODALITA' DI SEGMENTAZIONE (se per colore o per cluster)
         pcl::PointIndices::Ptr clusterPoints(new pcl::PointIndices);
         segmentColor (ui->getMotor()->getTargetCloud(), clusterPoints, event.getPointIndex(), 50 );
         colorIndices (ui->getMotor()->getTargetCloud(),clusterPoints );
