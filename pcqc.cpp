@@ -38,3 +38,9 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getSourceCloud()
 {
     return sourceCloud;
 }
+
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetCloudTemp()
+{
+    pcl::copyPointCloud(*targetCloud, *targetCloudTemp);
+    return targetCloudTemp;
+}
