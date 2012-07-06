@@ -130,7 +130,7 @@ void Ui::openComponentDialog()
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
-    componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // callback dedicata alla segmentazione di componenti
+    componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentColor, this); // callback dedicata alla segmentazione di componenti
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
     QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
     QPushButton *selectPointSegButton = new QPushButton(QString("Select Point"));
@@ -507,6 +507,30 @@ void Ui::pointPickCallback(const pcl::visualization::PointPickingEvent& event, v
     }
 }
 
+void Ui::pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEvent& event, void* cookie)
+{
+    Ui *ui = (Ui*)cookie;
+    float x,y,z;
+    if (event.getPointIndex() == -1)
+        ui->statusBar()->showMessage(tr("No point was clicked"));
+    else
+    {
+        event.getPoint(x,y,z);
+        ui->statusBar()->showMessage(QString("Point Clicked index: %1 x: %2 y: %3 z: %4")
+                                 .arg(event.getPointIndex())
+                                 .arg(x)
+                                 .arg(y)
+                                 .arg(z)
+                                 );
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = ui->getMotor()->getTargetCloudTemp();
+        pcl::PointIndices::Ptr clusterPoints(new pcl::PointIndices);
+        segmentColor (temp, clusterPoints, event.getPointIndex(), 50 );
+        colorIndices (temp,clusterPoints );
+        ui->getDialogViewer()->updatePointCloud(temp,"target");
+    }
+}
+
 void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingEvent& event, void* cookie)
 {
     Ui *ui = (Ui*)cookie;
@@ -522,21 +546,12 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(y)
                                  .arg(z)
                                  );
-    // CHECK SU MODALITA' DI SEGMENTAZIONE (se per colore o per cluster)
-        //backup original cloud
-//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp(new pcl::PointCloud<pcl::PointXYZRGB>);
-//        pcl::PointIndices::Ptr tempIndices(new pcl::PointIndices);
-//        pcl::copyPointCloud(*ui->getMotor()->getTargetCloud(),*tempIndices,*temp);
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = ui->getMotor()->getTargetCloudTemp();
-
         pcl::PointIndices::Ptr clusterPoints(new pcl::PointIndices);
         segmentColor (temp, clusterPoints, event.getPointIndex(), 50 );
         colorIndices (temp,clusterPoints );
         ui->getDialogViewer()->updatePointCloud(temp,"target");
-
-        //restore cloud
-//        *ui->getMotor()->getTargetCloud()=temp.get();
     }
 }
 
