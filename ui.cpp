@@ -124,14 +124,13 @@ void Ui::openComponentDialog()
     dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
     dialogViewer->setupInteractor(dialogVisualizer->GetInteractor(), dialogVisualizer->GetRenderWindow()); // tells the visualizer what interactor is using now and for what window
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getTargetCloudTemp();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getTargetCloudTemp();
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(temp);
     dialogViewer->addPointCloud<pcl::PointXYZRGB>(temp, rgb, "target");
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
-    boost::signals2::connection callbackConnection;
-    callbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // callback dedicata alla segmentazione di componenti
+    componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // callback dedicata alla segmentazione di componenti
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
     QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
     QPushButton *selectPointSegButton = new QPushButton(QString("Select Point"));
@@ -173,7 +172,7 @@ void Ui::openComponentDialog()
     // il primo del causa seg fault se viene attivata la callback
     addComponentDialog->resize(640, 480);
     addComponentDialog->exec(); // se Ui rimane bloccato non solo nell'interfaccia usare show() che è non bloccante
-    callbackConnection.disconnect(); // disconnect the callback function from the viewer
+    componentCallbackConnection.disconnect(); // disconnect the callback function from the viewer
     delete dialogViewer; // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree.
 }
 

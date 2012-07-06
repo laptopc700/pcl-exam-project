@@ -126,6 +126,7 @@ private:
 
 // Dialog UIs
     QDialog *addComponentDialog;
+    boost::signals2::connection componentCallbackConnection;
     QDialog *addCheckDialog;
     pcl::visualization::PCLVisualizer *dialogViewer;
 
