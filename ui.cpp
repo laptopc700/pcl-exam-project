@@ -116,6 +116,7 @@ void Ui::clearAll()
 
 void Ui::openComponentDialog()
 {
+//    delete addComponentDialog; // if this is not the first iteration of component definition, de-alloc the last dialog window, CAUSA SEGFAULT, memoria non gestita!
     addComponentDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
     QVBoxLayout *dialogLayout = new QVBoxLayout; // create vertical layout
     QVTKWidget *dialogVisualizer = new QVTKWidget; // create qvtk widget
@@ -128,8 +129,8 @@ void Ui::openComponentDialog()
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
-    //CALLBACK!!
-    dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // TO DO: IMPOSTARE NUOVA CALLBACK DEDICATA PER GESTIRE L'AGGIUNTA DI UN COMPONENTE
+    boost::signals2::connection callbackConnection;
+    callbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // callback dedicata alla segmentazione di componenti
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
     QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
     QPushButton *selectPointSegButton = new QPushButton(QString("Select Point"));
@@ -149,7 +150,7 @@ void Ui::openComponentDialog()
     QPushButton *showColButton = new QPushButton(QString("Segment!"));
     //connect
     QPushButton *saveComponent = new QPushButton(QString("Add component to component list"));
-    saveComponent->setDefault(true); //default button, pressed if enter is pressed
+    saveComponent->setDefault(true); // default button, pressed if enter is pressed
     //connect
     addComponentDialogSegLayout->addWidget(selectPointSegButton);
     addComponentDialogSegLayout->addWidget(setSegThresholdBar);
@@ -164,12 +165,15 @@ void Ui::openComponentDialog()
     dialogLayout->addLayout(addComponentDialogColLayout);
     dialogLayout->addWidget(saveComponent);
     addComponentDialog->setLayout(dialogLayout);
-    addComponentDialog->deleteLater(); // delete dialog when the control returns to the event loop from which deleteLater() was called (after exec i guess)
+
+    // DIALOG EXECUTION
+//    addComponentDialog->deleteLater(); // delete dialog when the control returns to the event loop from which deleteLater() was called (after exec i guess)
     dialogLayout->deleteLater(); // delete dialog layout when the control returns to the event loop from which deleteLater() was called (after exec i guess)
+    // il primo del causa seg fault se viene attivata la callback
     addComponentDialog->resize(640, 480);
     addComponentDialog->exec(); // se Ui rimane bloccato non solo nell'interfaccia usare show() che è non bloccante
-    // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree.
-    delete dialogViewer;
+    callbackConnection.disconnect(); // disconnect the callback function from the viewer
+    delete dialogViewer; // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree.
 }
 
 void Ui::openCheckDialog()
@@ -520,11 +524,10 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  );
 
         pcl::PointIndices::Ptr clusterPoints;
-
-        segmentColor (  ui->getMotor()->getTargetCloud(), clusterPoints, event.getPointIndex(),  50 );
+        segmentColor (ui->getMotor()->getTargetCloud(), clusterPoints, event.getPointIndex(), 50 );
         colorIndices (ui->getMotor()->getTargetCloud(),clusterPoints );
-
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloud(),"target");
+//        ui->getComponentDialog()->findChild<QVTKWidget *>("dialogVisualizer")->update();
     }
 }
 

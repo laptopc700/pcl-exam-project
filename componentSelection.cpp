@@ -55,7 +55,8 @@ segmentColor(
     int g = selectedPoint.g;
     int b = selectedPoint.b;
 //fin qui ok
-    for (int i = 0; i < input->size(); i++){
+    int i = 0;
+    for (i = 0; i < input->size(); i++){
         if
         (
                 abs(input->at(i).r-r)<threshold &&
@@ -63,7 +64,8 @@ segmentColor(
                 abs(input->at(i).b-b)<threshold
         )
                    { cout << "Do" << flush;
-            output->indices.push_back(i);//SCRIVE SOLO Do QUANDO ZIO CAN SI INCHIODA: PUSH BACK DA CONTROLLARE}
+            output->indices.push_back(i);//SCRIVE SOLO Do QUANDO ZIO CAN SI INCHIODA: PUSH BACK DA CONTROLLARE
+        }
         cout << i<<" - " << flush;
     }
             cout << "OK!"<<endl;
