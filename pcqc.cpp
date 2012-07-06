@@ -3,6 +3,7 @@
 Pcqc::Pcqc()
 {
     targetCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
+    targetCloudTemp.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     sourceCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     registeredCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
 }
