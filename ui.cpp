@@ -30,9 +30,19 @@ pcl::visualization::PCLVisualizer* Ui::getViewer()
     return viewer;
 }
 
+pcl::visualization::PCLVisualizer* Ui::getDialogViewer()
+{
+    return dialogViewer;
+}
+
 QVTKWidget* Ui::getViewerWidget()
 {
     return qvtkVisualizer;
+}
+
+QDialog* Ui::getComponentDialog()
+{
+    return addComponentDialog;
 }
 
 // SLOT FUNCTIONS
@@ -109,7 +119,7 @@ void Ui::openComponentDialog()
     addComponentDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
     QVBoxLayout *dialogLayout = new QVBoxLayout; // create vertical layout
     QVTKWidget *dialogVisualizer = new QVTKWidget; // create qvtk widget
-    pcl::visualization::PCLVisualizer *dialogViewer = new pcl::visualization::PCLVisualizer("Dialog Viewer", false);
+    dialogViewer = new pcl::visualization::PCLVisualizer("Dialog Viewer", false);
     dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
     dialogViewer->setupInteractor(dialogVisualizer->GetInteractor(), dialogVisualizer->GetRenderWindow()); // tells the visualizer what interactor is using now and for what window
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
@@ -509,7 +519,7 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(z)
                                  );
         ui->getMotor()->getTargetCloud() = voxelCloud(ui->getMotor()->getTargetCloud(), 1,1);
-        ui->getViewer()->updatePointCloud(ui->getMotor()->getTargetCloud(),"target");
+        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloud(),"target");
     }
 }
 

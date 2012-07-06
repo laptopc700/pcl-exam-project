@@ -21,7 +21,10 @@ public:
     void setMotor(Pcqc *pcqc);// to set another motor if we want the ui work with different pcqc instances.
     Pcqc* getMotor();
     pcl::visualization::PCLVisualizer* getViewer();
+    pcl::visualization::PCLVisualizer* getDialogViewer();
     QVTKWidget* getViewerWidget();
+    QDialog* getComponentDialog();
+
 
 private slots:
     void about();
@@ -124,6 +127,7 @@ private:
 // Dialog UIs
     QDialog *addComponentDialog;
     QDialog *addCheckDialog;
+    pcl::visualization::PCLVisualizer *dialogViewer;
 
 };
 
