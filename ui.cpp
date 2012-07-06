@@ -1,5 +1,5 @@
 #include "ui.h"
-
+//PUBLIC FUNCTIONS
 Ui::Ui(Pcqc *pcqc)
 {
     motor = pcqc;
@@ -18,6 +18,21 @@ Ui::~Ui()
     delete mainWidget; // maybe a redundant delete
     delete fileMenu; // maybe a redundant delete
     delete helpMenu; // maybe a redundant delete
+}
+
+Pcqc* Ui::getMotor()
+{
+    return motor;
+}
+
+pcl::visualization::PCLVisualizer* Ui::getViewer()
+{
+    return viewer;
+}
+
+QVTKWidget* Ui::getViewerWidget()
+{
+    return qvtkVisualizer;
 }
 
 // SLOT FUNCTIONS
@@ -77,7 +92,7 @@ void Ui::showSource()
     {
         pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getSourceCloud());
         viewer->addPointCloud<pcl::PointXYZRGB>(motor->getSourceCloud(), rgb, "source");
-            viewer->resetCamera();
+        viewer->resetCamera();
         statusBar()->showMessage(QString("Source point cloud added to the visualizer."));
     }
     else statusBar()->showMessage(QString("Source point cloud removed from the visualizer."));
@@ -98,12 +113,11 @@ void Ui::openComponentDialog()
     dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
     dialogViewer->setupInteractor(dialogVisualizer->GetInteractor(), dialogVisualizer->GetRenderWindow()); // tells the visualizer what interactor is using now and for what window
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
-pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getTargetCloud());
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getTargetCloud());
     dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "target");
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
-
     //CALLBACK!!
     dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // TO DO: IMPOSTARE NUOVA CALLBACK DEDICATA PER GESTIRE L'AGGIUNTA DI UN COMPONENTE
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
@@ -390,15 +404,6 @@ void Ui::setupVisualizer()
     qvtkVisualizer->SetRenderWindow(viewer->getRenderWindow());// set as render window the render window of the pcl visualizer
     viewer->setupInteractor(qvtkVisualizer->GetInteractor(), qvtkVisualizer->GetRenderWindow());// tells the visualizer what interactor is using now and for what window
     viewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);// ripristina input system of original visualizer (shift+click for points)
-
-    // workaround per posizionare la camera sulla zona delle cloud :D
-//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr prova (new pcl::PointCloud<pcl::PointXYZRGB>);
-//    pcl::io::loadPCDFile ("target.pcd", *prova);
-//    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(prova);
-//    viewer->addPointCloud<pcl::PointXYZRGB>(prova, rgb, "prova");
-//    viewer->removeAllPointClouds();
-    //delete prova
-
     viewer->setBackgroundColor(0, 0, 0);
     viewer->initCameraParameters();
     viewer->registerPointPickingCallback(&pointPickCallback, this); // callback function for interaction with the mouse on the visualizer
@@ -503,10 +508,8 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(y)
                                  .arg(z)
                                  );
-
-//   QUESTE NON VANNO PERCHE' SONO RIFERITE A UN CONTESTO NON STATICO
-//        motor->getTargetCloud()=voxelCloud(motor->getTargetCloud(), 1,1);
-//        viewer->updatePointCloud(motor->getTargetCloud(),"target");
+        ui->getMotor()->getTargetCloud() = voxelCloud(ui->getMotor()->getTargetCloud(), 1,1);
+        ui->getViewer()->updatePointCloud(ui->getMotor()->getTargetCloud(),"target");
     }
 }
 

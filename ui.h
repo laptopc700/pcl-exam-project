@@ -19,6 +19,9 @@ public:
     //They are deleted when the parent (main window->mainWidget) is deleted.
     ~Ui(); //The only thing to delete is the viewer (i guess), the motor is allocated in the stack
     void setMotor(Pcqc *pcqc);// to set another motor if we want the ui work with different pcqc instances.
+    Pcqc* getMotor();
+    pcl::visualization::PCLVisualizer* getViewer();
+    QVTKWidget* getViewerWidget();
 
 private slots:
     void about();
