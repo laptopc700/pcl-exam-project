@@ -52,7 +52,8 @@ private:
     void setupResultsBox();
     void setupVisualizerCommands();
     void setupMainLayout();
-    static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie); // callback function for the visualizer to interact with the mouse
+    static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie);
+    static void pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEvent& event, void* cookie);
     static void pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingEvent& event, void* cookie);
     QString colorToStyleSheet(QColor *color);
 
