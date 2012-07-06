@@ -523,7 +523,7 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(z)
                                  );
 
-        pcl::PointIndices::Ptr clusterPoints;
+        pcl::PointIndices::Ptr clusterPoints(new pcl::PointIndices);
         segmentColor (ui->getMotor()->getTargetCloud(), clusterPoints, event.getPointIndex(), 50 );
         colorIndices (ui->getMotor()->getTargetCloud(),clusterPoints );
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloud(),"target");

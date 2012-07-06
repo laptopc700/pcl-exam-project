@@ -55,7 +55,6 @@ segmentColor
     int r = selectedPoint.r;
     int g = selectedPoint.g;
     int b = selectedPoint.b;
-//fin qui ok
     int i = 0;
     for (i = 0; i < input->size(); i++)
     {
@@ -65,11 +64,7 @@ segmentColor
              abs(input->at(i).g-g)<threshold &&
              abs(input->at(i).b-b)<threshold
         )
-        {
-            cout << "Do" << flush;
-            output->indices.push_back(i);//SCRIVE SOLO Do QUANDO ZIO CAN SI INCHIODA: PUSH BACK DA CONTROLLARE
-        }
-        cout << i<<" - " << flush;
+            output->indices.push_back(i);
     }
     cout << "OK!"<<endl;
 }
@@ -86,9 +81,9 @@ colorIndices
     while (! indices->indices.empty())
     {
         int pointN= indices->indices.back();
-        (*input)[pointN].r=0;
-        (*input)[pointN].g=255;
-        (*input)[pointN].b=0;
+        input->at(pointN).r=0;
+        input->at(pointN).g=255;
+        input->at(pointN).b=0;
         indices->indices.pop_back();
     }
     cout << "OK!"<<endl;
