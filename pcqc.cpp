@@ -24,12 +24,14 @@ bool Pcqc::loadTargetCloud(QString path)
 bool Pcqc::loadSourceCloud(QString path)
 {
     const std::string stdpath = path.toStdString();
-    if(pcl::io::loadPCDFile(stdpath, *sourceCloud) == 0){
+    if(pcl::io::loadPCDFile(stdpath, *sourceCloud) == 0)
+    {
         vector<int> indices;
         pcl::removeNaNFromPointCloud(*sourceCloud, *sourceCloud, indices);
-        sourceCloud=voxelCloud(sourceCloud,1,1);
-        segmentation(sourceCloud,sourceCloud,1);
-            return true;}
+        sourceCloud = voxelCloud(sourceCloud,1,1); // alleggerisce il calcolo, da capire se peggiora il risultato o meno.
+        segmentation(sourceCloud,sourceCloud,1); // segmentazione del piano principale.
+        return true;
+    }
     else return false;
 }
 

@@ -37,6 +37,8 @@ private slots:
     void showSource();
     void clearAll();
     void openComponentDialog();
+    void setComponentDialogClusterCallback();
+    void setComponentDialogColorCallback();
     void openCheckDialog();
 
 private:
@@ -128,8 +130,8 @@ private:
 // Dialog UIs
     QDialog *addComponentDialog;
     boost::signals2::connection componentCallbackConnection;
-    QDialog *addCheckDialog;
     pcl::visualization::PCLVisualizer *dialogViewer;
+    QDialog *addCheckDialog;
 
 };
 

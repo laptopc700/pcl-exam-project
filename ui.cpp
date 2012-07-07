@@ -130,18 +130,18 @@ void Ui::openComponentDialog()
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
-    componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // callback dedicata alla segmentazione di componenti
+    componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallback, this); // callback standard non segmenta nulla
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
     QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
-    QPushButton *selectPointSegButton = new QPushButton(QString("Select Point"));
-    //connect
+    QPushButton *selectPointSegButton = new QPushButton(QString("Cluster Segmentation"));
+    connect(selectPointSegButton, SIGNAL(clicked()), this, SLOT(setComponentDialogClusterCallback()));
     QSlider *setSegThresholdBar = new QSlider(Qt::Horizontal);
     //connect
     QPushButton *showSegButton = new QPushButton(QString("Segment!"));
     //connect
     QHBoxLayout *addComponentDialogColLayout = new QHBoxLayout;
-    QPushButton *selectPointColButton = new QPushButton(QString("Select Point"));
-    //connect
+    QPushButton *selectPointColButton = new QPushButton(QString("Color Segmentation"));
+    connect(selectPointColButton, SIGNAL(clicked()), this, SLOT(setComponentDialogColorCallback()));
     QColor *selectedColor = new QColor(255, 0, 0, 255); // initializer color at black
     QPushButton *colorBox = new QPushButton;
     colorBox->setStyleSheet(colorToStyleSheet(selectedColor));
@@ -174,6 +174,20 @@ void Ui::openComponentDialog()
     addComponentDialog->exec(); // se Ui rimane bloccato non solo nell'interfaccia usare show() che è non bloccante
     componentCallbackConnection.disconnect(); // disconnect the callback function from the viewer
     delete dialogViewer; // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree.
+}
+
+void Ui::setComponentDialogClusterCallback()
+{
+//    componentCallbackConnection.disconnect();
+    dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this);
+    //TO DO: cambia cursore
+}
+
+void Ui::setComponentDialogColorCallback()
+{
+//    componentCallbackConnection.disconnect();
+    dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentColor, this);
+    //TO DO: cambia cursore
 }
 
 void Ui::openCheckDialog()
