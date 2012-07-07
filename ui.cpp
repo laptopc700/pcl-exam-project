@@ -126,7 +126,7 @@ void Ui::openComponentDialog()
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getTargetCloudTemp();
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(temp);
-    dialogViewer->addPointCloud<pcl::PointXYZRGB>(temp, rgb, "target");
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(temp, rgb, "cloud");
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
@@ -537,11 +537,8 @@ void Ui::pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEve
                                  .arg(z)
                                  );
 
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = ui->getMotor()->getTargetCloudTemp();
-        pcl::PointIndices::Ptr clusterPoints(new pcl::PointIndices);
-        segmentColor (temp, clusterPoints, event.getPointIndex(), 50 );
-        colorIndices (temp,clusterPoints );
-        ui->getDialogViewer()->updatePointCloud(temp,"target");
+        ui->getMotor()->colorSegmentation(event.getPointIndex(), 50, true);
+        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudColorSeg(),"cloud");
     }
 }
 
@@ -561,11 +558,8 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(z)
                                  );
 
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = ui->getMotor()->getTargetCloudTemp();
-        pcl::PointIndices::Ptr clusterPoints(new pcl::PointIndices);
-        segmentCluster(temp, clusterPoints,event.getPointIndex(),2);
-        colorIndices (temp,clusterPoints );
-        ui->getDialogViewer()->updatePointCloud(temp,"target");
+        ui->getMotor()->clusterSegmentation(event.getPointIndex(), 2, true);
+        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudClusterSeg(),"cloud");
     }
 }
 
