@@ -124,7 +124,7 @@ void Ui::openComponentDialog()
     dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
     dialogViewer->setupInteractor(dialogVisualizer->GetInteractor(), dialogVisualizer->GetRenderWindow()); // tells the visualizer what interactor is using now and for what window
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getTargetCloudTemp();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getTargetCloud();
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(temp);
     dialogViewer->addPointCloud<pcl::PointXYZRGB>(temp, rgb, "cloud");
     dialogViewer->setBackgroundColor(0, 0, 0);
@@ -144,14 +144,14 @@ void Ui::openComponentDialog()
     QHBoxLayout *addComponentDialogColLayout = new QHBoxLayout;
     QPushButton *selectPointColButton = new QPushButton(QString("Color Segmentation"));
     connect(selectPointColButton, SIGNAL(clicked()), this, SLOT(setComponentDialogColorCallback()));
-    QColor *selectedColor = new QColor(255, 0, 0, 255); // initializer color at black
+    QColor *selectedColor = new QColor(0, 0, 0, 255); // initialize color at black
     QPushButton *colorBox = new QPushButton;
+    colorBox->setObjectName("colorbox");
     colorBox->setStyleSheet(colorToStyleSheet(selectedColor));
     QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
     setColThresholdBar->setRange(0,255);
     setColThresholdBar->setObjectName(QString("sliderColor"));
     connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
-    //connect
     QPushButton *showColButton = new QPushButton(QString("Segment!"));
     //connect
     QPushButton *saveComponent = new QPushButton(QString("Add component to component list"));
@@ -194,10 +194,9 @@ void Ui::setClusterThreshold()
     motor->setClusterSegThreshold(slider->value());
 }
 
-void Ui::setColorThreshold()
+void Ui::segmentCluster()
 {
-    QSlider *slider= addComponentDialog->findChild<QSlider *>("sliderColor");
-    motor->setColorSegThreshold(slider->value());
+
 }
 
 void Ui::setComponentDialogColorCallback()
@@ -205,6 +204,17 @@ void Ui::setComponentDialogColorCallback()
 //    componentCallbackConnection.disconnect();
     dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentColor, this);
     //TO DO: cambia cursore
+}
+
+void Ui::setColorThreshold()
+{
+    QSlider *slider= addComponentDialog->findChild<QSlider *>("sliderColor");
+    motor->setColorSegThreshold(slider->value());
+}
+
+void Ui::segmentColor()
+{
+
 }
 
 void Ui::openCheckDialog()
@@ -337,6 +347,9 @@ void Ui::openCheckDialog()
     addCheckDialog->exec();
 }
 
+// TO DO: create slot functions for every action (every button)
+// TO DO: create slot functions for every action (every button)
+// TO DO: create slot functions for every action (every button)
 // TO DO: create slot functions for every action (every button)
 
 // MAIN UI MENU ACTIONS
@@ -553,7 +566,8 @@ void Ui::pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEve
                                  .arg(y)
                                  .arg(z)
                                  );
-
+        QPushButton *colorbox = ui->getComponentDialog()->findChild<QPushButton *>("colorbox");
+        colorbox->setStyleSheet(colorToStyleSheet(ui->getMotor()->getPointColor(event.getPointIndex(), true)));
         ui->getMotor()->colorSegmentation(event.getPointIndex(), true);
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudColorSeg(),"cloud");
     }

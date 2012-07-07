@@ -20,10 +20,10 @@ public:
     ~Ui(); //The only thing to delete is the viewer (i guess), the motor is allocated in the stack
     void setMotor(Pcqc *pcqc);// to set another motor if we want the ui work with different pcqc instances.
     Pcqc* getMotor();
-    pcl::visualization::PCLVisualizer* getViewer();
-    pcl::visualization::PCLVisualizer* getDialogViewer();
-    QVTKWidget* getViewerWidget();
-    QDialog* getComponentDialog();
+    pcl::visualization::PCLVisualizer* getViewer(); // returns the main window's visualizer
+    pcl::visualization::PCLVisualizer* getDialogViewer(); // returns the dialog window's visualizer
+    QVTKWidget* getViewerWidget(); // returns the main window's widget that holds the visualizer's renderer
+    QDialog* getComponentDialog(); // returns the dialog window's widget
 
 
 private slots:
@@ -39,8 +39,10 @@ private slots:
     void openComponentDialog();
     void setComponentDialogClusterCallback();
     void setClusterThreshold();
-    void setColorThreshold();
+    void segmentCluster();
     void setComponentDialogColorCallback();
+    void setColorThreshold();
+    void segmentColor();
     void openCheckDialog();
 
 private:
@@ -59,7 +61,7 @@ private:
     static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie);
     static void pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEvent& event, void* cookie);
     static void pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingEvent& event, void* cookie);
-    QString colorToStyleSheet(QColor *color);
+    static QString colorToStyleSheet(QColor *color);
 
 // Motor object
     Pcqc *motor;

@@ -51,15 +51,27 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getSourceCloud()
     return sourceCloud;
 }
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetCloudTemp()
-{
-    pcl::copyPointCloud(*targetCloud, *targetCloudTemp);
-    return targetCloudTemp;
-}
-
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetCloudColorSeg()
 {
     return targetCloudColorSeg;
+}
+
+QColor* Pcqc::getPointColor(int pointIndex, bool isFirstStep)
+{
+    QColor *color = new QColor;
+    if(isFirstStep)
+    {
+        color->setRed(targetCloud->at(pointIndex).r);
+        color->setGreen(targetCloud->at(pointIndex).g);
+        color->setBlue(targetCloud->at(pointIndex).b);
+    }
+    else
+    {
+        color->setRed(targetCloudClusterSeg->at(pointIndex).r);
+        color->setGreen(targetCloudClusterSeg->at(pointIndex).g);
+        color->setBlue(targetCloudClusterSeg->at(pointIndex).b);
+    }
+    return color;
 }
 
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetCloudClusterSeg()
@@ -111,7 +123,7 @@ void Pcqc::colorSegmentation(int selectedPointIndex, bool isFirstStep)
     {
         //start from the result of the first step: the cluster segmented cloud (it can't be otherwise)
         pcl::copyPointCloud(*targetCloudClusterSeg, *targetCloudColorSeg);
-        segmentCluster(targetCloudColorSeg, newComponentPointIndices, selectedPointIndex, colThreshold );
+        segmentColor(targetCloudColorSeg, newComponentPointIndices, selectedPointIndex, colThreshold );
         colorIndices(targetCloudColorSeg, newComponentPointIndices);
     }
 }

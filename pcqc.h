@@ -5,6 +5,7 @@
 #include "componentSelection.h"
 #include "componentMatch.h"
 #include <QString>
+#include <QColor>
 
 class Pcqc
 {
@@ -15,8 +16,8 @@ public:
     bool loadSourceCloud(QString path); // returns true if file was loaded correctly
     //GETTERS
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloud();
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloudTemp();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloudColorSeg();
+    QColor* getPointColor(int pointIndex, bool isFirstStep);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloudClusterSeg();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceCloud();
     //SETTERS
