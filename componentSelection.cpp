@@ -1,7 +1,7 @@
 #include "componentSelection.h"
 
 void
-segmentComponent
+segmentCluster
 (
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
     pcl::PointIndices::Ptr output,
@@ -23,19 +23,23 @@ segmentComponent
 //    j index of the point in the i-th cluster
 //    if the j-th point is the one selected the cluster selected is the i-th
 
-    int selectedClusterIndex;
+    int selectedClusterIndex=-1;
     for (int i=0;i<cluster_indices_out.size();i++)
-        for (int j=0;j<cluster_indices_out[i].indices.size();j++)
-            if(cluster_indices_out[i].indices.at(j)==selectedPointIndex)
-            {
-                selectedClusterIndex=i;
-                break;
-            }
-//    TO DO: aggiungere un break per il ciclo più esterno, o un controllo con un flag booleano se ha finito nei cicli precedenti
+        if (selectedClusterIndex>0) break;
+        else
+            for (int j=0;j<cluster_indices_out[i].indices.size();j++)
+                  if(cluster_indices_out[i].indices.at(j)==selectedPointIndex)
+                  {
+                  selectedClusterIndex=i;
+                  break;
+                  }
 
-    pcl::PointIndicesPtr temp(&cluster_indices_out[selectedClusterIndex]);
-    output = temp;
-//    *output=cluster_indices_out[selectedClusterIndex];
+    //non sono riuscito a tirar fuori il cluster in altro modo, ma si dovrebbe riuscire a fare meglio...
+pcl::PointIndices temp=cluster_indices_out[selectedClusterIndex];
+        while(!temp.indices.empty()){
+        output->indices.push_back(temp.indices.back());
+        temp.indices.pop_back();
+        }
     cout << "OK!"<<endl;
 }
 

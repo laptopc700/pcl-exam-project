@@ -130,7 +130,7 @@ void Ui::openComponentDialog()
     dialogViewer->setBackgroundColor(0, 0, 0);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
-    componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentColor, this); // callback dedicata alla segmentazione di componenti
+    componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this); // callback dedicata alla segmentazione di componenti
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
     QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
     QPushButton *selectPointSegButton = new QPushButton(QString("Select Point"));
@@ -170,7 +170,7 @@ void Ui::openComponentDialog()
 //    addComponentDialog->deleteLater(); // delete dialog when the control returns to the event loop from which deleteLater() was called (after exec i guess)
     dialogLayout->deleteLater(); // delete dialog layout when the control returns to the event loop from which deleteLater() was called (after exec i guess)
     // il primo del causa seg fault se viene attivata la callback
-    addComponentDialog->resize(640, 480);
+    addComponentDialog->resize(800,600);//640, 480);
     addComponentDialog->exec(); // se Ui rimane bloccato non solo nell'interfaccia usare show() che è non bloccante
     componentCallbackConnection.disconnect(); // disconnect the callback function from the viewer
     delete dialogViewer; // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree.
@@ -549,7 +549,7 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = ui->getMotor()->getTargetCloudTemp();
         pcl::PointIndices::Ptr clusterPoints(new pcl::PointIndices);
-        segmentColor (temp, clusterPoints, event.getPointIndex(), 50 );
+        segmentCluster(temp, clusterPoints,event.getPointIndex(),2);
         colorIndices (temp,clusterPoints );
         ui->getDialogViewer()->updatePointCloud(temp,"target");
     }

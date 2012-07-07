@@ -33,7 +33,7 @@
 using namespace std;
 
 void
-segmentComponent
+segmentCluster
 (
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
     pcl::PointIndices::Ptr output,
