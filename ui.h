@@ -38,6 +38,8 @@ private slots:
     void clearAll();
     void openComponentDialog();
     void setComponentDialogClusterCallback();
+    void setClusterThreshold();
+    void setColorThreshold();
     void setComponentDialogColorCallback();
     void openCheckDialog();
 

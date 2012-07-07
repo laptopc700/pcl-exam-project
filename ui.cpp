@@ -136,7 +136,8 @@ void Ui::openComponentDialog()
     QPushButton *selectPointSegButton = new QPushButton(QString("Cluster Segmentation"));
     connect(selectPointSegButton, SIGNAL(clicked()), this, SLOT(setComponentDialogClusterCallback()));
     QSlider *setSegThresholdBar = new QSlider(Qt::Horizontal);
-    //connect
+    setSegThresholdBar->setRange(0,5);
+    connect(setSegThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QPushButton *showSegButton = new QPushButton(QString("Segment!"));
     //connect
     QHBoxLayout *addComponentDialogColLayout = new QHBoxLayout;
@@ -146,6 +147,8 @@ void Ui::openComponentDialog()
     QPushButton *colorBox = new QPushButton;
     colorBox->setStyleSheet(colorToStyleSheet(selectedColor));
     QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
+    setColThresholdBar->setRange(0,255);
+    connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
     //connect
     QPushButton *showColButton = new QPushButton(QString("Segment!"));
     //connect
@@ -181,6 +184,18 @@ void Ui::setComponentDialogClusterCallback()
 //    componentCallbackConnection.disconnect();
     dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this);
     //TO DO: cambia cursore
+}
+
+void Ui::setClusterThreshold()
+{
+    QSlider *slider= addComponentDialog->findChild<QSlider *>("setSegThresholdBar");
+    motor->setClusterSegThreshold(slider->value());
+}
+
+void Ui::setColorThreshold()
+{
+    QSlider *slider= addComponentDialog->findChild<QSlider *>("setColThresholdBar");
+    motor->setColorSegThreshold(slider->value());
 }
 
 void Ui::setComponentDialogColorCallback()
@@ -537,7 +552,7 @@ void Ui::pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEve
                                  .arg(z)
                                  );
 
-        ui->getMotor()->colorSegmentation(event.getPointIndex(), 50, true);
+        ui->getMotor()->colorSegmentation(event.getPointIndex(), true);
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudColorSeg(),"cloud");
     }
 }
@@ -558,7 +573,7 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(z)
                                  );
 
-        ui->getMotor()->clusterSegmentation(event.getPointIndex(), 2, true);
+        ui->getMotor()->clusterSegmentation(event.getPointIndex(), true);
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudClusterSeg(),"cloud");
     }
 }

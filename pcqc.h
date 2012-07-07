@@ -21,10 +21,10 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceCloud();
     //SETTERS
     void setClusterSegThreshold(int threshold);
-    void setColorSwgThreshold(int threshold);
+    void setColorSegThreshold(int threshold);
     //FUNCTIONS
-    void clusterSegmentation(int selectedPointIndex, int threshold, bool isFirstStep);
-    void colorSegmentation(int selectedPointIndex, int threshold, bool isFirstStep);
+    void clusterSegmentation(int selectedPointIndex, bool isFirstStep);
+    void colorSegmentation(int selectedPointIndex, bool isFirstStep);
 
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceCloud;

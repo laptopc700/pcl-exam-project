@@ -6,9 +6,9 @@ Pcqc::Pcqc()
     targetCloudTemp.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     sourceCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     targetCloudColorSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
-    int colThreshold = 0;
+    colThreshold = 0;
     targetCloudClusterSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
-    int cluThreshold = 0;
+    cluThreshold = 0;
     newComponentPointIndices.reset (new pcl::PointIndices);
     registeredCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
 }
@@ -73,45 +73,45 @@ void Pcqc::setClusterSegThreshold(int threshold)
     cluThreshold = threshold;
 }
 
-void Pcqc::setColorSwgThreshold(int threshold)
+void Pcqc::setColorSegThreshold(int threshold)
 {
     colThreshold = threshold;
 }
 
 //FUNCTIONS
-void Pcqc::clusterSegmentation(int selectedPointIndex, int threshold, bool isFirstStep)
+void Pcqc::clusterSegmentation(int selectedPointIndex, bool isFirstStep)
 {
     if(isFirstStep)
     {
         //start from a new copy of the cloud
         pcl::copyPointCloud(*targetCloud, *targetCloudClusterSeg);
-        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, threshold );
+        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, cluThreshold );
         colorIndices(targetCloudClusterSeg, newComponentPointIndices);
     }
     else
     {
         //start from the result of the first step: the color segmented cloud (it can't be otherwise)
         pcl::copyPointCloud(*targetCloudColorSeg, *targetCloudClusterSeg);
-        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, threshold );
+        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, cluThreshold );
         colorIndices(targetCloudClusterSeg, newComponentPointIndices);
     }
 
 }
 
-void Pcqc::colorSegmentation(int selectedPointIndex, int threshold, bool isFirstStep)
+void Pcqc::colorSegmentation(int selectedPointIndex, bool isFirstStep)
 {
     if(isFirstStep)
     {
         //start from a new copy of the cloud
         pcl::copyPointCloud(*targetCloud, *targetCloudColorSeg);
-        segmentColor(targetCloudColorSeg, newComponentPointIndices, selectedPointIndex, threshold );
+        segmentColor(targetCloudColorSeg, newComponentPointIndices, selectedPointIndex, colThreshold );
         colorIndices(targetCloudColorSeg, newComponentPointIndices);
     }
     else
     {
         //start from the result of the first step: the cluster segmented cloud (it can't be otherwise)
         pcl::copyPointCloud(*targetCloudClusterSeg, *targetCloudColorSeg);
-        segmentCluster(targetCloudColorSeg, newComponentPointIndices, selectedPointIndex, threshold );
+        segmentCluster(targetCloudColorSeg, newComponentPointIndices, selectedPointIndex, colThreshold );
         colorIndices(targetCloudColorSeg, newComponentPointIndices);
     }
 }
