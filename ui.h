@@ -24,6 +24,7 @@ public:
     pcl::visualization::PCLVisualizer* getDialogViewer(); // returns the dialog window's visualizer
     QVTKWidget* getViewerWidget(); // returns the main window's widget that holds the visualizer's renderer
     QDialog* getComponentDialog(); // returns the dialog window's widget
+    bool isFirstSegmentationStep;
 
 
 private slots:
@@ -135,6 +136,7 @@ private:
     QDialog *addComponentDialog;
     boost::signals2::connection componentCallbackConnection;
     pcl::visualization::PCLVisualizer *dialogViewer;
+
     QDialog *addCheckDialog;
 
 };

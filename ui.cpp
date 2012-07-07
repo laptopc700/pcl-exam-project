@@ -117,6 +117,7 @@ void Ui::clearAll()
 void Ui::openComponentDialog()
 {
 //    delete addComponentDialog; // if this is not the first iteration of component definition, de-alloc the last dialog window, CAUSA SEGFAULT, memoria non gestita!
+    isFirstSegmentationStep = true;
     addComponentDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
     QVBoxLayout *dialogLayout = new QVBoxLayout; // create vertical layout
     QVTKWidget *dialogVisualizer = new QVTKWidget; // create qvtk widget
@@ -131,7 +132,9 @@ void Ui::openComponentDialog()
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
     componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallback, this); // callback standard non segmenta nulla
+
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
+
     QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
     QPushButton *selectPointSegButton = new QPushButton(QString("Cluster Segmentation"));
     connect(selectPointSegButton, SIGNAL(clicked()), this, SLOT(setComponentDialogClusterCallback()));
@@ -141,6 +144,7 @@ void Ui::openComponentDialog()
     connect(setSegThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QPushButton *showSegButton = new QPushButton(QString("Segment!"));
     //connect
+
     QHBoxLayout *addComponentDialogColLayout = new QHBoxLayout;
     QPushButton *selectPointColButton = new QPushButton(QString("Color Segmentation"));
     connect(selectPointColButton, SIGNAL(clicked()), this, SLOT(setComponentDialogColorCallback()));
@@ -154,9 +158,11 @@ void Ui::openComponentDialog()
     connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
     QPushButton *showColButton = new QPushButton(QString("Segment!"));
     //connect
+
     QPushButton *saveComponent = new QPushButton(QString("Add component to component list"));
     saveComponent->setDefault(true); // default button, pressed if enter is pressed
     //connect
+
     addComponentDialogSegLayout->addWidget(selectPointSegButton);
     addComponentDialogSegLayout->addWidget(setSegThresholdBar);
     addComponentDialogSegLayout->addWidget(showSegButton);
@@ -567,8 +573,8 @@ void Ui::pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEve
                                  .arg(z)
                                  );
         QPushButton *colorbox = ui->getComponentDialog()->findChild<QPushButton *>("colorbox");
-        colorbox->setStyleSheet(colorToStyleSheet(ui->getMotor()->getPointColor(event.getPointIndex(), true)));
-        ui->getMotor()->colorSegmentation(event.getPointIndex(), true);
+        colorbox->setStyleSheet(colorToStyleSheet(ui->getMotor()->getPointColor(event.getPointIndex(), ui->isFirstSegmentationStep)));
+        ui->getMotor()->colorSegmentation(event.getPointIndex(), ui->isFirstSegmentationStep);
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudColorSeg(),"cloud");
     }
 }
@@ -589,7 +595,7 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
                                  .arg(z)
                                  );
 
-        ui->getMotor()->clusterSegmentation(event.getPointIndex(), true);
+        ui->getMotor()->clusterSegmentation(event.getPointIndex(), ui->isFirstSegmentationStep);
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudClusterSeg(),"cloud");
     }
 }
