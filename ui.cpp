@@ -137,6 +137,7 @@ void Ui::openComponentDialog()
     connect(selectPointSegButton, SIGNAL(clicked()), this, SLOT(setComponentDialogClusterCallback()));
     QSlider *setSegThresholdBar = new QSlider(Qt::Horizontal);
     setSegThresholdBar->setRange(0,5);
+    setSegThresholdBar->setObjectName(QString("sliderCluster"));
     connect(setSegThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QPushButton *showSegButton = new QPushButton(QString("Segment!"));
     //connect
@@ -148,6 +149,7 @@ void Ui::openComponentDialog()
     colorBox->setStyleSheet(colorToStyleSheet(selectedColor));
     QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
     setColThresholdBar->setRange(0,255);
+    setColThresholdBar->setObjectName(QString("sliderColor"));
     connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
     //connect
     QPushButton *showColButton = new QPushButton(QString("Segment!"));
@@ -188,13 +190,13 @@ void Ui::setComponentDialogClusterCallback()
 
 void Ui::setClusterThreshold()
 {
-    QSlider *slider= addComponentDialog->findChild<QSlider *>("setSegThresholdBar");
+    QSlider *slider= addComponentDialog->findChild<QSlider *>("sliderCluster");
     motor->setClusterSegThreshold(slider->value());
 }
 
 void Ui::setColorThreshold()
 {
-    QSlider *slider= addComponentDialog->findChild<QSlider *>("setColThresholdBar");
+    QSlider *slider= addComponentDialog->findChild<QSlider *>("sliderColor");
     motor->setColorSegThreshold(slider->value());
 }
 
