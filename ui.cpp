@@ -128,7 +128,7 @@ void Ui::openComponentDialog()
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getTargetCloud();
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(temp);
     dialogViewer->addPointCloud<pcl::PointXYZRGB>(temp, rgb, "cloud");
-    dialogViewer->setBackgroundColor(0, 0, 0);
+    dialogViewer->setBackgroundColor(0.5, 0.5, 0.5);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
     componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallback, this); // callback standard non segmenta nulla
@@ -139,7 +139,7 @@ void Ui::openComponentDialog()
     QPushButton *selectPointSegButton = new QPushButton(QString("Cluster Segmentation"));
     connect(selectPointSegButton, SIGNAL(clicked()), this, SLOT(setComponentDialogClusterCallback()));
     QSlider *setSegThresholdBar = new QSlider(Qt::Horizontal);
-    setSegThresholdBar->setRange(0,5);
+    setSegThresholdBar->setRange(0,5000);
     setSegThresholdBar->setObjectName(QString("sliderCluster"));
     connect(setSegThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QPushButton *showSegButton = new QPushButton(QString("Segment!"));
@@ -468,7 +468,7 @@ void Ui::setupVisualizer()
     qvtkVisualizer->SetRenderWindow(viewer->getRenderWindow());// set as render window the render window of the pcl visualizer
     viewer->setupInteractor(qvtkVisualizer->GetInteractor(), qvtkVisualizer->GetRenderWindow());// tells the visualizer what interactor is using now and for what window
     viewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);// ripristina input system of original visualizer (shift+click for points)
-    viewer->setBackgroundColor(0, 0, 0);
+    viewer->setBackgroundColor(0.5, 0.5, 0.5);
     viewer->initCameraParameters();
     viewer->registerPointPickingCallback(&pointPickCallback, this); // callback function for interaction with the mouse on the visualizer
 }

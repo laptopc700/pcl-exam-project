@@ -20,7 +20,7 @@ bool Pcqc::loadTargetCloud(QString path)
         vector<int> indices;
         pcl::removeNaNFromPointCloud(*targetCloud, *targetCloud, indices);
 
-        targetCloud=voxelCloud(targetCloud,1,1);
+        targetCloud=voxelCloud(targetCloud,0.4,1);
         segmentation(targetCloud,targetCloud,1);
             return true;}
     else return false;
@@ -33,7 +33,7 @@ bool Pcqc::loadSourceCloud(QString path)
     {
         vector<int> indices;
         pcl::removeNaNFromPointCloud(*sourceCloud, *sourceCloud, indices);
-        sourceCloud = voxelCloud(sourceCloud,1,1); // alleggerisce il calcolo, da capire se peggiora il risultato o meno.
+        sourceCloud = voxelCloud(sourceCloud,0.4,1); // alleggerisce il calcolo, da capire se peggiora il risultato o meno.
         segmentation(sourceCloud,sourceCloud,1); // segmentazione del piano principale.
         return true;
     }
@@ -97,14 +97,14 @@ void Pcqc::clusterSegmentation(int selectedPointIndex, bool isFirstStep)
     {
         //start from a new copy of the cloud
         pcl::copyPointCloud(*targetCloud, *targetCloudClusterSeg);
-        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, cluThreshold );
+        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, cluThreshold/1000 );
         colorIndices(targetCloudClusterSeg, newComponentPointIndices);
     }
     else
     {
         //start from the result of the first step: the color segmented cloud (it can't be otherwise)
         pcl::copyPointCloud(*targetCloudColorSeg, *targetCloudClusterSeg);
-        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, cluThreshold );
+        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, cluThreshold/1000 );
         colorIndices(targetCloudClusterSeg, newComponentPointIndices);
     }
 
