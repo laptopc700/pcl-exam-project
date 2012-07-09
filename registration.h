@@ -28,6 +28,7 @@
 #include <pcl/common/transforms.h>
 #include <pcl/surface/grid_projection.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/statistical_outlier_removal.h>
 
 using namespace std;
 
@@ -49,7 +50,7 @@ void segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity);
 
 
-
+void removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
 
 
 

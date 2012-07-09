@@ -58,6 +58,16 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity)
   if (verbosity) cout << "OK! Segmented: now there are " << segmented->size  () << " points.\n";
 }
 
+
+void removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud){
+pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+sor.setInputCloud (cloud);
+sor.setMeanK (50);
+sor.setStddevMulThresh (1.0);
+sor.filter (*cloud);
+}
+
+
 void detectKeypoints ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input,
 pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints, int verbosity)
 {

@@ -22,6 +22,7 @@ bool Pcqc::loadTargetCloud(QString path)
 
         targetCloud=voxelCloud(targetCloud,0.4,1);
         segmentation(targetCloud,targetCloud,1);
+        removeOutliers(targetCloud);
             return true;}
     else return false;
 }
@@ -35,6 +36,7 @@ bool Pcqc::loadSourceCloud(QString path)
         pcl::removeNaNFromPointCloud(*sourceCloud, *sourceCloud, indices);
         sourceCloud = voxelCloud(sourceCloud,0.4,1); // alleggerisce il calcolo, da capire se peggiora il risultato o meno.
         segmentation(sourceCloud,sourceCloud,1); // segmentazione del piano principale.
+        removeOutliers(sourceCloud);
         return true;
     }
     else return false;
