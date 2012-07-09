@@ -24,17 +24,19 @@ public:
     void setClusterSegThreshold(int threshold);
     void setColorSegThreshold(int threshold);
     //FUNCTIONS
-    void clusterSegmentation(int selectedPointIndex, bool isFirstStep);
-    void colorSegmentation(int selectedPointIndex, bool isFirstStep);
+    void clusterSegmentation(int selectedPointIndex, bool isFirstStep); //TODELETE
+    void colorSegmentation(int selectedPointIndex, bool isFirstStep); //TODELETE
+    void componentSegmentation(int selectedPointIndex);
 
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceCloud;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudColorSeg;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudColorSeg; //TODELETE
     int colThreshold;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudClusterSeg;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudClusterSeg; //TODELETE
     int cluThreshold;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudTemp;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudComponentSeg;
     pcl::PointIndices::Ptr newComponentPointIndices;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredCloud;
 };

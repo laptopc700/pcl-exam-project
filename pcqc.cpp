@@ -93,7 +93,29 @@ void Pcqc::setColorSegThreshold(int threshold)
 }
 
 //FUNCTIONS
-void Pcqc::clusterSegmentation(int selectedPointIndex, bool isFirstStep)
+
+void Pcqc::componentSegmentation(int selectedPointIndex)
+{
+        //start from a new copy of the cloud
+        pcl::copyPointCloud(*targetCloud, *targetCloudComponentSeg);
+        pcl::PointIndices::Ptr tempClusterIndices(new pcl::PointIndices);
+        segmentCluster(targetCloudClusterSeg, tempClusterIndices, selectedPointIndex, cluThreshold/1000 );
+
+        pcl::PointIndices::Ptr tempColorIndices(new pcl::PointIndices);
+        segmentColor(targetCloudColorSeg, tempColorIndices, selectedPointIndex, colThreshold );
+
+        //To do:||||||||||||||||||||||| migliorare questo che e' quadratico ||||||||||||||||||||||
+        for (int i=0 ;i<tempClusterIndices->indices.size(); i++)
+            for (int j=0 ;j<tempColorIndices->indices.size(); j++)
+                if (tempClusterIndices->indices.at(i)==tempColorIndices->indices.at(j))
+                         {newComponentPointIndices->indices.push_back(tempClusterIndices->indices.at(i));
+                          break;
+                }
+
+        colorIndices(targetCloudClusterSeg, newComponentPointIndices);
+}
+
+void Pcqc::clusterSegmentation(int selectedPointIndex, bool isFirstStep)//TODELETE
 {
     if(isFirstStep)
     {
@@ -112,7 +134,7 @@ void Pcqc::clusterSegmentation(int selectedPointIndex, bool isFirstStep)
 
 }
 
-void Pcqc::colorSegmentation(int selectedPointIndex, bool isFirstStep)
+void Pcqc::colorSegmentation(int selectedPointIndex, bool isFirstStep)//TODELETE
 {
     if(isFirstStep)
     {
