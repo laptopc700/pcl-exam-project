@@ -4,6 +4,7 @@ Pcqc::Pcqc()
 {
     targetCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     sourceCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
+    targetCloudComponentSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     targetCloudColorSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     colThreshold = 0;
     targetCloudClusterSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -76,6 +77,7 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetCloudComponentSeg()
     return targetCloudComponentSeg;
 }
 //SETTERS
+
 void Pcqc::setClusterSegThreshold(int threshold)
 {
     cluThreshold = threshold;
