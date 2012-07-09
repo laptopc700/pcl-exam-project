@@ -95,6 +95,8 @@ void Pcqc::componentSegmentation(int selectedPointIndex)
 { cout << "Component Segmentation... "<<flush;
         //start from a new copy of the cloud
         pcl::copyPointCloud(*targetCloud, *targetCloudComponentSeg);
+        //and a new point indices
+        newComponentPointIndices->indices.clear();
         pcl::PointIndices::Ptr tempClusterIndices(new pcl::PointIndices);
         segmentCluster(targetCloudComponentSeg, tempClusterIndices, selectedPointIndex, cluThreshold/1000 );
         pcl::PointIndices::Ptr tempColorIndices(new pcl::PointIndices);

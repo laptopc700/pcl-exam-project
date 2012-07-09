@@ -84,13 +84,24 @@ colorIndices
 )
 {
     cout << "colorIndices..." << flush;
-    while (! indices->indices.empty())
+
+    for (int i =0; i<indices->indices.size();i++)
+
     {
-        int pointN= indices->indices.back();
-        input->at(pointN).r=0;
-        input->at(pointN).g=255;
-        input->at(pointN).b=0;
-        indices->indices.pop_back();
+                int pointN= indices->indices.at(i);
+                input->at(pointN).r=0;
+                input->at(pointN).g=255;
+                input->at(pointN).b=0;
     }
+
+    //    while (! indices->indices.empty())
+    //    {
+    //        int pointN= indices->indices.back();
+    //        input->at(pointN).r=0;
+    //        input->at(pointN).g=255;
+    //        input->at(pointN).b=0;
+    //        indices->indices.pop_back();
+    //    }
+
     cout << "OK!"<<endl<<flush;
 }
