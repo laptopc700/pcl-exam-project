@@ -91,7 +91,7 @@ void Pcqc::setColorSegThreshold(int threshold)
 //FUNCTIONS
 
 void Pcqc::componentSegmentation(int selectedPointIndex)
-{
+{ cout << "Component Segmentation... "<<flush;
         //start from a new copy of the cloud
         pcl::copyPointCloud(*targetCloud, *targetCloudComponentSeg);
         pcl::PointIndices::Ptr tempClusterIndices(new pcl::PointIndices);
@@ -108,6 +108,7 @@ void Pcqc::componentSegmentation(int selectedPointIndex)
                 }
 
         colorIndices(targetCloudComponentSeg, newComponentPointIndices);
+        cout << "OK!\n"<<flush;
 }
 
 void Pcqc::clusterSegmentation(int selectedPointIndex, bool isFirstStep)//TODELETE

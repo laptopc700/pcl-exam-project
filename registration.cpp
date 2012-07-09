@@ -24,7 +24,7 @@ pcl::VoxelGrid<pcl::PointXYZRGB> sor;
 sor.setInputCloud (input);
 sor.setLeafSize (leafSize,leafSize,leafSize);
 sor.filter (*cloud_filtered);
-if (verbosity) cout << "OK! Cloud downsampled in " << cloud_filtered->points.size() << " Voxels\n";
+if (verbosity) cout << "OK! Cloud downsampled in " << cloud_filtered->points.size() << " Voxels\n"<<flush;
 return cloud_filtered;
 }
 
@@ -55,7 +55,7 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity)
   extract.filter (*segmented);
   vector<int> indices;
   pcl::removeNaNFromPointCloud(*segmented, *segmented, indices);
-  if (verbosity) cout << "OK! Segmented: now there are " << segmented->size  () << " points.\n";
+  if (verbosity) cout << "OK! Segmented: now there are " << segmented->size  () << " points.\n"<<flush;
 }
 
 

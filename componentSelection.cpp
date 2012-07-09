@@ -9,7 +9,7 @@ segmentCluster
     double threshold
 )
 {
-    cout << "segmentComponent..." << flush;
+    cout << "segmentCluster..." << flush;
     vector<pcl::PointIndices> cluster_indices_out;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
     ec.setClusterTolerance (threshold);
@@ -40,7 +40,7 @@ pcl::PointIndices temp=cluster_indices_out[selectedClusterIndex];
         output->indices.push_back(temp.indices.back());
         temp.indices.pop_back();
         }
-    cout << "OK!"<<endl;
+    cout << "OK!"<<endl<<flush;
 }
 
 
@@ -70,7 +70,7 @@ segmentColor
         )
             output->indices.push_back(i);
     }
-    cout << "OK!"<<endl;
+    cout << "OK!"<<endl<<flush;
 }
 
 void
@@ -89,5 +89,5 @@ colorIndices
         input->at(pointN).b=0;
         indices->indices.pop_back();
     }
-    cout << "OK!"<<endl;
+    cout << "OK!"<<endl<<flush;
 }
