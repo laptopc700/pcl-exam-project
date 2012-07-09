@@ -44,6 +44,7 @@ private slots:
     void setColorThreshold();
     void setClusterThreshold();
     void segmentComponent();
+    void saveComponent();
 //    void setComponentDialogColorCallback();
     void openCheckDialog();
 

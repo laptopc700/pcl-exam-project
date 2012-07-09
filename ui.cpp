@@ -116,10 +116,9 @@ void Ui::clearAll()
 
 void Ui::openComponentDialog()
 {
-//    delete addComponentDialog; // if this is not the first iteration of component definition, de-alloc the last dialog window, CAUSA SEGFAULT, memoria non gestita!
-//    isFirstSegmentationStep = true;
     addComponentDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
     QVBoxLayout *dialogLayout = new QVBoxLayout; // create vertical layout
+
     QVTKWidget *dialogVisualizer = new QVTKWidget; // create qvtk widget
     dialogViewer = new pcl::visualization::PCLVisualizer("Dialog Viewer", false);
     dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
@@ -135,56 +134,68 @@ void Ui::openComponentDialog()
 
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
 
-    QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
-    QPushButton *selectPointSegButton = new QPushButton(QString("Select Component"));
-    connect(selectPointSegButton, SIGNAL(clicked()), this, SLOT(setComponentDialogCallback()));
-    QSlider *setSegThresholdBar = new QSlider(Qt::Horizontal);
-    setSegThresholdBar->setRange(0,5000);
-    setSegThresholdBar->setObjectName(QString("sliderCluster"));
-    connect(setSegThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
-    QPushButton *showSegButton = new QPushButton(QString("Segment!"));
-    connect(showSegButton, SIGNAL(clicked()), this, SLOT(segmentComponent()));
+    QHBoxLayout *dialogControlsLayout = new QHBoxLayout;
 
-    QHBoxLayout *addComponentDialogColLayout = new QHBoxLayout;
-    QPushButton *selectPointColButton = new QPushButton(QString("Reset Selection"));
-    connect(selectPointColButton, SIGNAL(clicked()), this, SLOT(resetComponentDialogCallback()));
+    QVBoxLayout *buttonsBox = new QVBoxLayout;
+    QPushButton *selectPointButton = new QPushButton(QString("Select Component"));
+    connect(selectPointButton, SIGNAL(clicked()), this, SLOT(setComponentDialogCallback()));
+    QPushButton *resetButton = new QPushButton(QString("Reset Selection"));
+    connect(resetButton, SIGNAL(clicked()), this, SLOT(resetComponentDialogCallback()));
+    buttonsBox->addWidget(selectPointButton);
+    buttonsBox->addWidget(resetButton);
+
+    QVBoxLayout *numbersBox = new QVBoxLayout;
+    QFontMetrics metrics(QApplication::font());
     QColor *selectedColor = new QColor(0, 0, 0, 255); // initialize color at black
-    QPushButton *colorBox = new QPushButton;
+    QPushButton *colorBox = new QPushButton(QString("0"));
     colorBox->setObjectName("colorbox");
     colorBox->setStyleSheet(colorToStyleSheet(selectedColor));
+    selectedColor = new QColor(255, 255, 255, 255); // change color at white
+    QLineEdit *clusterBox = new QLineEdit("0");
+    clusterBox->setObjectName("clusterbox");
+    clusterBox->setFixedWidth(metrics.width("8,888"));
+    numbersBox->addWidget(clusterBox);
+    numbersBox->addWidget(colorBox);
+
+    QVBoxLayout *slidersBox = new QVBoxLayout;
+    QSlider *setCluThresholdBar = new QSlider(Qt::Horizontal);
+    setCluThresholdBar->setRange(0,5000);
+    setCluThresholdBar->setObjectName(QString("sliderCluster"));
+    connect(setCluThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
     setColThresholdBar->setRange(0,255);
     setColThresholdBar->setObjectName(QString("sliderColor"));
     connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
-//    QPushButton *showColButton = new QPushButton(QString("Segment!"));
-    //connect
+    slidersBox->addWidget(setCluThresholdBar);
+    slidersBox->addWidget(setColThresholdBar);
 
-    QPushButton *saveComponent = new QPushButton(QString("Add component to component list"));
+    QPushButton *showSegButton = new QPushButton(QString("Segment!"));
+    connect(showSegButton, SIGNAL(clicked()), this, SLOT(segmentComponent()));
+
+    dialogControlsLayout->addLayout(buttonsBox);
+    dialogControlsLayout->addLayout(numbersBox);
+    dialogControlsLayout->addLayout(slidersBox);
+    dialogControlsLayout->addWidget(showSegButton);
+
+    QPushButton *saveComponent = new QPushButton(QString("Save to component list"));
     saveComponent->setDefault(true); // default button, pressed if enter is pressed
-    //connect
+    connect(saveComponent, SIGNAL(clicked()), this, SLOT(saveComponent()));
 
-    addComponentDialogSegLayout->addWidget(selectPointSegButton);
-    addComponentDialogSegLayout->addWidget(setSegThresholdBar);
-    addComponentDialogSegLayout->addWidget(showSegButton);
-    addComponentDialogColLayout->addWidget(selectPointColButton);
-    addComponentDialogColLayout->addWidget(colorBox);
-    addComponentDialogColLayout->addWidget(setColThresholdBar);
-//    addComponentDialogColLayout->addWidget(showColButton);
     dialogLayout->addWidget(dialogVisualizer);
     dialogLayout->addWidget(addComponentDialogName);
-    dialogLayout->addLayout(addComponentDialogSegLayout);
-    dialogLayout->addLayout(addComponentDialogColLayout);
+    dialogLayout->addLayout(dialogControlsLayout);
     dialogLayout->addWidget(saveComponent);
     addComponentDialog->setLayout(dialogLayout);
 
     // DIALOG EXECUTION
 //    addComponentDialog->deleteLater(); // delete dialog when the control returns to the event loop from which deleteLater() was called (after exec i guess)
+//    causa seg fault se viene attivata la callback
+
     dialogLayout->deleteLater(); // delete dialog layout when the control returns to the event loop from which deleteLater() was called (after exec i guess)
-    // il primo del causa seg fault se viene attivata la callback
-    addComponentDialog->resize(800,600);//640, 480);
-    addComponentDialog->exec(); // se Ui rimane bloccato non solo nell'interfaccia usare show() che è non bloccante
+    addComponentDialog->resize(800,600);
+    addComponentDialog->exec();
     componentCallbackConnection.disconnect(); // disconnect the callback function from the viewer
-    delete dialogViewer; // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree.
+    delete dialogViewer; // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree).
 }
 
 void Ui::setComponentDialogCallback()
@@ -215,6 +226,11 @@ void Ui::setColorThreshold()
 void Ui::segmentComponent()
 {
     // TO DO
+}
+
+void Ui::saveComponent()
+{
+
 }
 
 void Ui::openCheckDialog()
