@@ -14,18 +14,22 @@ class Ui : public QMainWindow
     Q_OBJECT
 
 public:
+
+    // INIT
     Ui(Pcqc *pcqc);// constructor, also creates puntatore all'oggetto che elabora le point cloud, esterno alla UI (motor)
     // destructor is not needed for the gui elements because everything is parented in the QObjects tree.
     //They are deleted when the parent (main window->mainWidget) is deleted.
     ~Ui(); //The only thing to delete is the viewer (i guess), the motor is allocated in the stack
+
+    // SETTERS
     void setMotor(Pcqc *pcqc);// to set another motor if we want the ui work with different pcqc instances.
+
+    // GETTERS
     Pcqc* getMotor();
     pcl::visualization::PCLVisualizer* getViewer(); // returns the main window's visualizer
     pcl::visualization::PCLVisualizer* getDialogViewer(); // returns the dialog window's visualizer
     QVTKWidget* getViewerWidget(); // returns the main window's widget that holds the visualizer's renderer
     QDialog* getComponentDialog(); // returns the dialog window's widget
-//    bool isFirstSegmentationStep;
-
 
 private slots:
     void about();
@@ -40,16 +44,14 @@ private slots:
     void openComponentDialog();
     void setComponentDialogCallback();
     void resetComponentDialogCallback();
-//    void setComponentDialogClusterCallback();
     void setColorThreshold();
     void setClusterThreshold();
     void segmentComponent();
     void saveComponent();
-//    void setComponentDialogColorCallback();
     void openCheckDialog();
 
 private:
-// UI functions
+// UI FUNCTIONS
     void createActions(); // create all the actions of the ui
     void setupMenuBar();
     void setupStatusBar();
@@ -62,9 +64,7 @@ private:
     void setupVisualizerCommands();
     void setupMainLayout();
     static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie);
-    static void pointPickCallbackSegmentComponent(const pcl::visualization::PointPickingEvent& event, void* cookie);
-//    static void pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEvent& event, void* cookie);
-//    static void pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingEvent& event, void* cookie);
+    static void pointPickCallbackSelectComponent(const pcl::visualization::PointPickingEvent& event, void* cookie);
     static QString colorToStyleSheet(QColor *color);
 
 // Motor object

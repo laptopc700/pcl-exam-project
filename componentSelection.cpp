@@ -76,6 +76,8 @@ segmentColor
     cout << "OK!"<<endl<<flush;
 }
 
+
+// TO DO: aggiungere parametri del colore per colorare del colore che si vuole (int r, int g, int b), perchè servirà in futuro.
 void
 colorIndices
 (

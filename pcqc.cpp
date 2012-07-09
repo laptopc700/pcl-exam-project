@@ -4,10 +4,8 @@ Pcqc::Pcqc()
 {
     targetCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     sourceCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
-    targetCloudComponentSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
-    targetCloudColorSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>); // TO DELETE
+    newComponentCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     colThreshold = 0;
-    targetCloudClusterSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>); // TO DELETE
     cluThreshold = 0;
     newComponentPointIndices.reset (new pcl::PointIndices);
     registeredCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -62,23 +60,12 @@ QColor* Pcqc::getPointColor(int pointIndex)
     return color;
 }
 
-
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetCloudColorSeg()
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getNewComponentCloud()
 {
-    return targetCloudColorSeg;
+    return newComponentCloud;
 }
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetCloudClusterSeg()
-{
-    return targetCloudClusterSeg;
-}
-
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetCloudComponentSeg()
-{
-    return targetCloudComponentSeg;
-}
 //SETTERS
-
 void Pcqc::setClusterSegThreshold(int threshold)
 {
     cluThreshold = threshold;
@@ -90,72 +77,52 @@ void Pcqc::setColorSegThreshold(int threshold)
 }
 
 //FUNCTIONS
+void Pcqc::componentSelection(int selectedPointIndex)
+{
+    cout << "Component Segmentation... "<<flush; // DEBUG PRINT
+    pcl::copyPointCloud(*targetCloud, *newComponentCloud); // start from a new copy of the cloud
+    newComponentPointIndices->indices.clear();// and a new point indices
 
-void Pcqc::componentSegmentation(int selectedPointIndex)
-{ cout << "Component Segmentation... "<<flush;
-        //start from a new copy of the cloud
-        pcl::copyPointCloud(*targetCloud, *targetCloudComponentSeg);
-        //and a new point indices
-        newComponentPointIndices->indices.clear();
-        pcl::PointIndices::Ptr tempClusterIndices(new pcl::PointIndices);
-        segmentCluster(targetCloudComponentSeg, tempClusterIndices, selectedPointIndex, cluThreshold/1000 );
-        pcl::PointIndices::Ptr tempColorIndices(new pcl::PointIndices);
-        segmentColor(targetCloudComponentSeg, tempColorIndices, selectedPointIndex, colThreshold );
+    pcl::PointIndices::Ptr tempClusterIndices(new pcl::PointIndices);
+    segmentCluster(newComponentCloud, tempClusterIndices, selectedPointIndex, cluThreshold/1000 );
 
+    pcl::PointIndices::Ptr tempColorIndices(new pcl::PointIndices);
+    segmentColor(newComponentCloud, tempColorIndices, selectedPointIndex, colThreshold );
 
-
-        while(!tempClusterIndices->indices.empty() && !tempColorIndices->indices.empty())
+    // point indices intersection cycle
+    while(!tempClusterIndices->indices.empty() && !tempColorIndices->indices.empty())
+    {
+        if(tempClusterIndices->indices.back()==tempColorIndices->indices.back())//trovato
         {
-            if(tempClusterIndices->indices.back()==tempColorIndices->indices.back())//trovato
-            {
-                newComponentPointIndices->indices.push_back(tempClusterIndices->indices.back()); //pusha dentro
-                tempClusterIndices->indices.pop_back(); //passa al prossimo
-            }
-            else //poppa fuori il minimo
-            {
-                if(tempClusterIndices->indices.back()  <  tempColorIndices->indices.back())
-                    tempClusterIndices->indices.pop_back();
-                else
-                    tempColorIndices->indices.pop_back();
-            }
+            newComponentPointIndices->indices.push_back(tempClusterIndices->indices.back()); //pusha dentro
+            tempClusterIndices->indices.pop_back(); //passa al prossimo
         }
-
-        colorIndices(targetCloudComponentSeg, newComponentPointIndices);
-        cout << "OK! Selected "<< newComponentPointIndices->indices.size() <<" points for this component\n"<<flush;
+        else //poppa fuori il minimo
+        {
+            if(tempClusterIndices->indices.back()  <  tempColorIndices->indices.back())
+                tempClusterIndices->indices.pop_back();
+            else
+                tempColorIndices->indices.pop_back();
+        }
+    }
+    colorIndices(newComponentCloud, newComponentPointIndices);
+    cout << "OK! Selected "<< newComponentPointIndices->indices.size() <<" points for this component\n"<<flush; // DEBUG PRINT
 }
 
-void Pcqc::clusterSegmentation(int selectedPointIndex, bool isFirstStep)//TODELETE
+bool Pcqc::componentSegmentation()
 {
-    if(isFirstStep)
-    {
-        //start from a new copy of the cloud
-        pcl::copyPointCloud(*targetCloud, *targetCloudClusterSeg);
-        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, cluThreshold/1000 );
-        colorIndices(targetCloudClusterSeg, newComponentPointIndices);
-    }
-    else
-    {
-        //start from the result of the first step: the color segmented cloud (it can't be otherwise)
-        pcl::copyPointCloud(*targetCloudColorSeg, *targetCloudClusterSeg);
-        segmentCluster(targetCloudClusterSeg, newComponentPointIndices, selectedPointIndex, cluThreshold/1000 );
-        colorIndices(targetCloudClusterSeg, newComponentPointIndices);
-    }
+    pcl::copyPointCloud(*targetCloud, *newComponentPointIndices, *newComponentCloud);
+    return true;
 }
 
-void Pcqc::colorSegmentation(int selectedPointIndex, bool isFirstStep)//TODELETE
+bool Pcqc::componentSave(QString componentName)
 {
-    if(isFirstStep)
-    {
-        //start from a new copy of the cloud
-        pcl::copyPointCloud(*targetCloud, *targetCloudColorSeg);
-        segmentColor(targetCloudColorSeg, newComponentPointIndices, selectedPointIndex, colThreshold );
-        colorIndices(targetCloudColorSeg, newComponentPointIndices);
-    }
-    else
-    {
-        //start from the result of the first step: the cluster segmented cloud (it can't be otherwise)
-        pcl::copyPointCloud(*targetCloudClusterSeg, *targetCloudColorSeg);
-        segmentColor(targetCloudColorSeg, newComponentPointIndices, selectedPointIndex, colThreshold );
-        colorIndices(targetCloudColorSeg, newComponentPointIndices);
-    }
+    // TO DO
+    return true;
+}
+
+bool Pcqc::componentDelete(QString componentName)
+{
+    // TO DO
+    return true;
 }

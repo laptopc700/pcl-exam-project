@@ -1,4 +1,5 @@
 #include "ui.h"
+
 //PUBLIC FUNCTIONS
 Ui::Ui(Pcqc *pcqc)
 {
@@ -132,44 +133,46 @@ void Ui::openComponentDialog()
     dialogViewer->resetCamera();
     componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallback, this); // callback standard non segmenta nulla
 
-    QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
+    QLineEdit *addComponentDialogName  = new QLineEdit("Insert Component Name");
+    addComponentDialogName->setObjectName("componentname");
 
     QHBoxLayout *dialogControlsLayout = new QHBoxLayout;
 
     QVBoxLayout *buttonsBox = new QVBoxLayout;
-    QPushButton *selectPointButton = new QPushButton(QString("Select Component"));
+    QPushButton *selectPointButton = new QPushButton("Select Component");
     connect(selectPointButton, SIGNAL(clicked()), this, SLOT(setComponentDialogCallback()));
-    QPushButton *resetButton = new QPushButton(QString("Reset Selection"));
+    QPushButton *resetButton = new QPushButton("Reset Selection");
     connect(resetButton, SIGNAL(clicked()), this, SLOT(resetComponentDialogCallback()));
     buttonsBox->addWidget(selectPointButton);
     buttonsBox->addWidget(resetButton);
 
     QVBoxLayout *numbersBox = new QVBoxLayout;
-    QFontMetrics metrics(QApplication::font());
     QColor *selectedColor = new QColor(0, 0, 0, 255); // initialize color at black
-    QPushButton *colorBox = new QPushButton(QString("0"));
+    QPushButton *colorBox = new QPushButton("+-0");
     colorBox->setObjectName("colorbox");
     colorBox->setStyleSheet(colorToStyleSheet(selectedColor));
-    selectedColor = new QColor(255, 255, 255, 255); // change color at white
+    colorBox->setMaximumWidth(50);
     QLineEdit *clusterBox = new QLineEdit("0");
+    clusterBox->setReadOnly(true);
     clusterBox->setObjectName("clusterbox");
-    clusterBox->setFixedWidth(metrics.width("8,888"));
+    clusterBox->setMaxLength(5);
+    clusterBox->setMaximumWidth(50);
     numbersBox->addWidget(clusterBox);
     numbersBox->addWidget(colorBox);
 
     QVBoxLayout *slidersBox = new QVBoxLayout;
     QSlider *setCluThresholdBar = new QSlider(Qt::Horizontal);
     setCluThresholdBar->setRange(0,5000);
-    setCluThresholdBar->setObjectName(QString("sliderCluster"));
+    setCluThresholdBar->setObjectName("sliderCluster");
     connect(setCluThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
     setColThresholdBar->setRange(0,255);
-    setColThresholdBar->setObjectName(QString("sliderColor"));
+    setColThresholdBar->setObjectName("sliderColor");
     connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
     slidersBox->addWidget(setCluThresholdBar);
     slidersBox->addWidget(setColThresholdBar);
 
-    QPushButton *showSegButton = new QPushButton(QString("Segment!"));
+    QPushButton *showSegButton = new QPushButton("Segment!");
     connect(showSegButton, SIGNAL(clicked()), this, SLOT(segmentComponent()));
 
     dialogControlsLayout->addLayout(buttonsBox);
@@ -177,7 +180,7 @@ void Ui::openComponentDialog()
     dialogControlsLayout->addLayout(slidersBox);
     dialogControlsLayout->addWidget(showSegButton);
 
-    QPushButton *saveComponent = new QPushButton(QString("Save to component list"));
+    QPushButton *saveComponent = new QPushButton("Save to component list");
     saveComponent->setDefault(true); // default button, pressed if enter is pressed
     connect(saveComponent, SIGNAL(clicked()), this, SLOT(saveComponent()));
 
@@ -200,7 +203,7 @@ void Ui::openComponentDialog()
 
 void Ui::setComponentDialogCallback()
 {
-    dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentComponent, this);
+    dialogViewer->registerPointPickingCallback(&pointPickCallbackSelectComponent, this);
     //TO DO: cambia cursore
 }
 
@@ -215,22 +218,32 @@ void Ui::setClusterThreshold()
 {
     QSlider *slider= addComponentDialog->findChild<QSlider *>("sliderCluster");
     motor->setClusterSegThreshold(slider->value());
+    QLineEdit *clusterbox = addComponentDialog->findChild<QLineEdit *>("clusterbox");
+    clusterbox->setText(QString("%1").arg((float)slider->value() / 1000));
 }
 
 void Ui::setColorThreshold()
 {
     QSlider *slider= addComponentDialog->findChild<QSlider *>("sliderColor");
     motor->setColorSegThreshold(slider->value());
+    QPushButton *colorbox = addComponentDialog->findChild<QPushButton *>("colorbox");
+    colorbox->setText(QString("+-%1").arg(slider->value()));
 }
 
 void Ui::segmentComponent()
 {
-    // TO DO
+    if(motor->componentSegmentation())
+        statusBar()->showMessage("Segmented new component.");
+    else statusBar()->showMessage("Couldn't segment this selection.");
+    dialogViewer->updatePointCloud(motor->getNewComponentCloud(),"cloud");
 }
 
 void Ui::saveComponent()
 {
-
+    QLineEdit *componentname = addComponentDialog->findChild<QLineEdit *>("componentname");
+    if( motor->componentSave(componentname->text()) )
+        statusBar()->showMessage("Component successfully saved!");
+    else statusBar()->showMessage("Couldn't save this component.");
 }
 
 void Ui::openCheckDialog()
@@ -368,7 +381,7 @@ void Ui::openCheckDialog()
 // TO DO: create slot functions for every action (every button)
 // TO DO: create slot functions for every action (every button)
 
-// MAIN UI MENU ACTIONS
+// UI FUNCTIONS
 void Ui::createActions()
 {
     // Menu Bar Actions
@@ -390,7 +403,6 @@ void Ui::createActions()
     connect(aboutPCLAct, SIGNAL(triggered()), this, SLOT(aboutPCL()));
 }
 
-// LAYOUT FUNCTIONS
 void Ui::setupMenuBar()
 {
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -567,7 +579,7 @@ void Ui::pointPickCallback(const pcl::visualization::PointPickingEvent& event, v
     }
 }
 
-void Ui::pointPickCallbackSegmentComponent(const pcl::visualization::PointPickingEvent& event, void* cookie)
+void Ui::pointPickCallbackSelectComponent(const pcl::visualization::PointPickingEvent& event, void* cookie)
 {
     Ui *ui = (Ui*)cookie;
     float x,y,z;
@@ -584,55 +596,10 @@ void Ui::pointPickCallbackSegmentComponent(const pcl::visualization::PointPickin
                                  );
         QPushButton *colorbox = ui->getComponentDialog()->findChild<QPushButton *>("colorbox");
         colorbox->setStyleSheet(colorToStyleSheet(ui->getMotor()->getPointColor(event.getPointIndex())));
-        ui->getMotor()->componentSegmentation(event.getPointIndex());
-        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudComponentSeg(),"cloud");
+        ui->getMotor()->componentSelection(event.getPointIndex());
+        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getNewComponentCloud(),"cloud");
     }
 }
-
-/*
-void Ui::pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEvent& event, void* cookie)
-{
-    Ui *ui = (Ui*)cookie;
-    float x,y,z;
-    if (event.getPointIndex() == -1)
-        ui->statusBar()->showMessage(tr("No point was clicked"));
-    else
-    {
-        event.getPoint(x,y,z);
-        ui->statusBar()->showMessage(QString("Point Clicked index: %1 x: %2 y: %3 z: %4")
-                                 .arg(event.getPointIndex())
-                                 .arg(x)
-                                 .arg(y)
-                                 .arg(z)
-                                 );
-        QPushButton *colorbox = ui->getComponentDialog()->findChild<QPushButton *>("colorbox");
-        colorbox->setStyleSheet(colorToStyleSheet(ui->getMotor()->getPointColor(event.getPointIndex(), ui->isFirstSegmentationStep)));
-        ui->getMotor()->colorSegmentation(event.getPointIndex(), ui->isFirstSegmentationStep);
-        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudColorSeg(),"cloud");
-    }
-}
-
-void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingEvent& event, void* cookie)
-{
-    Ui *ui = (Ui*)cookie;
-    float x,y,z;
-    if (event.getPointIndex() == -1)
-        ui->statusBar()->showMessage(tr("No point was clicked"));
-    else
-    {
-        event.getPoint(x,y,z);
-        ui->statusBar()->showMessage(QString("Point Clicked index: %1 x: %2 y: %3 z: %4")
-                                 .arg(event.getPointIndex())
-                                 .arg(x)
-                                 .arg(y)
-                                 .arg(z)
-                                 );
-
-        ui->getMotor()->clusterSegmentation(event.getPointIndex(), ui->isFirstSegmentationStep);
-        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudClusterSeg(),"cloud");
-    }
-}
-*/
 
 QString Ui::colorToStyleSheet(QColor *color)
 {
