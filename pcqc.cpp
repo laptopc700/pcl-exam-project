@@ -99,14 +99,26 @@ void Pcqc::componentSegmentation(int selectedPointIndex)
         segmentCluster(targetCloudComponentSeg, tempClusterIndices, selectedPointIndex, cluThreshold/1000 );
         pcl::PointIndices::Ptr tempColorIndices(new pcl::PointIndices);
         segmentColor(targetCloudComponentSeg, tempColorIndices, selectedPointIndex, colThreshold );
-        // TD DO:||||||||||||||||||||||| migliorare questo che e' quadratico ||||||||||||||||||||||
-        for (int i=0 ;i<tempClusterIndices->indices.size(); i++)
-            for (int j=0 ;j<tempColorIndices->indices.size(); j++)
-                if (tempClusterIndices->indices.at(i) == tempColorIndices->indices.at(j))
-                {
-                    newComponentPointIndices->indices.push_back(tempClusterIndices->indices.at(i));
-                    break;
-                }
+
+
+        while(!tempClusterIndices->indices.empty())
+        {
+            if(tempClusterIndices->indices.back()==tempColorIndices->indices.back())//trovato
+            {
+                newComponentPointIndices->indices.push_back(tempClusterIndices->indices.back());
+                tempClusterIndices->indices.pop_back(); //poppa da cluster
+            }
+            else tempColorIndices->indices.pop_back(); //poppa da color
+        }
+
+            // To DO:||||||||||||||||||||||| migliorare questo che e' quadratico ||||||||||||||||||||||
+//        for (int i=0 ;i<tempClusterIndices->indices.size(); i++)
+//            for (int j=0 ;j<tempColorIndices->indices.size(); j++)
+//                if (tempClusterIndices->indices.at(i) == tempColorIndices->indices.at(j))
+//                {
+//                    newComponentPointIndices->indices.push_back(tempClusterIndices->indices.at(i));
+//                    break;
+//                }
 
         colorIndices(targetCloudComponentSeg, newComponentPointIndices);
         cout << "OK!\n"<<flush;
