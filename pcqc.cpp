@@ -5,9 +5,9 @@ Pcqc::Pcqc()
     targetCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     sourceCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     targetCloudComponentSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
-    targetCloudColorSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
+    targetCloudColorSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>); // TO DELETE
     colThreshold = 0;
-    targetCloudClusterSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
+    targetCloudClusterSeg.reset (new pcl::PointCloud<pcl::PointXYZRGB>); // TO DELETE
     cluThreshold = 0;
     newComponentPointIndices.reset (new pcl::PointIndices);
     registeredCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -59,6 +59,7 @@ QColor* Pcqc::getPointColor(int pointIndex)
     color->setRed(targetCloud->at(pointIndex).r);
     color->setGreen(targetCloud->at(pointIndex).g);
     color->setBlue(targetCloud->at(pointIndex).b);
+    return color;
 }
 
 
