@@ -60,7 +60,7 @@ segmentColor
     int g = selectedPoint.g;
     int b = selectedPoint.b;
     int i = 0;
-    for (i = 0; i < input->size(); i++)
+    for (i = input->size()-1; i >0 ; i--)//Al contrario per mantenere ordinati in modo crescente gli indici
     {
         if
         (
@@ -68,8 +68,11 @@ segmentColor
              abs(input->at(i).g-g)<threshold &&
              abs(input->at(i).b-b)<threshold
         )
-            output->indices.push_back(i);
+        output->indices.push_back(i);
+
     }
+
+
     cout << "OK!"<<endl<<flush;
 }
 
