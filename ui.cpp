@@ -117,7 +117,7 @@ void Ui::clearAll()
 void Ui::openComponentDialog()
 {
 //    delete addComponentDialog; // if this is not the first iteration of component definition, de-alloc the last dialog window, CAUSA SEGFAULT, memoria non gestita!
-    isFirstSegmentationStep = true;
+//    isFirstSegmentationStep = true;
     addComponentDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
     QVBoxLayout *dialogLayout = new QVBoxLayout; // create vertical layout
     QVTKWidget *dialogVisualizer = new QVTKWidget; // create qvtk widget
@@ -136,18 +136,18 @@ void Ui::openComponentDialog()
     QLineEdit *addComponentDialogName  = new QLineEdit(QString("Insert Component Name"));
 
     QHBoxLayout *addComponentDialogSegLayout = new QHBoxLayout;
-    QPushButton *selectPointSegButton = new QPushButton(QString("Cluster Segmentation"));
-    connect(selectPointSegButton, SIGNAL(clicked()), this, SLOT(setComponentDialogClusterCallback()));
+    QPushButton *selectPointSegButton = new QPushButton(QString("Select Component"));
+    connect(selectPointSegButton, SIGNAL(clicked()), this, SLOT(setComponentDialogCallback()));
     QSlider *setSegThresholdBar = new QSlider(Qt::Horizontal);
     setSegThresholdBar->setRange(0,5000);
     setSegThresholdBar->setObjectName(QString("sliderCluster"));
     connect(setSegThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QPushButton *showSegButton = new QPushButton(QString("Segment!"));
-    //connect
+    connect(showSegButton, SIGNAL(clicked()), this, SLOT(segmentComponent()));
 
     QHBoxLayout *addComponentDialogColLayout = new QHBoxLayout;
-    QPushButton *selectPointColButton = new QPushButton(QString("Color Segmentation"));
-    connect(selectPointColButton, SIGNAL(clicked()), this, SLOT(setComponentDialogColorCallback()));
+    QPushButton *selectPointColButton = new QPushButton(QString("Reset Selection"));
+    connect(selectPointColButton, SIGNAL(clicked()), this, SLOT(resetComponentDialogCallback()));
     QColor *selectedColor = new QColor(0, 0, 0, 255); // initialize color at black
     QPushButton *colorBox = new QPushButton;
     colorBox->setObjectName("colorbox");
@@ -156,7 +156,7 @@ void Ui::openComponentDialog()
     setColThresholdBar->setRange(0,255);
     setColThresholdBar->setObjectName(QString("sliderColor"));
     connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
-    QPushButton *showColButton = new QPushButton(QString("Segment!"));
+//    QPushButton *showColButton = new QPushButton(QString("Segment!"));
     //connect
 
     QPushButton *saveComponent = new QPushButton(QString("Add component to component list"));
@@ -169,7 +169,7 @@ void Ui::openComponentDialog()
     addComponentDialogColLayout->addWidget(selectPointColButton);
     addComponentDialogColLayout->addWidget(colorBox);
     addComponentDialogColLayout->addWidget(setColThresholdBar);
-    addComponentDialogColLayout->addWidget(showColButton);
+//    addComponentDialogColLayout->addWidget(showColButton);
     dialogLayout->addWidget(dialogVisualizer);
     dialogLayout->addWidget(addComponentDialogName);
     dialogLayout->addLayout(addComponentDialogSegLayout);
@@ -187,11 +187,17 @@ void Ui::openComponentDialog()
     delete dialogViewer; // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree.
 }
 
-void Ui::setComponentDialogClusterCallback()
+void Ui::setComponentDialogCallback()
 {
-//    componentCallbackConnection.disconnect();
-    dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentCluster, this);
+    dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentComponent, this);
     //TO DO: cambia cursore
+}
+
+void Ui::resetComponentDialogCallback()
+{
+    dialogViewer->registerPointPickingCallback(&pointPickCallback, this);
+    dialogViewer->updatePointCloud(motor->getTargetCloud(),"cloud");
+    //TO DO: reset cursore
 }
 
 void Ui::setClusterThreshold()
@@ -200,27 +206,15 @@ void Ui::setClusterThreshold()
     motor->setClusterSegThreshold(slider->value());
 }
 
-void Ui::segmentCluster()
-{
-
-}
-
-void Ui::setComponentDialogColorCallback()
-{
-//    componentCallbackConnection.disconnect();
-    dialogViewer->registerPointPickingCallback(&pointPickCallbackSegmentColor, this);
-    //TO DO: cambia cursore
-}
-
 void Ui::setColorThreshold()
 {
     QSlider *slider= addComponentDialog->findChild<QSlider *>("sliderColor");
     motor->setColorSegThreshold(slider->value());
 }
 
-void Ui::segmentColor()
+void Ui::segmentComponent()
 {
-
+    // TO DO
 }
 
 void Ui::openCheckDialog()
@@ -557,6 +551,29 @@ void Ui::pointPickCallback(const pcl::visualization::PointPickingEvent& event, v
     }
 }
 
+void Ui::pointPickCallbackSegmentComponent(const pcl::visualization::PointPickingEvent& event, void* cookie)
+{
+    Ui *ui = (Ui*)cookie;
+    float x,y,z;
+    if (event.getPointIndex() == -1)
+        ui->statusBar()->showMessage(tr("No point was clicked"));
+    else
+    {
+        event.getPoint(x,y,z);
+        ui->statusBar()->showMessage(QString("Point Clicked index: %1 x: %2 y: %3 z: %4")
+                                 .arg(event.getPointIndex())
+                                 .arg(x)
+                                 .arg(y)
+                                 .arg(z)
+                                 );
+        QPushButton *colorbox = ui->getComponentDialog()->findChild<QPushButton *>("colorbox");
+        colorbox->setStyleSheet(colorToStyleSheet(ui->getMotor()->getPointColor(event.getPointIndex())));
+        ui->getMotor()->componentSegmentation(event.getPointIndex());
+        ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudComponentSeg(),"cloud");
+    }
+}
+
+/*
 void Ui::pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEvent& event, void* cookie)
 {
     Ui *ui = (Ui*)cookie;
@@ -599,6 +616,7 @@ void Ui::pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingE
         ui->getDialogViewer()->updatePointCloud(ui->getMotor()->getTargetCloudClusterSeg(),"cloud");
     }
 }
+*/
 
 QString Ui::colorToStyleSheet(QColor *color)
 {

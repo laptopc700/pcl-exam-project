@@ -24,7 +24,7 @@ public:
     pcl::visualization::PCLVisualizer* getDialogViewer(); // returns the dialog window's visualizer
     QVTKWidget* getViewerWidget(); // returns the main window's widget that holds the visualizer's renderer
     QDialog* getComponentDialog(); // returns the dialog window's widget
-    bool isFirstSegmentationStep;
+//    bool isFirstSegmentationStep;
 
 
 private slots:
@@ -38,12 +38,13 @@ private slots:
     void showSource();
     void clearAll();
     void openComponentDialog();
-    void setComponentDialogClusterCallback();
-    void setClusterThreshold();
-    void segmentCluster();
-    void setComponentDialogColorCallback();
+    void setComponentDialogCallback();
+    void resetComponentDialogCallback();
+//    void setComponentDialogClusterCallback();
     void setColorThreshold();
-    void segmentColor();
+    void setClusterThreshold();
+    void segmentComponent();
+//    void setComponentDialogColorCallback();
     void openCheckDialog();
 
 private:
@@ -60,8 +61,9 @@ private:
     void setupVisualizerCommands();
     void setupMainLayout();
     static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie);
-    static void pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEvent& event, void* cookie);
-    static void pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingEvent& event, void* cookie);
+    static void pointPickCallbackSegmentComponent(const pcl::visualization::PointPickingEvent& event, void* cookie);
+//    static void pointPickCallbackSegmentColor(const pcl::visualization::PointPickingEvent& event, void* cookie);
+//    static void pointPickCallbackSegmentCluster(const pcl::visualization::PointPickingEvent& event, void* cookie);
     static QString colorToStyleSheet(QColor *color);
 
 // Motor object

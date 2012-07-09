@@ -16,9 +16,10 @@ public:
     bool loadSourceCloud(QString path); // returns true if file was loaded correctly
     //GETTERS
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloud();
+    QColor* getPointColor(int pointIndex);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloudColorSeg();
-    QColor* getPointColor(int pointIndex, bool isFirstStep);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloudClusterSeg();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloudComponentSeg();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceCloud();
     //SETTERS
     void setClusterSegThreshold(int threshold);
@@ -35,7 +36,6 @@ private:
     int colThreshold;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudClusterSeg; //TODELETE
     int cluThreshold;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudTemp;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloudComponentSeg;
     pcl::PointIndices::Ptr newComponentPointIndices;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredCloud;
