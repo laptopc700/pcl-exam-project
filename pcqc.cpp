@@ -101,17 +101,21 @@ void Pcqc::componentSegmentation(int selectedPointIndex)
         segmentColor(targetCloudComponentSeg, tempColorIndices, selectedPointIndex, colThreshold );
 
 
-        while(!tempClusterIndices->indices.empty())
+        while(!tempClusterIndices->indices.empty() && !tempColorIndices->indices.empty())
+
         {
             if(tempClusterIndices->indices.back()==tempColorIndices->indices.back())//trovato
-            {
-                newComponentPointIndices->indices.push_back(tempClusterIndices->indices.back());
-                tempClusterIndices->indices.pop_back(); //poppa da cluster
+                newComponentPointIndices->indices.push_back(tempClusterIndices->indices.back()); //pusha dentro
+            else {
+                //poppa fuori il minimo
+                if(tempClusterIndices->indices.back()  <  tempColorIndices->indices.back())
+                    tempClusterIndices->indices.pop_back();
+                else
+                    tempColorIndices->indices.pop_back();
             }
-            else tempColorIndices->indices.pop_back(); //poppa da color
         }
 
-            // To DO:||||||||||||||||||||||| migliorare questo che e' quadratico ||||||||||||||||||||||
+//             To DO:||||||||||||||||||||||| migliorare questo che e' quadratico ||||||||||||||||||||||
 //        for (int i=0 ;i<tempClusterIndices->indices.size(); i++)
 //            for (int j=0 ;j<tempColorIndices->indices.size(); j++)
 //                if (tempClusterIndices->indices.at(i) == tempColorIndices->indices.at(j))
@@ -121,7 +125,7 @@ void Pcqc::componentSegmentation(int selectedPointIndex)
 //                }
 
         colorIndices(targetCloudComponentSeg, newComponentPointIndices);
-        cout << "OK!\n"<<flush;
+        cout << "OK! Selected "<< newComponentPointIndices->indices.size() <<" points for this component\n"<<flush;
 }
 
 void Pcqc::clusterSegmentation(int selectedPointIndex, bool isFirstStep)//TODELETE
