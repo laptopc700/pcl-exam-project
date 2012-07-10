@@ -48,7 +48,9 @@ private slots:
     void setClusterThreshold();
     void segmentComponent();
     void saveComponent();
+    void deleteComponent();
     void openCheckDialog();
+    void showTargetComponent();
 
 private:
 // UI FUNCTIONS

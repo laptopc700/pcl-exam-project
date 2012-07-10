@@ -4,8 +4,10 @@
 #include "registration.h"
 #include "componentSelection.h"
 #include "componentMatch.h"
+#include <QMap>
 #include <QString>
 #include <QColor>
+// the class can easily be converted to use std libraries instead of QT, for QMap (std::map) as for QString (std::string) and color (triple of integers)
 
 class Pcqc
 {
@@ -18,11 +20,14 @@ public:
     //GETTERS
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceCloud();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getRegisteredCloud();
     QColor* getPointColor(int pointIndex);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getNewComponentCloud();
+    QMap<QString, pcl::PointIndices::Ptr>* getComponentsList();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getComponentCloud(QString componentName);
 
     //SETTERS
-    void setClusterSegThreshold(int threshold); // set the euclidea threshold for the clustering
+    void setClusterSegThreshold(int threshold); // set the euclidean threshold for the clustering
     void setColorSegThreshold(int threshold); // set the color threshold (0-255) of tolerance for the color segmentation
 
     //FUNCTIONS
@@ -32,13 +37,14 @@ public:
     bool componentDelete(QString componentName); // delete component from component list
 
 private:
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceCloud;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud;
-    int colThreshold;
-    int cluThreshold;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceCloud; // the new clout to be registered and to be checked
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud; // the reference cloud that is correct in every detail
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredCloud; // the source cloud registered to the target cloud
+    int colThreshold; // the euclidean threshold for the clustering
+    int cluThreshold; // the color threshold (0-255) of tolerance for the color segmentation
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr newComponentCloud;
     pcl::PointIndices::Ptr newComponentPointIndices;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredCloud;
+    QMap<QString, pcl::PointIndices::Ptr> componentsList; // dictonary that maps a name of a component with a pointer to the indices of the target cloud that define that component
 };
 
 #endif // PCQC_H

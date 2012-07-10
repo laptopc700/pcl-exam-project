@@ -14,14 +14,15 @@ Pcqc::Pcqc()
 bool Pcqc::loadTargetCloud(QString path)
 {
     const std::string stdpath = path.toStdString();
-    if(pcl::io::loadPCDFile(stdpath, *targetCloud) == 0 ){
+    if(pcl::io::loadPCDFile(stdpath, *targetCloud) == 0 )
+    {
         vector<int> indices;
         pcl::removeNaNFromPointCloud(*targetCloud, *targetCloud, indices);
-
         targetCloud=voxelCloud(targetCloud,0.4,1);
         segmentation(targetCloud,targetCloud,1);
         removeOutliers(targetCloud);
-            return true;}
+            return true;
+    }
     else return false;
 }
 
@@ -51,6 +52,11 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getSourceCloud()
     return sourceCloud;
 }
 
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getRegisteredCloud()
+{
+    return registeredCloud;
+}
+
 QColor* Pcqc::getPointColor(int pointIndex)
 {
     QColor *color = new QColor;
@@ -63,6 +69,18 @@ QColor* Pcqc::getPointColor(int pointIndex)
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getNewComponentCloud()
 {
     return newComponentCloud;
+}
+
+QMap<QString, pcl::PointIndices::Ptr>* Pcqc::getComponentsList()
+{
+    return &componentsList;
+}
+
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getComponentCloud(QString componentName)
+{
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr componentCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::copyPointCloud(*targetCloud, *(componentsList.value(componentName)), *componentCloud);
+    return componentCloud;
 }
 
 //SETTERS
@@ -117,12 +135,20 @@ bool Pcqc::componentSegmentation()
 
 bool Pcqc::componentSave(QString componentName)
 {
-    // TO DO
-    return true;
+    if(componentsList.find(componentName) == componentsList.end())
+    {
+        componentsList.insert(componentName, newComponentPointIndices);
+        return true;
+    }
+    else return false;
 }
 
 bool Pcqc::componentDelete(QString componentName)
 {
-    // TO DO
-    return true;
+    if(componentsList.find(componentName) == componentsList.end())
+    {
+        componentsList.remove(componentName);
+        return true;
+    }
+    else return false;
 }

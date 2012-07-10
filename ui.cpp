@@ -84,32 +84,6 @@ void Ui::loadSource()
     else statusBar()->showMessage(QString("couldn't load the source point cloud, maybe the path or the filename are not correct."));
 }
 
-void Ui::showTarget()
-{
-    if(!viewer->removePointCloud("target"))
-    {
-        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getTargetCloud());
-        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "target");
-        viewer->resetCamera();
-        statusBar()->showMessage(QString("Target point cloud added to the visualizer."));
-    }
-    else statusBar()->showMessage(QString("Target point cloud removed from the visualizer."));
-    qvtkVisualizer->update();
-}
-
-void Ui::showSource()
-{
-    if(!viewer->removePointCloud("source"))
-    {
-        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getSourceCloud());
-        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getSourceCloud(), rgb, "source");
-        viewer->resetCamera();
-        statusBar()->showMessage(QString("Source point cloud added to the visualizer."));
-    }
-    else statusBar()->showMessage(QString("Source point cloud removed from the visualizer."));
-    qvtkVisualizer->update();
-}
-
 void Ui::clearAll()
 {
     viewer->removeAllPointClouds();
@@ -242,8 +216,24 @@ void Ui::saveComponent()
 {
     QLineEdit *componentname = addComponentDialog->findChild<QLineEdit *>("componentname");
     if( motor->componentSave(componentname->text()) )
+    {
+        componentsList->addItem(componentname->text());
+        targetComponentsList->addItem(componentname->text());
         statusBar()->showMessage("Component successfully saved!");
-    else statusBar()->showMessage("Couldn't save this component.");
+    }
+    else statusBar()->showMessage("Couldn't save this component: check component name.");
+}
+
+void Ui::deleteComponent()
+{
+    if(componentsList->selectedItems().isEmpty())
+        statusBar()->showMessage("Can't delete component: no components selected.");
+    else
+    {
+        targetComponentsList->removeItem(targetComponentsList->findText(componentsList->selectedItems().first()->text()));
+        qDeleteAll(componentsList->selectedItems());
+        statusBar()->showMessage("Components deleted.");
+    }
 }
 
 void Ui::openCheckDialog()
@@ -376,6 +366,45 @@ void Ui::openCheckDialog()
     addCheckDialog->exec();
 }
 
+void Ui::showTarget()
+{
+    if(!viewer->removePointCloud("target"))
+    {
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getTargetCloud());
+        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "target");
+        viewer->resetCamera();
+        statusBar()->showMessage(QString("Target point cloud added to the visualizer."));
+    }
+    else statusBar()->showMessage(QString("Target point cloud removed from the visualizer."));
+    qvtkVisualizer->update();
+}
+
+void Ui::showSource()
+{
+    if(!viewer->removePointCloud("source"))
+    {
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getSourceCloud());
+        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getSourceCloud(), rgb, "source");
+        viewer->resetCamera();
+        statusBar()->showMessage(QString("Source point cloud added to the visualizer."));
+    }
+    else statusBar()->showMessage(QString("Source point cloud removed from the visualizer."));
+    qvtkVisualizer->update();
+}
+
+void Ui::showTargetComponent()
+{
+    if(  !viewer->removePointCloud( targetComponentsList->currentText().toStdString() )  )
+    {
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getComponentCloud(targetComponentsList->currentText()) );
+        viewer->addPointCloud<pcl::PointXYZRGB>( motor->getComponentCloud(targetComponentsList->currentText()), rgb, targetComponentsList->currentText().toStdString() );
+        viewer->resetCamera();
+        statusBar()->showMessage(QString("%1 point cloud added to the visualizer.").arg(targetComponentsList->currentText()));
+    }
+    else statusBar()->showMessage(QString("%1 point cloud removed from the visualizer.").arg(targetComponentsList->currentText()));
+    qvtkVisualizer->update();
+}
+
 // TO DO: create slot functions for every action (every button)
 // TO DO: create slot functions for every action (every button)
 // TO DO: create slot functions for every action (every button)
@@ -441,11 +470,13 @@ void Ui::setupComponentsBox()
     addComponentButton = new QPushButton(QString("Add..."));
     connect(addComponentButton, SIGNAL(clicked()), this, SLOT(openComponentDialog()));
     delComponentButton = new QPushButton(QString("Delete"));
-    //connect
+    connect(delComponentButton, SIGNAL(clicked()), this, SLOT(deleteComponent()));
     componentButtonsLayout->addWidget(addComponentButton);
     componentButtonsLayout->addWidget(delComponentButton);
     componentsLayout = new QVBoxLayout;
     componentsList = new QListWidget;
+    componentsList->setSelectionMode(QAbstractItemView::SingleSelection);
+//    connect(componentsList, SIGNAL(itemClicked(QListWidgetItem*)), componentsList, SLOT(s))
     componentsLayout->addLayout(componentButtonsLayout);
     componentsLayout->addWidget(componentsList);
     componentsBox->setLayout(componentsLayout);
@@ -515,11 +546,13 @@ void Ui::setupVisualizerCommands()
     clearAllButton = new QPushButton(QString("Clear All Clouds"));
     connect(clearAllButton, SIGNAL(clicked()), this, SLOT(clearAll()));
     showTComponentButton = new QPushButton(QString("Show/Hide Target Component"));
+    connect(showTComponentButton, SIGNAL(clicked()), this, SLOT(showTargetComponent()));
     targetComponentsList = new QComboBox;
     showTargetComponentLayout = new QHBoxLayout;
     showTargetComponentLayout->addWidget(showTComponentButton);
     showTargetComponentLayout->addWidget(targetComponentsList);
     showSComponentButton = new QPushButton(QString("Show/Hide Source Component"));
+    //connect
     sourceComponentsList = new QComboBox;
     showSourceComponentLayout = new QHBoxLayout;
     showSourceComponentLayout->addWidget(showSComponentButton);
