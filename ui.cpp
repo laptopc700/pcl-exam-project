@@ -394,6 +394,8 @@ void Ui::showSource()
 
 void Ui::showTargetComponent()
 {
+    if(targetComponentsList->currentText() == "")
+        return;
     if(  !viewer->removePointCloud( targetComponentsList->currentText().toStdString() )  )
     {
         pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getComponentCloud(targetComponentsList->currentText()) );
