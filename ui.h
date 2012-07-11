@@ -36,11 +36,6 @@ private slots:
     void aboutPCL();
     void browseTarget();
     void loadTarget();
-    void browseSource();
-    void loadSource();
-    void showTarget();
-    void showSource();
-    void clearAll();
     void openComponentDialog();
     void setComponentDialogCallback();
     void resetComponentDialogCallback();
@@ -50,7 +45,19 @@ private slots:
     void saveComponent();
     void deleteComponent();
     void openCheckDialog();
+    void browseSource();
+    void loadSource();
+
+    void start();
+    void showTarget();
+    void showSource();
+    void showRegistered();
     void showTargetComponent();
+    void showSourceComponent();
+    void clearAll();
+
+
+
 
 private:
 // UI FUNCTIONS
@@ -102,10 +109,11 @@ private:
     QPushButton *loadSButton;
     // results widget
     QPushButton *startButton;
-    QListWidget *resultsList;
+    QTextEdit *resultsList;
     // visualization buttons widgets
     QPushButton *showTButton;
     QPushButton *showSButton;
+    QPushButton *showRButton;
     QPushButton *showTComponentButton;
     QComboBox *targetComponentsList;
     QPushButton *showSComponentButton;

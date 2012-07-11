@@ -34,6 +34,7 @@ public:
     bool componentSegmentation(); // segment the new component from the target cloud with the newComponentPointIndices and save it in the newComponentCloud
     bool componentSave(QString componentName); // add segmented component to component list (maybe dictionary?)
     bool componentDelete(QString componentName); // delete component from component list
+    void registration();
 
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceCloud; // the new clout to be registered and to be checked

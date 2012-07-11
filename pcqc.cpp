@@ -147,3 +147,8 @@ bool Pcqc::componentDelete(QString componentName)
     }
     else return false;
 }
+
+void Pcqc::registration()
+{
+    registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 0, 0);
+}

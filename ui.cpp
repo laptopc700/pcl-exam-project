@@ -371,6 +371,14 @@ void Ui::openCheckDialog()
     addCheckDialog->exec();
 }
 
+void Ui::start()
+{
+    //check target cloud and source cloud, give error if they are not loaded.
+    resultsList->append("Registration...");
+    motor->registration();
+    resultsList->append("Source Cloud Registered.");
+}
+
 void Ui::showTarget()
 {
     if(!viewer->removePointCloud("target"))
@@ -397,6 +405,19 @@ void Ui::showSource()
     qvtkVisualizer->update();
 }
 
+void Ui::showRegistered()
+{
+    if(!viewer->removePointCloud("registered"))
+    {
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getRegisteredCloud());
+        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getRegisteredCloud(), rgb, "registered");
+        viewer->resetCamera();
+        statusBar()->showMessage(QString("Registered point cloud added to the visualizer."));
+    }
+    else statusBar()->showMessage(QString("Registered point cloud removed from the visualizer."));
+    qvtkVisualizer->update();
+}
+
 void Ui::showTargetComponent()
 {
     if(targetComponentsList->currentText() == "")
@@ -410,6 +431,22 @@ void Ui::showTargetComponent()
     }
     else statusBar()->showMessage(QString("%1 point cloud removed from the visualizer.").arg(targetComponentsList->currentText()));
     qvtkVisualizer->update();
+}
+
+void Ui::showSourceComponent()
+{
+    if(sourceComponentsList->currentText() == "")
+        return;
+    // TO DO BASING ON HOW WE ORGANISE THE SOURCE COMPONENTS ELABORATED IN PCQC
+//    if(  !viewer->removePointCloud( sourceComponentsList->currentText().toStdString() )  )
+//    {
+//        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getComponentCloud(sourceComponentsList->currentText()) );
+//        viewer->addPointCloud<pcl::PointXYZRGB>( motor->getComponentCloud(sourceComponentsList->currentText()), rgb, sourceComponentsList->currentText().toStdString() );
+//        viewer->resetCamera();
+//        statusBar()->showMessage(QString("%1 point cloud added to the visualizer.").arg(sourceComponentsList->currentText()));
+//    }
+//    else statusBar()->showMessage(QString("%1 point cloud removed from the visualizer.").arg(sourceComponentsList->currentText()));
+//    qvtkVisualizer->update();
 }
 
 // TO DO: create slot functions for every action (every button)
@@ -537,7 +574,9 @@ void Ui::setupResultsBox()
 {
     resultsBox = new QGroupBox(QString("Analysis Results"));
     startButton = new QPushButton(QString("START!"));
-    resultsList = new QListWidget;
+    connect(startButton, SIGNAL(clicked()), this, SLOT(start()));
+    resultsList = new QTextEdit;
+    resultsList->setReadOnly(true);
     resultsLayout = new QHBoxLayout;
     resultsLayout->addWidget(startButton);
     resultsLayout->addWidget(resultsList);
@@ -550,6 +589,8 @@ void Ui::setupVisualizerCommands()
     connect(showTButton, SIGNAL(clicked()), this, SLOT(showTarget()));
     showSButton = new QPushButton(QString("Show/Hide Source Cloud"));
     connect(showSButton, SIGNAL(clicked()), this, SLOT(showSource()));
+    showRButton = new QPushButton(QString("Show/Hide Registered Cloud"));
+    connect(showRButton, SIGNAL(clicked()), this, SLOT(showRegistered()));
     clearAllButton = new QPushButton(QString("Clear All Clouds"));
     connect(clearAllButton, SIGNAL(clicked()), this, SLOT(clearAll()));
     showTComponentButton = new QPushButton(QString("Show/Hide Target Component"));
@@ -590,6 +631,7 @@ void Ui::setupMainLayout()
     viewerLayout->addWidget(resultsBox);
     viewerLayout->addWidget(showTButton);
     viewerLayout->addWidget(showSButton);
+    viewerLayout->addWidget(showRButton);
     viewerLayout->addLayout(showTargetComponentLayout);
     viewerLayout->addLayout(showSourceComponentLayout);
     viewerLayout->addWidget(clearAllButton);
