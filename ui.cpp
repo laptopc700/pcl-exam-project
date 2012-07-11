@@ -373,10 +373,24 @@ void Ui::openCheckDialog()
 
 void Ui::start()
 {
-    //check target cloud and source cloud, give error if they are not loaded.
-    resultsList->append("Registration...");
+    //INITIAL CHECKS
+    if(motor->getTargetCloud()->empty())
+    {
+        statusBar()->showMessage(QString("Load a reference cloud before starting."));
+        return;
+    }
+    if(motor->getSourceCloud()->empty())
+    {
+        statusBar()->showMessage(QString("Load an input cloud before starting."));
+        return;
+    }
+
+    //REGISTRATION
+    statusBar()->showMessage("Registration...");
     motor->registration();
-    resultsList->append("Source Cloud Registered.");
+    statusBar()->showMessage("Registration...OK");
+
+    //COMPONENTS CHECK
 }
 
 void Ui::showTarget()
