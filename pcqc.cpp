@@ -71,15 +71,10 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getNewComponentCloud()
     return newComponentCloud;
 }
 
-QMap<QString, pcl::PointIndices::Ptr>* Pcqc::getComponentsList()
-{
-    return &componentsList;
-}
-
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getComponentCloud(QString componentName)
 {
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr componentCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::copyPointCloud(*targetCloud, *(componentsList.value(componentName)), *componentCloud);
+    pcl::copyPointCloud(*targetCloud, componentsList.value(componentName), *componentCloud);
     return componentCloud;
 }
 
@@ -137,7 +132,7 @@ bool Pcqc::componentSave(QString componentName)
 {
     if(componentsList.find(componentName) == componentsList.end())
     {
-        componentsList.insert(componentName, newComponentPointIndices);
+        componentsList.insert(componentName, *newComponentPointIndices); // se non è già presente quella chiave, aggiungo il componente, altrimenti no
         return true;
     }
     else return false;
@@ -145,9 +140,9 @@ bool Pcqc::componentSave(QString componentName)
 
 bool Pcqc::componentDelete(QString componentName)
 {
-    if(componentsList.find(componentName) == componentsList.end())
+    if(componentsList.find(componentName) != componentsList.end())
     {
-        componentsList.remove(componentName);
+        componentsList.remove(componentName); // se è presente quella chiave, cancello l'item, altrimenti no
         return true;
     }
     else return false;

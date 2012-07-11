@@ -230,9 +230,14 @@ void Ui::deleteComponent()
         statusBar()->showMessage("Can't delete component: no components selected.");
     else
     {
-        targetComponentsList->removeItem(targetComponentsList->findText(componentsList->selectedItems().first()->text()));
-        qDeleteAll(componentsList->selectedItems());
-        statusBar()->showMessage("Components deleted.");
+        if( motor->componentDelete(componentsList->selectedItems().first()->text()) )
+        {
+            targetComponentsList->removeItem(targetComponentsList->findText(componentsList->selectedItems().first()->text())); // delete entry from target component list (combo box)
+            qDeleteAll(componentsList->selectedItems()); // delete entry from components list
+            statusBar()->showMessage("Components deleted.");
+        }
+        else statusBar()->showMessage("Can't delete component: no matching name found in cloud handler.");
+
     }
 }
 

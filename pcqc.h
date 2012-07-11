@@ -23,7 +23,6 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getRegisteredCloud();
     QColor* getPointColor(int pointIndex);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getNewComponentCloud();
-    QMap<QString, pcl::PointIndices::Ptr>* getComponentsList();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getComponentCloud(QString componentName);
 
     //SETTERS
@@ -44,7 +43,7 @@ private:
     int cluThreshold; // the color threshold (0-255) of tolerance for the color segmentation
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr newComponentCloud;
     pcl::PointIndices::Ptr newComponentPointIndices;
-    QMap<QString, pcl::PointIndices::Ptr> componentsList; // dictonary that maps a name of a component with a pointer to the indices of the target cloud that define that component
+    QMap<QString, pcl::PointIndices> componentsList; // dictonary that maps a name of a component with a point indices of the target cloud that define that component
 };
 
 #endif // PCQC_H
