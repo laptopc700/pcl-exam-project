@@ -36,6 +36,14 @@ public:
     bool componentDelete(QString componentName); // delete component from component list
     void registration();
 
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr
+    voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize, int verbosity);
+
+    void segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity);
+
+    void removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
+
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceCloud; // the new clout to be registered and to be checked
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud; // the reference cloud that is correct in every detail
@@ -45,6 +53,8 @@ private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr newComponentCloud;
     pcl::PointIndices::Ptr newComponentPointIndices;
     QMap<QString, pcl::PointIndices> componentsList; // dictonary that maps a name of a component with a point indices of the target cloud that define that component
+
+
 };
 
 #endif // PCQC_H

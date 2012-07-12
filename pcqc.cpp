@@ -11,7 +11,64 @@ Pcqc::Pcqc()
     registeredCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
 }
 
-bool Pcqc::loadTargetCloud(QString path)
+
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr
+Pcqc::voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize, int verbosity){
+if (verbosity) cout << "Voxelling... "<<flush;
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZRGB>);
+pcl::VoxelGrid<pcl::PointXYZRGB> sor;
+sor.setInputCloud (input);
+sor.setLeafSize (leafSize,leafSize,leafSize);
+sor.filter (*cloud_filtered);
+if (verbosity) cout << "OK! Cloud downsampled in " << cloud_filtered->points.size() << " Voxels\n"<<flush;
+return cloud_filtered;
+}
+
+void
+Pcqc::segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity)
+{
+  if (verbosity) cout << "Segmentation... " << flush;
+  // fit plane and keep points above that plane
+  pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
+  pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
+  // Create the segmentation object
+  pcl::SACSegmentation<pcl::PointXYZRGB> seg;
+  // Optional
+  seg.setOptimizeCoefficients (true);
+  // Mandatory
+  seg.setModelType (pcl::SACMODEL_PLANE);
+  seg.setMethodType (pcl::SAC_RANSAC);
+  seg.setDistanceThreshold (3);
+
+  seg.setInputCloud (source);
+  seg.segment (*inliers, *coefficients);
+
+  pcl::ExtractIndices<pcl::PointXYZRGB> extract;
+  extract.setInputCloud (source);
+  extract.setIndices (inliers);
+  extract.setNegative (true);
+
+  extract.filter (*segmented);
+  vector<int> indices;
+  pcl::removeNaNFromPointCloud(*segmented, *segmented, indices);
+  if (verbosity) cout << "OK! Segmented: now there are " << segmented->size  () << " points.\n"<<flush;
+}
+
+
+void
+Pcqc::removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud){
+    cout << "Removing outliers... " << flush;
+pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+sor.setInputCloud (cloud);
+sor.setMeanK (50);
+sor.setStddevMulThresh (1.0);
+sor.filter (*cloud);
+cout << "OK! " << cloud->size() << " points now.\n"<<flush;
+}
+
+bool
+Pcqc::loadTargetCloud(QString path)
 {
     const std::string stdpath = path.toStdString();
     if(pcl::io::loadPCDFile(stdpath, *targetCloud) == 0 )
@@ -26,7 +83,8 @@ bool Pcqc::loadTargetCloud(QString path)
     else return false;
 }
 
-bool Pcqc::loadSourceCloud(QString path)
+bool
+Pcqc::loadSourceCloud(QString path)
 {
     const std::string stdpath = path.toStdString();
     if(pcl::io::loadPCDFile(stdpath, *sourceCloud) == 0)
@@ -150,5 +208,5 @@ bool Pcqc::componentDelete(QString componentName)
 
 void Pcqc::registration()
 {
-    registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 0, 0);
+    registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 1, 1);
 }

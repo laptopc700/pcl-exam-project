@@ -16,59 +16,6 @@ for (size_t i = 0; i < input->size(); ++i){
 }
 }
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize, int verbosity){
-if (verbosity) cout << "Voxelling... "<<flush;
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZRGB>);
-pcl::VoxelGrid<pcl::PointXYZRGB> sor;
-sor.setInputCloud (input);
-sor.setLeafSize (leafSize,leafSize,leafSize);
-sor.filter (*cloud_filtered);
-if (verbosity) cout << "OK! Cloud downsampled in " << cloud_filtered->points.size() << " Voxels\n"<<flush;
-return cloud_filtered;
-}
-
-void segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity)
-{
-  if (verbosity) cout << "Segmentation... " << flush;
-  // fit plane and keep points above that plane
-  pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
-  pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
-  // Create the segmentation object
-  pcl::SACSegmentation<pcl::PointXYZRGB> seg;
-  // Optional
-  seg.setOptimizeCoefficients (true);
-  // Mandatory
-  seg.setModelType (pcl::SACMODEL_PLANE);
-  seg.setMethodType (pcl::SAC_RANSAC);
-  seg.setDistanceThreshold (3);
-
-  seg.setInputCloud (source);
-  seg.segment (*inliers, *coefficients);
-
-  pcl::ExtractIndices<pcl::PointXYZRGB> extract;
-  extract.setInputCloud (source);
-  extract.setIndices (inliers);
-  extract.setNegative (true);
-
-  extract.filter (*segmented);
-  vector<int> indices;
-  pcl::removeNaNFromPointCloud(*segmented, *segmented, indices);
-  if (verbosity) cout << "OK! Segmented: now there are " << segmented->size  () << " points.\n"<<flush;
-}
-
-
-void removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud){
-    cout << "Removing outliers... " << flush;
-pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
-sor.setInputCloud (cloud);
-sor.setMeanK (50);
-sor.setStddevMulThresh (1.0);
-sor.filter (*cloud);
-cout << "OK! " << cloud->size() << " points now.\n"<<flush;
-}
-
 void detectKeypoints ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input,
 pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints, int verbosity)
 {
@@ -218,46 +165,46 @@ int verbosity, int compute_target)
 //per cancellare i warnings
 pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
 
-vector<int> indices;
-pcl::removeNaNFromPointCloud(*source, *source, indices);
-if (verbosity) cout << "OK! Loaded "<< source->points.size() << " points from file SOURCE \n";
-vector<int> indices2;
-pcl::removeNaNFromPointCloud(*target, *target, indices2);
-if (verbosity) cout << "OK! Loaded "<< target->points.size() << " points from file TARGET \n";
+//vector<int> indices;
+//pcl::removeNaNFromPointCloud(*source, *source, indices);
+//if (verbosity) cout << "OK! Loaded "<< source->points.size() << " points from file SOURCE \n";
+//vector<int> indices2;
+//pcl::removeNaNFromPointCloud(*target, *target, indices2);
+//if (verbosity) cout << "OK! Loaded "<< target->points.size() << " points from file TARGET \n";
 
 
-//Voxelling and downsampling
-double leafSize=0.5;
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_vox  (new pcl::PointCloud<pcl::PointXYZRGB>);
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_vox  (new pcl::PointCloud<pcl::PointXYZRGB>);
-source_vox = voxelCloud(source,leafSize, verbosity);
-target_vox = voxelCloud(target,leafSize, verbosity);
+////Voxelling and downsampling
+//double leafSize=0.5;
+//pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_vox  (new pcl::PointCloud<pcl::PointXYZRGB>);
+//pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_vox  (new pcl::PointCloud<pcl::PointXYZRGB>);
+//source_vox = voxelCloud(source,leafSize, verbosity);
+//target_vox = voxelCloud(target,leafSize, verbosity);
 
-//segmenta il piano
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_segmented (new pcl::PointCloud<pcl::PointXYZRGB>);
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_segmented (new pcl::PointCloud<pcl::PointXYZRGB>);
-  segmentation (source_vox, source_segmented, verbosity);
-if(compute_target){
-segmentation (target_vox, target_segmented, verbosity);
-pcl::io::savePCDFileBinary("correct/target_segmented.pcd",*target_segmented);
-}
-else pcl::io::loadPCDFile("correct/target_segmented.pcd",*target_segmented);
+////segmenta il piano
+//  pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_segmented (new pcl::PointCloud<pcl::PointXYZRGB>);
+//  pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_segmented (new pcl::PointCloud<pcl::PointXYZRGB>);
+//  segmentation (source_vox, source_segmented, verbosity);
+//if(compute_target){
+//segmentation (target_vox, target_segmented, verbosity);
+//pcl::io::savePCDFileBinary("correct/target_segmented.pcd",*target_segmented);
+//}
+//else pcl::io::loadPCDFile("correct/target_segmented.pcd",*target_segmented);
 
 //sift3d keypoint detector
   pcl::PointCloud<pcl::PointXYZI>::Ptr source_keypoints (new pcl::PointCloud<pcl::PointXYZI> ());
   pcl::PointCloud<pcl::PointXYZI>::Ptr target_keypoints (new pcl::PointCloud<pcl::PointXYZI> ());
-  detectKeypoints (source_segmented, source_keypoints, verbosity);
+  detectKeypoints (source, source_keypoints, verbosity);
 if(compute_target) {
-  detectKeypoints (target_segmented, target_keypoints, verbosity);
+  detectKeypoints (target, target_keypoints, verbosity);
 pcl::io::savePCDFileBinary("correct/target_keypoints.pcd",*target_keypoints);}
 else pcl::io::loadPCDFile("correct/target_keypoints.pcd",*target_keypoints);
 
 //FPFH feature extractor
 pcl::PointCloud<pcl::FPFHSignature33>::Ptr source_features (new pcl::PointCloud<pcl::FPFHSignature33>);
 pcl::PointCloud<pcl::FPFHSignature33>::Ptr target_features (new pcl::PointCloud<pcl::FPFHSignature33>);
-extractDescriptors (source_segmented, source_keypoints, source_features, verbosity);
+extractDescriptors (source, source_keypoints, source_features, verbosity);
 if(compute_target) {
-extractDescriptors (target_segmented, target_keypoints, target_features, verbosity);
+extractDescriptors (target, target_keypoints, target_features, verbosity);
 pcl::io::savePCDFileBinary("correct/target_features.pcd",*target_features);}
 else pcl::io::loadPCDFile("correct/target_features.pcd",*target_features);
 
@@ -274,14 +221,14 @@ filterCorrespondences (source_keypoints, target_keypoints , source2target , targ
 //Initial transformation
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_transformed (new pcl::PointCloud<pcl::PointXYZRGB>);
 Eigen::Matrix4f initial_transformation_matrix = determineInitialTransformation (source_keypoints, target_keypoints, correspondences,
-source_segmented , target_segmented , source_transformed, verbosity);
+source , target , source_transformed, verbosity);
 
 //Final transformation
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_registered (new pcl::PointCloud<pcl::PointXYZRGB>);
-Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_transformed , source_registered, target_segmented, verbosity);
+Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_transformed , source_registered, target, verbosity);
 
-  segmentation (source, source, verbosity);
-//  segmentation (source_vox, source_segmented, verbosity);
+//  segmentation (source, source, verbosity);
+
 
   if (verbosity) cout << "Source cloud alignment..." << flush;
 pcl::transformPointCloud(*source, *registered, initial_transformation_matrix);

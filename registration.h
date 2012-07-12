@@ -42,15 +42,7 @@ registerSourceToTarget ( pcl::PointCloud<pcl::PointXYZRGB>::Ptr source ,
                          );
 
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize, int verbosity);
 
-
-void segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity);
-
-
-void removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
 
 
 
