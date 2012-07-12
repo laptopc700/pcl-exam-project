@@ -60,13 +60,14 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity)
 
 
 void removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud){
+    cout << "Removing outliers... " << flush;
 pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
 sor.setInputCloud (cloud);
 sor.setMeanK (50);
 sor.setStddevMulThresh (1.0);
 sor.filter (*cloud);
+cout << "OK! " << cloud->size() << " points now.\n"<<flush;
 }
-
 
 void detectKeypoints ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input,
 pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints, int verbosity)
