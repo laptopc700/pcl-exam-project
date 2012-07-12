@@ -35,13 +35,8 @@ public:
     bool componentSave(QString componentName); // add segmented component to component list (maybe dictionary?)
     bool componentDelete(QString componentName); // delete component from component list
     void registration();
-
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-    voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize, int verbosity);
-
-    void segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity);
-
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize, int verbosity);
+    void segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source, pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity);
     void removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
 
 private:
