@@ -124,9 +124,7 @@ Eigen::Matrix4f determineInitialTransformation (
     pcl::registration::TransformationEstimation<pcl::PointXYZI, pcl::PointXYZI>::Ptr transformation_estimation (new pcl::registration::TransformationEstimationSVD<pcl::PointXYZI, pcl::PointXYZI>);
     transformation_estimation->estimateRigidTransformation (*source_keypoints_, *target_keypoints_, *correspondences_, initial_transformation_matrix_);
     if (verbosity) cout << "OK" << endl;
-//    if (verbosity) cout << "Source cloud alignment..." << flush;
 //    pcl::transformPointCloud(*source_segmented_, *source_transformed_, initial_transformation_matrix_);
-//    if (verbosity) cout << "OK" << endl;
     return initial_transformation_matrix_;
 }
 
@@ -233,7 +231,7 @@ registerSourceToTarget (
 //    Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_transformed , registered, target, verbosity);
     pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
 
-    //questa trasformazione non serve la fa già la riga 147
+    //questa trasformazione non serve, la fa già registration->align riga 147
 //    if (verbosity) cout << "Source cloud final alignment..." << flush;
 //    pcl::transformPointCloud(*registered, *registered, final_transformation_matrix);
 //    if (verbosity) cout << "OK" << endl;
@@ -241,9 +239,9 @@ registerSourceToTarget (
     changeColor(source, 255, 0, 0);
     changeColor(target, 0, 0, 255);
     changeColor(registered,0, 255, 0);
-    if (verbosity) cout << "Restored "<< source->points.size() << " points source"<<endl;
-    if (verbosity) cout << "Restored "<< target->points.size() << " points target"<<endl;
-    if (verbosity) cout << "REGISTERED "<< registered->points.size() << " points"<<endl;
+    if (verbosity) cout << "Restored "<< source->points.size() << " points source"<< endl;
+    if (verbosity) cout << "Restored "<< target->points.size() << " points target"<< endl;
+    if (verbosity) cout << "REGISTERED "<< registered->points.size() << " points"<< endl;
 
 
     time (&end);
