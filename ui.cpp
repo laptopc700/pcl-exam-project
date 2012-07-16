@@ -138,11 +138,11 @@ void Ui::openComponentDialog()
 
     QVBoxLayout *numbersBox = new QVBoxLayout;
     QColor *selectedColor = new QColor(0, 0, 0, 255); // initialize color at black
-    QPushButton *colorBox = new QPushButton("+-0");
+    QPushButton *colorBox = new QPushButton("+-100");
     colorBox->setObjectName("colorbox");
     colorBox->setStyleSheet(colorToStyleSheet(selectedColor));
     colorBox->setMaximumWidth(50);
-    QLineEdit *clusterBox = new QLineEdit("0");
+    QLineEdit *clusterBox = new QLineEdit("1");
     clusterBox->setReadOnly(true);
     clusterBox->setObjectName("clusterbox");
     clusterBox->setMaxLength(5);
@@ -154,11 +154,13 @@ void Ui::openComponentDialog()
     QSlider *setCluThresholdBar = new QSlider(Qt::Horizontal);
     setCluThresholdBar->setRange(0,5000);
     setCluThresholdBar->setValue(1000);
+    motor->setClusterSegThreshold(1000);
     setCluThresholdBar->setObjectName("sliderCluster");
     connect(setCluThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
     setColThresholdBar->setRange(0,255);
     setColThresholdBar->setValue(100);
+    motor->setColorSegThreshold(100);
     setColThresholdBar->setObjectName("sliderColor");
     connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
     slidersBox->addWidget(setCluThresholdBar);

@@ -4,6 +4,7 @@
 #include "registration.h"
 #include "componentSelection.h"
 #include "componentMatch.h"
+#include "component.h"
 #include <QMap>
 #include <QString>
 #include <QColor>

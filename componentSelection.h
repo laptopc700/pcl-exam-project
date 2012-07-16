@@ -41,18 +41,7 @@ segmentCluster
 );
 
 
-//pcl::PointIndices
-//segmentVolume
-//(
-//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-//    float positionX,
-//    float positionY,
-//    float positionZ,
-//    float sizeX,
-//    float sizeY,
-//    float sizeZ,
-//    float rotation
-//);
+
 
 void
 segmentColor
@@ -72,8 +61,18 @@ intersectIndices
     pcl::PointIndices::Ptr intersection
 );
 
-
-
+//pcl::PointIndices
+//segmentVolume
+//(
+//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+//    float positionX,
+//    float positionY,
+//    float positionZ,
+//    float sizeX,
+//    float sizeY,
+//    float sizeZ,
+//    float rotation
+//);
 #endif // REGISTRATION_H
 
 

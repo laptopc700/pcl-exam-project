@@ -62,7 +62,7 @@ Pcqc::removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud){
 pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
 sor.setInputCloud (cloud);
 sor.setMeanK (50);
-sor.setStddevMulThresh (2);
+sor.setStddevMulThresh (1.0);
 sor.filter (*cloud);
 cout << "OK! " << cloud->size() << " points Loaded.\n"<<flush;
 }
@@ -168,7 +168,6 @@ Pcqc::colorIndices
                 input->at(pointN).b=b;
     }
 }
-
 
 void Pcqc::componentSelection(int selectedPointIndex)
 {
