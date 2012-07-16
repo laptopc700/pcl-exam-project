@@ -58,31 +58,47 @@ void Ui::aboutPCL()
                                                 "open project for 3D point cloud processing.") );
 }
 
-void Ui::browseTarget()
+void Ui::browseLoadTarget()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Load Target Point Cloud"), "/home", tr("Point Clouds *.pcd (*.pcd);;All Files (*.*)"));
     pathTField->setText(fileName);
-}
-
-void Ui::loadTarget()
-{
     if(motor->loadTargetCloud(pathTField->displayText()))
         statusBar()->showMessage(pathTField->displayText()+QString(" successfully loaded!"));
     else statusBar()->showMessage(QString("couldn't load the target point cloud, maybe the path or the filename are not correct."));
-}
 
-void Ui::browseSource()
+}
+//void Ui::browseTarget()
+//{
+//    QString fileName = QFileDialog::getOpenFileName(this, tr("Load Target Point Cloud"), "/home", tr("Point Clouds *.pcd (*.pcd);;All Files (*.*)"));
+//    pathTField->setText(fileName);
+//}
+//void Ui::loadTarget()
+//{
+//    if(motor->loadTargetCloud(pathTField->displayText()))
+//        statusBar()->showMessage(pathTField->displayText()+QString(" successfully loaded!"));
+//    else statusBar()->showMessage(QString("couldn't load the target point cloud, maybe the path or the filename are not correct."));
+//}
+
+void Ui::browseLoadSource()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Load Source Point Cloud"), "/home", tr("Point Clouds *.pcd (*.pcd);;All Files (*.*)"));
     pathSField->setText(fileName);
-}
-
-void Ui::loadSource()
-{
     if(motor->loadSourceCloud(pathSField->displayText()))
         statusBar()->showMessage(pathSField->displayText()+QString(" successfully loaded!"));
     else statusBar()->showMessage(QString("couldn't load the source point cloud, maybe the path or the filename are not correct."));
 }
+
+//void Ui::browseSource()
+//{
+//    QString fileName = QFileDialog::getOpenFileName(this, tr("Load Source Point Cloud"), "/home", tr("Point Clouds *.pcd (*.pcd);;All Files (*.*)"));
+//    pathSField->setText(fileName);
+//}
+//void Ui::loadSource()
+//{
+//    if(motor->loadSourceCloud(pathSField->displayText()))
+//        statusBar()->showMessage(pathSField->displayText()+QString(" successfully loaded!"));
+//    else statusBar()->showMessage(QString("couldn't load the source point cloud, maybe the path or the filename are not correct."));
+//}
 
 void Ui::clearAll()
 {
@@ -137,10 +153,12 @@ void Ui::openComponentDialog()
     QVBoxLayout *slidersBox = new QVBoxLayout;
     QSlider *setCluThresholdBar = new QSlider(Qt::Horizontal);
     setCluThresholdBar->setRange(0,5000);
+    setCluThresholdBar->setValue(1000);
     setCluThresholdBar->setObjectName("sliderCluster");
     connect(setCluThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setClusterThreshold()));
     QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
     setColThresholdBar->setRange(0,255);
+    setColThresholdBar->setValue(100);
     setColThresholdBar->setObjectName("sliderColor");
     connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
     slidersBox->addWidget(setCluThresholdBar);
@@ -510,14 +528,15 @@ void Ui::setupLoadTBox()
 {
     loadTBox = new QGroupBox(QString("Load Target Cloud"));
     browseTButton = new QPushButton(QString("Browse..."));
-    connect(browseTButton, SIGNAL(clicked()), this, SLOT(browseTarget()));
+    connect(browseTButton, SIGNAL(clicked()), this, SLOT(browseLoadTarget()));
+//    connect(browseTButton, SIGNAL(clicked()), this, SLOT(browseTarget()));
     pathTField = new QLineEdit();
-    loadTButton = new QPushButton(QString("LOAD!"));
-    connect(loadTButton, SIGNAL(clicked()), this, SLOT(loadTarget()));
+//    loadTButton = new QPushButton(QString("LOAD!"));
+//    connect(loadTButton, SIGNAL(clicked()), this, SLOT(loadTarget()));
     loadTargetLayout = new QHBoxLayout;
     loadTargetLayout->addWidget(browseTButton);
     loadTargetLayout->addWidget(pathTField);
-    loadTargetLayout->addWidget(loadTButton);
+//    loadTargetLayout->addWidget(loadTButton);
     loadTBox->setLayout(loadTargetLayout);
 }
 
@@ -561,14 +580,15 @@ void Ui::setupLoadSBox()
 {
     loadSBox = new QGroupBox(QString("Load Source Cloud"));
     browseSButton = new QPushButton(QString("Browse..."));
-    connect(browseSButton, SIGNAL(clicked()), this, SLOT(browseSource()));
+    connect(browseSButton, SIGNAL(clicked()), this, SLOT(browseLoadSource()));
+//    connect(browseSButton, SIGNAL(clicked()), this, SLOT(browseSource()));
     pathSField = new QLineEdit();
-    loadSButton = new QPushButton(QString("LOAD!"));
-    connect(loadSButton, SIGNAL(clicked()), this, SLOT(loadSource()));
+//    loadSButton = new QPushButton(QString("LOAD!"));
+//    connect(loadSButton, SIGNAL(clicked()), this, SLOT(loadSource()));
     loadSourceLayout = new QHBoxLayout;
     loadSourceLayout->addWidget(browseSButton);
     loadSourceLayout->addWidget(pathSField);
-    loadSourceLayout->addWidget(loadSButton);
+//    loadSourceLayout->addWidget(loadSButton);
     loadSBox->setLayout(loadSourceLayout);
 }
 

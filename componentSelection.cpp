@@ -9,7 +9,7 @@ segmentCluster
     double threshold
 )
 {
-    cout << "segmentCluster..." << flush;
+    cout << "segmentCluster... " << flush;
     vector<pcl::PointIndices> cluster_indices_out;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
     ec.setClusterTolerance (threshold);
@@ -40,7 +40,6 @@ pcl::PointIndices temp=cluster_indices_out[selectedClusterIndex];
         output->indices.push_back(temp.indices.back());
         temp.indices.pop_back();
         }
-    cout << "OK!"<<endl<<flush;
 }
 
 
@@ -54,7 +53,7 @@ segmentColor
     int threshold
 )
 {
-    cout << "segmentColor..." << flush;
+    cout << "segmentColor... " << flush;
     pcl::PointXYZRGB selectedPoint = (*input)[selectedPointIndex];
     int r = selectedPoint.r;
     int g = selectedPoint.g;
@@ -72,38 +71,37 @@ segmentColor
 
     }
 
-
-    cout << "OK!"<<endl<<flush;
 }
 
 
-// TO DO: aggiungere parametri del colore per colorare del colore che si vuole (int r, int g, int b), perchè servirà in futuro.
 void
-colorIndices
+intersectIndices
 (
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-    pcl::PointIndices::Ptr indices
+    pcl::PointIndices::Ptr first,
+    pcl::PointIndices::Ptr second,
+    pcl::PointIndices::Ptr intersection
 )
 {
-    cout << "colorIndices..." << flush;
+    cout << "intersectIndices... " << flush;
 
-    for (int i =0; i<indices->indices.size();i++)
-
+    // point indices intersection cycle
+    while(!first->indices.empty() && !second->indices.empty())
     {
-                int pointN= indices->indices.at(i);
-                input->at(pointN).r=0;
-                input->at(pointN).g=255;
-                input->at(pointN).b=0;
+        if(first->indices.back()==second->indices.back())//trovato
+        {
+            intersection->indices.push_back(first->indices.back()); //pusha dentro
+            first->indices.pop_back(); //passa al prossimo
+        }
+        else //poppa fuori il minimo
+        {
+            if(first->indices.back()  <  second->indices.back())
+                first->indices.pop_back();
+            else
+                second->indices.pop_back();
+        }
     }
 
-    //    while (! indices->indices.empty())
-    //    {
-    //        int pointN= indices->indices.back();
-    //        input->at(pointN).r=0;
-    //        input->at(pointN).g=255;
-    //        input->at(pointN).b=0;
-    //        indices->indices.pop_back();
-    //    }
-
-    cout << "OK!"<<endl<<flush;
 }
+
+
+

@@ -13,22 +13,22 @@ Pcqc::Pcqc()
 
 
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-Pcqc::voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize, int verbosity){
-if (verbosity) cout << "Voxelling... "<<flush;
+Pcqc::voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize){
+cout << "Voxelling... "<<flush;
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZRGB>);
 pcl::VoxelGrid<pcl::PointXYZRGB> sor;
 sor.setInputCloud (input);
 sor.setLeafSize (leafSize,leafSize,leafSize);
 sor.filter (*cloud_filtered);
-if (verbosity) cout << "OK! Cloud downsampled in " << cloud_filtered->points.size() << " Voxels\n"<<flush;
+//cout << "OK! Cloud downsampled in " << cloud_filtered->points.size() << " Voxels\n"<<flush;
 return cloud_filtered;
 }
 
 void
 Pcqc::segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity)
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented)
 {
-  if (verbosity) cout << "Segmentation... " << flush;
+  cout << "Plane segmentation... " << flush;
   // fit plane and keep points above that plane
   pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
   pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
@@ -52,7 +52,7 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented, int verbosity)
   extract.filter (*segmented);
   vector<int> indices;
   pcl::removeNaNFromPointCloud(*segmented, *segmented, indices);
-  if (verbosity) cout << "OK! Segmented: now there are " << segmented->size  () << " points.\n"<<flush;
+//cout << "OK!  " << segmented->size  () << " points.\n"<<flush;
 }
 
 
@@ -62,9 +62,9 @@ Pcqc::removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud){
 pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
 sor.setInputCloud (cloud);
 sor.setMeanK (50);
-sor.setStddevMulThresh (1.0);
+sor.setStddevMulThresh (2);
 sor.filter (*cloud);
-cout << "OK! " << cloud->size() << " points now.\n"<<flush;
+cout << "OK! " << cloud->size() << " points Loaded.\n"<<flush;
 }
 
 bool
@@ -75,8 +75,8 @@ Pcqc::loadTargetCloud(QString path)
     {
         vector<int> indices;
         pcl::removeNaNFromPointCloud(*targetCloud, *targetCloud, indices);
-        targetCloud=voxelCloud(targetCloud,0.4,1);
-        segmentation(targetCloud,targetCloud,1);
+        targetCloud=voxelCloud(targetCloud,0.4);
+        segmentation(targetCloud,targetCloud);
         removeOutliers(targetCloud);
             return true;
     }
@@ -91,8 +91,8 @@ Pcqc::loadSourceCloud(QString path)
     {
         vector<int> indices;
         pcl::removeNaNFromPointCloud(*sourceCloud, *sourceCloud, indices);
-        sourceCloud = voxelCloud(sourceCloud,0.4,1); // alleggerisce il calcolo, da capire se peggiora il risultato o meno.
-        segmentation(sourceCloud,sourceCloud,1); // segmentazione del piano principale.
+        sourceCloud = voxelCloud(sourceCloud,0.4); // alleggerisce il calcolo, da capire se peggiora il risultato o meno.
+        segmentation(sourceCloud,sourceCloud); // segmentazione del piano principale.
         removeOutliers(sourceCloud);
         return true;
     }
@@ -148,6 +148,28 @@ void Pcqc::setColorSegThreshold(int threshold)
 }
 
 //FUNCTIONS
+
+void
+Pcqc::colorIndices
+(
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+    pcl::PointIndices::Ptr indices,
+    int r,
+    int g,
+    int b
+)
+{
+    cout << "colorIndices... " << flush;
+    for (int i =0; i<indices->indices.size();i++)
+    {
+                int pointN= indices->indices.at(i);
+                input->at(pointN).r=r;
+                input->at(pointN).g=g;
+                input->at(pointN).b=b;
+    }
+}
+
+
 void Pcqc::componentSelection(int selectedPointIndex)
 {
     cout << "Component Segmentation... "<<flush; // DEBUG PRINT
@@ -160,23 +182,9 @@ void Pcqc::componentSelection(int selectedPointIndex)
     pcl::PointIndices::Ptr tempColorIndices(new pcl::PointIndices);
     segmentColor(newComponentCloud, tempColorIndices, selectedPointIndex, colThreshold );
 
-    // point indices intersection cycle
-    while(!tempClusterIndices->indices.empty() && !tempColorIndices->indices.empty())
-    {
-        if(tempClusterIndices->indices.back()==tempColorIndices->indices.back())//trovato
-        {
-            newComponentPointIndices->indices.push_back(tempClusterIndices->indices.back()); //pusha dentro
-            tempClusterIndices->indices.pop_back(); //passa al prossimo
-        }
-        else //poppa fuori il minimo
-        {
-            if(tempClusterIndices->indices.back()  <  tempColorIndices->indices.back())
-                tempClusterIndices->indices.pop_back();
-            else
-                tempColorIndices->indices.pop_back();
-        }
-    }
-    colorIndices(newComponentCloud, newComponentPointIndices);
+    intersectIndices(tempClusterIndices,tempColorIndices,newComponentPointIndices);
+
+    colorIndices(newComponentCloud, newComponentPointIndices,0,255,0);
     cout << "OK! Selected "<< newComponentPointIndices->indices.size() <<" points for this component\n"<<flush; // DEBUG PRINT
 }
 
@@ -208,5 +216,5 @@ bool Pcqc::componentDelete(QString componentName)
 
 void Pcqc::registration()
 {
-    registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 1, 1);
+    registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 1, 0);
 }

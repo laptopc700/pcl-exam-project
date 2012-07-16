@@ -6,15 +6,14 @@
 #include <sstream>
 #include <pcl/io/pcd_io.h>
 #include <pcl/registration/transforms.h>
-#include <pcl/visualization/pcl_visualizer.h>
+//#include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/keypoints/sift_keypoint.h>
 #include <pcl/keypoints/harris_keypoint3D.h>
 #include <pcl/ModelCoefficients.h>
 #include <pcl/sample_consensus/method_types.h>
 #include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/search/kdtree.h>
-#include <pcl/segmentation/extract_clusters.h>
+//#include <pcl/segmentation/extract_clusters.h>
 #include <pcl/features/fpfh_omp.h>
 #include <pcl/features/pfh.h>
 #include <pcl/features/pfhrgb.h>
@@ -27,8 +26,7 @@
 #include <pcl/registration/correspondence_rejection_sample_consensus.h>
 #include <pcl/common/transforms.h>
 #include <pcl/surface/grid_projection.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/filters/statistical_outlier_removal.h>
+
 
 using namespace std;
 

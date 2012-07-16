@@ -34,8 +34,9 @@ public:
 private slots:
     void about();
     void aboutPCL();
-    void browseTarget();
-    void loadTarget();
+    void browseLoadTarget();
+//    void browseTarget();
+//    void loadTarget();
     void openComponentDialog();
     void setComponentDialogCallback();
     void resetComponentDialogCallback();
@@ -45,8 +46,9 @@ private slots:
     void saveComponent();
     void deleteComponent();
     void openCheckDialog();
-    void browseSource();
-    void loadSource();
+    void browseLoadSource();
+//    void browseSource();
+//    void loadSource();
 
     void start();
     void showTarget();
@@ -94,7 +96,7 @@ private:
     // load target widgets
     QPushButton *browseTButton;
     QLineEdit *pathTField;
-    QPushButton *loadTButton;
+//    QPushButton *loadTButton;
     // add component widgets
     QPushButton *addComponentButton;
     QPushButton *delComponentButton;
@@ -106,7 +108,7 @@ private:
     // load source widgets
     QPushButton *browseSButton;
     QLineEdit *pathSField;
-    QPushButton *loadSButton;
+//    QPushButton *loadSButton;
     // results widget
     QPushButton *startButton;
     QTextEdit *resultsList;
