@@ -205,10 +205,14 @@ bool Pcqc::componentSave(QString componentName)
 {
     if(componentsList.find(componentName) == componentsList.end())
     {
-        Component newComponent(targetCloud,newComponentPointIndices,0,0,0);
+        pcl::PointIndices::Ptr indicesToSave(new pcl::PointIndices);
+        indicesToSave->indices = newComponentPointIndices->indices;
+        //TO DO: METTERE I TRE DATI (INDICE, CLUTHRESH, COLTHRESH)
+        Component newComponent(targetCloud,indicesToSave,0,cluThreshold,colThreshold);
         componentsList.insert(componentName, newComponent); // se non è già presente quella chiave, aggiungo il componente, altrimenti no
         return true;
     }
+
     else return false;
 }
 

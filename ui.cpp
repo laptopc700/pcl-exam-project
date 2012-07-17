@@ -420,7 +420,7 @@ void Ui::showTarget()
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetWithComponents(new pcl::PointCloud<pcl::PointXYZRGB>);
         pcl::copyPointCloud( *(motor-> getTargetCloud()),*targetWithComponents);
-        motor->colorComponents(targetWithComponents,0,100,255);
+        motor->colorComponents(targetWithComponents,0,150,255);
         pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(targetWithComponents);
         viewer->addPointCloud<pcl::PointXYZRGB>(targetWithComponents, rgb, "target");
         viewer->resetCamera();
