@@ -104,6 +104,7 @@ void filterCorrespondences ( pcl::PointCloud<pcl::PointXYZI>::Ptr source_keypoin
     pcl::registration::CorrespondenceRejectorSampleConsensus<pcl::PointXYZI> rejector;
     rejector.setInputCloud(source_keypoints_);
     rejector.setTargetCloud(target_keypoints_);
+    rejector.setMaxIterations(50);
     rejector.setInlierThreshold(2);
     rejector.setInputCorrespondences(correspondences_);
     rejector.getCorrespondences(*correspondences_);
