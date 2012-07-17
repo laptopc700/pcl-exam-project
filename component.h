@@ -12,8 +12,7 @@ class Component
 public:
     //CONSTRUCTORS
     Component();
-    Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_,
-              int generatingIndex_, double clusterThreshold_, int colorThreshold_);
+    Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_, int generatingIndex_, double clusterThreshold_, int colorThreshold_);
 
     //GETTERS
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getCloud(); // returns the component cloud to which the component is referred (target or source).

@@ -31,7 +31,7 @@ pcl::PointIndices::Ptr Component::getIndices()
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr Component::getComponentCloud()
 {
    pcl::PointCloud<pcl::PointXYZRGB>::Ptr componentCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::copyPointCloud(*cloud,*componentIndices,*componentCloud);
+   pcl::copyPointCloud(*cloud,*componentIndices,*componentCloud);
    return componentCloud;
 }
 int Component::getGeneratingIndex()
