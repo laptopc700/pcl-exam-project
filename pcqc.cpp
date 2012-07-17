@@ -179,6 +179,7 @@ Pcqc::colorComponents(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, int r, int g
 
 void Pcqc::componentSelection(int selectedPointIndex)
 {
+    lastClickedPointIndex = selectedPointIndex; // save the last clicked point index
     cout << "Component Segmentation... "<<flush; // DEBUG PRINT
     pcl::copyPointCloud(*targetCloud, *newComponentCloud); // start from a new copy of the cloud
     newComponentPointIndices->indices.clear();// and a new point indices
@@ -207,12 +208,10 @@ bool Pcqc::componentSave(QString componentName)
     {
         pcl::PointIndices::Ptr indicesToSave(new pcl::PointIndices);
         indicesToSave->indices = newComponentPointIndices->indices;
-        //TO DO: METTERE I TRE DATI (INDICE, CLUTHRESH, COLTHRESH)
-        Component newComponent(targetCloud,indicesToSave,0,cluThreshold,colThreshold);
+        Component newComponent(targetCloud, indicesToSave, lastClickedPointIndex, cluThreshold, colThreshold);
         componentsList.insert(componentName, newComponent); // se non è già presente quella chiave, aggiungo il componente, altrimenti no
         return true;
     }
-
     else return false;
 }
 

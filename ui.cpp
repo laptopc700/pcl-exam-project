@@ -67,17 +67,6 @@ void Ui::browseLoadTarget()
     else statusBar()->showMessage(QString("couldn't load the target point cloud, maybe the path or the filename are not correct."));
 
 }
-//void Ui::browseTarget()
-//{
-//    QString fileName = QFileDialog::getOpenFileName(this, tr("Load Target Point Cloud"), "/home", tr("Point Clouds *.pcd (*.pcd);;All Files (*.*)"));
-//    pathTField->setText(fileName);
-//}
-//void Ui::loadTarget()
-//{
-//    if(motor->loadTargetCloud(pathTField->displayText()))
-//        statusBar()->showMessage(pathTField->displayText()+QString(" successfully loaded!"));
-//    else statusBar()->showMessage(QString("couldn't load the target point cloud, maybe the path or the filename are not correct."));
-//}
 
 void Ui::browseLoadSource()
 {
@@ -87,18 +76,6 @@ void Ui::browseLoadSource()
         statusBar()->showMessage(pathSField->displayText()+QString(" successfully loaded!"));
     else statusBar()->showMessage(QString("couldn't load the source point cloud, maybe the path or the filename are not correct."));
 }
-
-//void Ui::browseSource()
-//{
-//    QString fileName = QFileDialog::getOpenFileName(this, tr("Load Source Point Cloud"), "/home", tr("Point Clouds *.pcd (*.pcd);;All Files (*.*)"));
-//    pathSField->setText(fileName);
-//}
-//void Ui::loadSource()
-//{
-//    if(motor->loadSourceCloud(pathSField->displayText()))
-//        statusBar()->showMessage(pathSField->displayText()+QString(" successfully loaded!"));
-//    else statusBar()->showMessage(QString("couldn't load the source point cloud, maybe the path or the filename are not correct."));
-//}
 
 void Ui::clearAll()
 {

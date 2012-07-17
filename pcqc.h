@@ -55,6 +55,7 @@ private:
     int cluThreshold; // the color threshold (0-255) of tolerance for the color segmentation
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr newComponentCloud;
     pcl::PointIndices::Ptr newComponentPointIndices;
+    int lastClickedPointIndex; // the index of the last point clicked (used to define the component selection)
     QMap<QString, Component> componentsList; // dictonary that maps a name of a component with a point indices of the target cloud that define that component
 
 
