@@ -222,6 +222,15 @@ bool Pcqc::componentDelete(QString componentName)
     else return false;
 }
 
+void Pcqc::findSourceComponent()
+{
+    QMapIterator<QString,Component> iter(componentsList);
+    Component toFind=iter.next().value();
+    pcl::PointIndices::Ptr toPrint (new pcl::PointIndices);
+    componentMatch(registeredCloud,targetCloud,toFind.getIndices(),toFind.getGeneratingIndex(),toFind.getClusterThreshold(),toFind.getColorThreshold(),toPrint);
+    cout <<"\n\nAreo qua!! "<<toPrint->indices.size()<<endl;
+}
+
 void Pcqc::registration()
 {
     registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 1, 0);

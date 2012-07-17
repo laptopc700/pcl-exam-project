@@ -6,13 +6,28 @@
 using namespace std;
 
 
+//void
+//matchComponent
+//(
+//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredSource,
+//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud,
+//        pcl::PointIndices::Ptr inputComponentIndices,
+//        int clickedIndex,
+//        double cluThreshold,
+//        int colThreshold,
+//        pcl::PointIndices::Ptr outputComponentIndices
+//);
+
 void
-matchComponent
+componentMatch
 (
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredSource,
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud,
-    pcl::PointIndices::Ptr inputTargetIndices,
-    pcl::PointIndices::Ptr outputSourceIndices
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredSource,
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud,
+        pcl::PointIndices::Ptr inputComponentIndices,
+        int clickedIndex,
+        double cluThreshold,
+        int colThreshold,
+        pcl::PointIndices::Ptr outputComponentIndices
 );
 
 bool colorOk(pcl::PointXYZRGB &p1,pcl::PointXYZRGB &p2);

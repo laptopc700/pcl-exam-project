@@ -167,31 +167,6 @@ registerSourceToTarget (
     //per cancellare i warnings
     pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
 
-    //vector<int> indices;
-    //pcl::removeNaNFromPointCloud(*source, *source, indices);
-    //if (verbosity) cout << "OK! Loaded "<< source->points.size() << " points from file SOURCE \n";
-    //vector<int> indices2;
-    //pcl::removeNaNFromPointCloud(*target, *target, indices2);
-    //if (verbosity) cout << "OK! Loaded "<< target->points.size() << " points from file TARGET \n";
-
-
-    ////Voxelling and downsampling
-    //double leafSize=0.5;
-    //pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_vox  (new pcl::PointCloud<pcl::PointXYZRGB>);
-    //pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_vox  (new pcl::PointCloud<pcl::PointXYZRGB>);
-    //source_vox = voxelCloud(source,leafSize, verbosity);
-    //target_vox = voxelCloud(target,leafSize, verbosity);
-
-    ////segmenta il piano
-    //  pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_segmented (new pcl::PointCloud<pcl::PointXYZRGB>);
-    //  pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_segmented (new pcl::PointCloud<pcl::PointXYZRGB>);
-    //  segmentation (source_vox, source_segmented, verbosity);
-    //if(compute_target){
-    //segmentation (target_vox, target_segmented, verbosity);
-    //pcl::io::savePCDFileBinary("correct/target_segmented.pcd",*target_segmented);
-    //}
-    //else pcl::io::loadPCDFile("correct/target_segmented.pcd",*target_segmented);
-
     //sift3d keypoint detector
     pcl::PointCloud<pcl::PointXYZI>::Ptr source_keypoints (new pcl::PointCloud<pcl::PointXYZI> ());
     pcl::PointCloud<pcl::PointXYZI>::Ptr target_keypoints (new pcl::PointCloud<pcl::PointXYZI> ());
@@ -232,7 +207,7 @@ registerSourceToTarget (
 //    Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_transformed , registered, target, verbosity);
     pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
 
-    //questa trasformazione non serve, la fa già registration->align riga 147
+    //questa trasformazione non serve, la fa già registration->align riga 148
 //    if (verbosity) cout << "Source cloud final alignment..." << flush;
 //    pcl::transformPointCloud(*registered, *registered, final_transformation_matrix);
 //    if (verbosity) cout << "OK" << endl;
