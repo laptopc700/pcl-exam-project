@@ -27,7 +27,7 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getRegisteredCloud();
-    QColor* getPointColor(int pointIndex);
+    QColor* getPointColor(int pointIndex); // da modificare per renderlo utile anche su altre cloud (prendere come argomento un cloud pointer)
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getNewComponentCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getComponentCloud(QString componentName);
 
@@ -36,8 +36,8 @@ public:
     void setColorSegThreshold(int threshold); // set the color threshold (0-255) of tolerance for the color segmentation
 
     //FUNCTIONS
-    void colorIndices( pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, pcl::PointIndices::Ptr indices,int r,int g, int b);//color in r,g,b the specified indices of the input cloud
-    void colorComponents( pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,int r, int g,int b);//color in r,g,b the specified indices of the input cloud
+    void colorIndices( pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, pcl::PointIndices::Ptr indices,int r,int g, int b); // color in r,g,b the specified indices of the input cloud
+    void colorComponents( pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,int r, int g,int b); //color in r,g,b the specified indices of the input cloud
     void componentSelection(int selectedPointIndex); // select a component with the specified thresholds, and color it in green in the newComponentCloud
     bool componentSegmentation(); // segment the new component from the target cloud with the newComponentPointIndices and save it in the newComponentCloud
     bool componentSave(QString componentName); // add segmented component to component list (maybe dictionary?)
