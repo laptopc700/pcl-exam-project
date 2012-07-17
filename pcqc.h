@@ -5,9 +5,11 @@
 #include "componentSelection.h"
 #include "componentMatch.h"
 #include "component.h"
+#include <qiterator.h>
 #include <QMap>
 #include <QString>
 #include <QColor>
+#include <iterator>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/segmentation/sac_segmentation.h>
@@ -34,15 +36,8 @@ public:
     void setColorSegThreshold(int threshold); // set the color threshold (0-255) of tolerance for the color segmentation
 
     //FUNCTIONS
-    void
-    colorIndices
-    (
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
-        pcl::PointIndices::Ptr indices,
-        int r,
-        int g,
-        int b
-    );//color in r,g,b the specified indices of the input cloud
+    void colorIndices( pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, pcl::PointIndices::Ptr indices,int r,int g, int b);//color in r,g,b the specified indices of the input cloud
+    void colorComponents( pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,int r, int g,int b);//color in r,g,b the specified indices of the input cloud
     void componentSelection(int selectedPointIndex); // select a component with the specified thresholds, and color it in green in the newComponentCloud
     bool componentSegmentation(); // segment the new component from the target cloud with the newComponentPointIndices and save it in the newComponentCloud
     bool componentSave(QString componentName); // add segmented component to component list (maybe dictionary?)
@@ -60,7 +55,7 @@ private:
     int cluThreshold; // the color threshold (0-255) of tolerance for the color segmentation
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr newComponentCloud;
     pcl::PointIndices::Ptr newComponentPointIndices;
-    QMap<QString, pcl::PointIndices> componentsList; // dictonary that maps a name of a component with a point indices of the target cloud that define that component
+    QMap<QString, Component> componentsList; // dictonary that maps a name of a component with a point indices of the target cloud that define that component
 
 
 };

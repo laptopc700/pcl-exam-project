@@ -1,5 +1,14 @@
 #include "component.h"
 
+Component::Component()
+{
+    cloud.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
+    componentIndices.reset(new pcl::PointIndices);
+    generatingIndex=0;
+    clusterThreshold=0;
+    colorThreshold=0;
+}
+
 Component::Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_,
           int generatingIndex_, double clusterThreshold_, int colorThreshold_)
 {
@@ -18,6 +27,12 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Component::getCloud()
 pcl::PointIndices::Ptr Component::getIndices()
 {
     return componentIndices;
+}
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Component::getComponentCloud()
+{
+   pcl::PointCloud<pcl::PointXYZRGB>::Ptr componentCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::copyPointCloud(*cloud,*componentIndices,*componentCloud);
+   return componentCloud;
 }
 int Component::getGeneratingIndex()
 {

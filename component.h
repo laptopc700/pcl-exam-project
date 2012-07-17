@@ -10,13 +10,15 @@ class Component
 {
 
 public:
-    //CONSTRUCTOR
+    //CONSTRUCTORS
+    Component();
     Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_,
               int generatingIndex_, double clusterThreshold_, int colorThreshold_);
 
     //GETTERS
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getCloud();
     pcl::PointIndices::Ptr getIndices();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getComponentCloud();
     int getGeneratingIndex();
     int getColorThreshold();
     double getClusterThreshold();

@@ -417,8 +417,12 @@ void Ui::showTarget()
 {
     if(!viewer->removePointCloud("target"))
     {
-        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getTargetCloud());
-        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "target");
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetWithComponents(new pcl::PointCloud<pcl::PointXYZRGB>);
+        pcl::copyPointCloud( *(motor-> getTargetCloud()),*targetWithComponents);
+        motor->colorComponents(targetWithComponents,0,100,255);
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(targetWithComponents);
+        viewer->addPointCloud<pcl::PointXYZRGB>(targetWithComponents, rgb, "target");
         viewer->resetCamera();
         statusBar()->showMessage(QString("Target point cloud added to the visualizer."));
     }
@@ -475,7 +479,7 @@ void Ui::showSourceComponent()
 //    if(  !viewer->removePointCloud( sourceComponentsList->currentText().toStdString() )  )
 //    {
 //        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getComponentCloud(sourceComponentsList->currentText()) );
-//        viewer->addPointCloud<pcl::PointXYZRGB>( motor->getComponentCloud(sourceComponentsList->currentText()), rgb, sourceComponentsList->currentText().toStdString() );
+//        viewer->addPointCloud<pcl::PointXYZRGB>( motor->(sourceComponentsList->currentText()), rgb, sourceComponentsList->currentText().toStdString() );
 //        viewer->resetCamera();
 //        statusBar()->showMessage(QString("%1 point cloud added to the visualizer.").arg(sourceComponentsList->currentText()));
 //    }
@@ -531,14 +535,10 @@ void Ui::setupLoadTBox()
     loadTBox = new QGroupBox(QString("Load Target Cloud"));
     browseTButton = new QPushButton(QString("Browse..."));
     connect(browseTButton, SIGNAL(clicked()), this, SLOT(browseLoadTarget()));
-//    connect(browseTButton, SIGNAL(clicked()), this, SLOT(browseTarget()));
     pathTField = new QLineEdit();
-//    loadTButton = new QPushButton(QString("LOAD!"));
-//    connect(loadTButton, SIGNAL(clicked()), this, SLOT(loadTarget()));
     loadTargetLayout = new QHBoxLayout;
     loadTargetLayout->addWidget(browseTButton);
     loadTargetLayout->addWidget(pathTField);
-//    loadTargetLayout->addWidget(loadTButton);
     loadTBox->setLayout(loadTargetLayout);
 }
 
@@ -583,14 +583,11 @@ void Ui::setupLoadSBox()
     loadSBox = new QGroupBox(QString("Load Source Cloud"));
     browseSButton = new QPushButton(QString("Browse..."));
     connect(browseSButton, SIGNAL(clicked()), this, SLOT(browseLoadSource()));
-//    connect(browseSButton, SIGNAL(clicked()), this, SLOT(browseSource()));
+
     pathSField = new QLineEdit();
-//    loadSButton = new QPushButton(QString("LOAD!"));
-//    connect(loadSButton, SIGNAL(clicked()), this, SLOT(loadSource()));
     loadSourceLayout = new QHBoxLayout;
     loadSourceLayout->addWidget(browseSButton);
     loadSourceLayout->addWidget(pathSField);
-//    loadSourceLayout->addWidget(loadSButton);
     loadSBox->setLayout(loadSourceLayout);
 }
 

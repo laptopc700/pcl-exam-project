@@ -35,8 +35,6 @@ private slots:
     void about();
     void aboutPCL();
     void browseLoadTarget();
-//    void browseTarget();
-//    void loadTarget();
     void openComponentDialog();
     void setComponentDialogCallback();
     void resetComponentDialogCallback();
@@ -47,8 +45,6 @@ private slots:
     void deleteComponent();
     void openCheckDialog();
     void browseLoadSource();
-//    void browseSource();
-//    void loadSource();
 
     void start();
     void showTarget();

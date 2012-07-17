@@ -131,9 +131,8 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getNewComponentCloud()
 
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getComponentCloud(QString componentName)
 {
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr componentCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::copyPointCloud(*targetCloud, componentsList.value(componentName), *componentCloud);
-    return componentCloud;
+    Component component = componentsList.value(componentName);
+    return component.getComponentCloud();
 }
 
 //SETTERS
@@ -167,7 +166,29 @@ Pcqc::colorIndices
                 input->at(pointN).g=g;
                 input->at(pointN).b=b;
     }
+        cout << "colored" << indices->indices.size() << flush;
 }
+
+void
+Pcqc::colorComponents
+(
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
+    int r,
+    int g,
+    int b
+)
+{
+    cout << "colorComponents... " << flush;
+    QMapIterator<QString, Component> iter(componentsList);
+    Component currentComponent;
+    while (iter.hasNext())
+    {
+        currentComponent = iter.next().value();
+        colorIndices(input,currentComponent.getIndices(),r,g,b);
+    }
+
+}
+
 
 void Pcqc::componentSelection(int selectedPointIndex)
 {
@@ -197,7 +218,8 @@ bool Pcqc::componentSave(QString componentName)
 {
     if(componentsList.find(componentName) == componentsList.end())
     {
-        componentsList.insert(componentName, *newComponentPointIndices); // se non è già presente quella chiave, aggiungo il componente, altrimenti no
+        Component newComponent(targetCloud,newComponentPointIndices,0,0,0);
+        componentsList.insert(componentName, newComponent); // se non è già presente quella chiave, aggiungo il componente, altrimenti no
         return true;
     }
     else return false;
