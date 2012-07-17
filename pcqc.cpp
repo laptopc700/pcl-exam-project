@@ -177,7 +177,7 @@ Pcqc::colorComponents
     int g,
     int b
 )
-{
+{ //NON FUNZIONA!! COLORA SOLO L'ULTIMO COMPONENTE INSERITO
     cout << "colorComponents... " << flush;
     QMapIterator<QString, Component> iter(componentsList);
     Component currentComponent;
