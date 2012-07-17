@@ -148,8 +148,7 @@ void Pcqc::setColorSegThreshold(int threshold)
 
 //FUNCTIONS
 
-void
-Pcqc::colorIndices(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, pcl::PointIndices::Ptr indices, int r, int g, int b)
+void Pcqc::colorIndices(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, pcl::PointIndices::Ptr indices, int r, int g, int b)
 {
     cout << "colorIndices... " << flush;
     for (int i =0; i<indices->indices.size();i++)
@@ -162,8 +161,7 @@ Pcqc::colorIndices(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, pcl::PointIndic
     cout << "colored" << indices->indices.size() << flush;
 }
 
-void
-Pcqc::colorComponents(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, int r, int g, int b)
+void Pcqc::colorComponents(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, int r, int g, int b)
 { //NON FUNZIONA!! COLORA SOLO L'ULTIMO COMPONENTE INSERITO
     cout << "colorComponents... " << flush;
     QMapIterator<QString, Component> iter(componentsList);
@@ -175,7 +173,6 @@ Pcqc::colorComponents(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, int r, int g
     }
 
 }
-
 
 void Pcqc::componentSelection(int selectedPointIndex)
 {
