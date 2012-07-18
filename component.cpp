@@ -4,19 +4,27 @@ Component::Component()
 {
     cloud.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
     componentIndices.reset(new pcl::PointIndices);
-    generatingIndex=0;
-    clusterThreshold=0;
-    colorThreshold=0;
+    generatingIndex  =0;
+    clusterThreshold = 0;
+    colorThreshold = 0;
 }
 
-Component::Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_,
-          int generatingIndex_, double clusterThreshold_, int colorThreshold_)
+Component::Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_, int generatingIndex_, double clusterThreshold_, int colorThreshold_)
 {
-    cloud= cloud_;
+    cloud = cloud_;
     componentIndices=componentIndices_;
     generatingIndex=generatingIndex_;
     clusterThreshold=clusterThreshold_;
     colorThreshold=colorThreshold_;
+}
+
+Component::Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_)
+{
+    cloud = cloud_;
+    componentIndices=componentIndices_;
+    generatingIndex = 0;
+    clusterThreshold = 0;
+    colorThreshold = 0;
 }
 
 //GETTERS

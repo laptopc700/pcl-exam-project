@@ -9,46 +9,38 @@ segmentCluster
     double threshold
 )
 {
-    cout << "segmentCluster... " << flush;
+    cout << "segmentCluster... " << flush; // DEBUG
     vector<pcl::PointIndices> cluster_indices_out;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
-//TO DO: METTERE UN KDTREE??
-//    pcl::KdTreeFLANN<pcl::PointXYZRGB> tree = new pcl::KdTreeFLANN<pcl::PointXYZRGB>;
     ec.setClusterTolerance (threshold);
     ec.setMinClusterSize (1);
     ec.setMaxClusterSize (input->size());
     ec.setInputCloud (input);
-//    ec.setSearchMethod(tree);
     ec.extract (cluster_indices_out);
-
-
 //    i cluster index
 //    j index of the point in the i-th cluster
 //    if the j-th point is the one selected the cluster selected is the i-th
-
     int selectedClusterIndex=-1;
     for (int i=0;i<cluster_indices_out.size();i++)
         if (selectedClusterIndex>0) break;
         else
             for (int j=0;j<cluster_indices_out[i].indices.size();j++)
-                  if(cluster_indices_out[i].indices.at(j)==selectedPointIndex)
-                  {
-                  selectedClusterIndex=i;
-                  break;
-                  }
+                if(cluster_indices_out[i].indices.at(j)==selectedPointIndex)
+                {
+                    selectedClusterIndex=i;
+                    break;
+                }
 
     //non sono riuscito a tirar fuori il cluster in altro modo, ma si dovrebbe riuscire a fare meglio...
-pcl::PointIndices temp=cluster_indices_out[selectedClusterIndex];
-        while(!temp.indices.empty()){
+    pcl::PointIndices temp=cluster_indices_out[selectedClusterIndex];
+    while(!temp.indices.empty())
+    {
         output->indices.push_back(temp.indices.back());
         temp.indices.pop_back();
-        }
+    }
 }
 
-
-
-void
-segmentColor
+void segmentColor
 (
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,
     pcl::PointIndices::Ptr output,
@@ -56,7 +48,7 @@ segmentColor
     int threshold
 )
 {
-    cout << "segmentColor... " << flush;
+    cout << "segmentColor... " << flush; // DEBUG
     pcl::PointXYZRGB selectedPoint = (*input)[selectedPointIndex];
     int r = selectedPoint.r;
     int g = selectedPoint.g;
@@ -85,7 +77,7 @@ intersectIndices
     pcl::PointIndices::Ptr intersection
 )
 {
-    cout << "intersectIndices... " << flush;
+    cout << "intersectIndices... " << flush; // DEBUG
 
     // point indices intersection cycle
     while(!first->indices.empty() && !second->indices.empty())

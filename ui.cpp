@@ -388,7 +388,7 @@ void Ui::start()
     statusBar()->showMessage("Registration...OK");
 
     //COMPONENTS CHECK
-    motor->findSourceComponent();
+    motor->findSourceComponents();
 
     // TO DO
 }
@@ -397,10 +397,9 @@ void Ui::showTarget()
 {
     if(!viewer->removePointCloud("target"))
     {
-
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetWithComponents(new pcl::PointCloud<pcl::PointXYZRGB>);
-        pcl::copyPointCloud( *(motor-> getTargetCloud()),*targetWithComponents);
-        motor->colorComponents(targetWithComponents,0,150,255);
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetWithComponents(new pcl::PointCloud<pcl::PointXYZRGB>); // DEBUG, DEVE MOSTRARE LA CLOUD "PURA" E POI PERMETTERE DI EVIDENIZIARLI
+        pcl::copyPointCloud( *(motor-> getTargetCloud()),*targetWithComponents); // DEBUG
+        motor->colorComponents(targetWithComponents, motor->getTargetComponentsList(), 0, 150, 255); // DEBUG
         pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(targetWithComponents);
         viewer->addPointCloud<pcl::PointXYZRGB>(targetWithComponents, rgb, "target");
         viewer->resetCamera();
@@ -427,8 +426,11 @@ void Ui::showRegistered()
 {
     if(!viewer->removePointCloud("registered"))
     {
-        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(motor->getRegisteredCloud());
-        viewer->addPointCloud<pcl::PointXYZRGB>(motor->getRegisteredCloud(), rgb, "registered");
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredWithComponents(new pcl::PointCloud<pcl::PointXYZRGB>); // DEBUG, DEVE MOSTRARE LA CLOUD "PURA" E POI PERMETTERE DI EVIDENIZIARLI
+        pcl::copyPointCloud( *(motor->getRegisteredCloud()),*registeredWithComponents); // DEBUG
+        motor->colorComponents(registeredWithComponents, motor->getSourceComponentsList(), 0, 255, 0); // DEBUG
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(registeredWithComponents);
+        viewer->addPointCloud<pcl::PointXYZRGB>(registeredWithComponents, rgb, "registered");
         viewer->resetCamera();
         statusBar()->showMessage(QString("Registered point cloud added to the visualizer."));
     }
@@ -442,8 +444,8 @@ void Ui::showTargetComponent()
         return;
     if(  !viewer->removePointCloud( targetComponentsList->currentText().toStdString() )  )
     {
-        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getComponentCloud(targetComponentsList->currentText()) );
-        viewer->addPointCloud<pcl::PointXYZRGB>( motor->getComponentCloud(targetComponentsList->currentText()), rgb, targetComponentsList->currentText().toStdString() );
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getTargetComponentCloud(targetComponentsList->currentText()) );
+        viewer->addPointCloud<pcl::PointXYZRGB>( motor->getTargetComponentCloud(targetComponentsList->currentText()), rgb, targetComponentsList->currentText().toStdString() );
         viewer->resetCamera();
         statusBar()->showMessage(QString("%1 point cloud added to the visualizer.").arg(targetComponentsList->currentText()));
     }

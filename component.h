@@ -5,14 +5,15 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/common/transforms.h>
 
+//TO DO: Considerare la possibilità di rendere questa classe astratta e di ereditarla nelle classi TargetComponent e SourceComponent, o nei tipi di componenti specifici.
 
 class Component
 {
-
 public:
     //CONSTRUCTORS
-    Component();
-    Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_, int generatingIndex_, double clusterThreshold_, int colorThreshold_);
+    Component(); //empty
+    Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_, int generatingIndex_, double clusterThreshold_, int colorThreshold_); // target component
+    Component(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_, pcl::PointIndices::Ptr componentIndices_); //source component
 
     //GETTERS
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getCloud(); // returns the component cloud to which the component is referred (target or source).
@@ -35,8 +36,5 @@ private:
     int generatingIndex; // index of the point clicked on the target/source cloud to segment this component.
     double clusterThreshold; // clustering threshold used tosegment this component.
     int colorThreshold; // color threshold used to segment this component.
-
-
-
 };
 #endif // COMPONENT_H
