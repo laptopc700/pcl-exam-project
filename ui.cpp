@@ -378,7 +378,7 @@ void Ui::start()
     }
     if(motor->getSourceCloud()->empty())
     {
-        statusBar()->showMessage(QString("Load an input cloud before starting."));
+        statusBar()->showMessage(QString("Load an sample cloud before starting."));
         return;
     }
 
@@ -388,13 +388,9 @@ void Ui::start()
     statusBar()->showMessage("Registration...OK");
 
     //COMPONENTS CHECK
-motor->findSourceComponent();
-//    ...
-//    ...
-//    ...
-//    ...
-//    ...
-//    ...
+    motor->findSourceComponent();
+
+    // TO DO
 }
 
 void Ui::showTarget()
@@ -516,7 +512,7 @@ void Ui::setupStatusBar()
 
 void Ui::setupLoadTBox()
 {
-    loadTBox = new QGroupBox(QString("Load Target Cloud"));
+    loadTBox = new QGroupBox(QString("Load Reference Cloud"));
     browseTButton = new QPushButton(QString("Browse..."));
     connect(browseTButton, SIGNAL(clicked()), this, SLOT(browseLoadTarget()));
     pathTField = new QLineEdit();
@@ -564,7 +560,7 @@ void Ui::setupChecksBox()
 
 void Ui::setupLoadSBox()
 {
-    loadSBox = new QGroupBox(QString("Load Source Cloud"));
+    loadSBox = new QGroupBox(QString("Load Sample Cloud"));
     browseSButton = new QPushButton(QString("Browse..."));
     connect(browseSButton, SIGNAL(clicked()), this, SLOT(browseLoadSource()));
 

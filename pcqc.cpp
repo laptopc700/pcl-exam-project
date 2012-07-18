@@ -226,7 +226,7 @@ void Pcqc::findSourceComponent()
     Component toFind=iter.next().value();
     pcl::PointIndices::Ptr toPrint (new pcl::PointIndices);
     componentMatch(registeredCloud,targetCloud,toFind.getIndices(),toFind.getGeneratingIndex(),toFind.getClusterThreshold(),toFind.getColorThreshold(),toPrint);
-    cout <<"\n Coloro quisti punti "<<toPrint->indices.size()<<endl;
+    cout <<"\n Coloro questi punti "<<toPrint->indices.size()<<endl;
     colorIndices(registeredCloud,toPrint,255,255,0);
 }
 

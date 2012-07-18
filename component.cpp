@@ -86,10 +86,3 @@ int Component::getSize()
 {
     return componentIndices->indices.size();
 }
-
-
-
-
-
-
-
