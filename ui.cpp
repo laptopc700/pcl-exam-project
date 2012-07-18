@@ -370,7 +370,7 @@ void Ui::openCheckDialog()
 
 void Ui::start()
 {
-    //INITIAL CHECKS
+    // INITIAL CHECKS
     if(motor->getTargetCloud()->empty())
     {
         statusBar()->showMessage(QString("Load a reference cloud before starting."));
@@ -382,15 +382,23 @@ void Ui::start()
         return;
     }
 
-    //REGISTRATION
-    statusBar()->showMessage("Registration...");
-    motor->registration();
+    // REGISTRATION
+    statusBar()->showMessage("Registration...");  
+    motor->registration();    
     statusBar()->showMessage("Registration...OK");
 
-    //COMPONENTS CHECK
+    // COMPONENTS CHECK
+    statusBar()->showMessage("Components matching...");
     motor->findSourceComponents();
+    //TO DO: add components to sourceComponentsList ComboBox
+    resultsList->append(QString("COMPONENTS MATCHING"));
+//    resultsList->append(QString("%1 of %2 components matched.").arg(sourceComponentsList->count()).arg(targetComponentsList->count()));
+    statusBar()->showMessage("Components matching...OK");
 
-    // TO DO
+    // VERIFY SOURCE COMPONENTS PROPERTIES
+    statusBar()->showMessage("Components check...");
+    resultsList->append(QString("COMPONENTS CHECK"));
+    statusBar()->showMessage("Components check...OK");
 }
 
 void Ui::showTarget()
