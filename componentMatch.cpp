@@ -3,40 +3,9 @@
 #include <pcl/common/geometry.h>
 #include <math.h>
 #include <pcl/search/kdtree.h>
-#include <pcl/search/search.h>
-
-//void
-//matchComponent(
-//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredSource,
-//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud,
-//        pcl::PointIndices::Ptr inputComponentIndices,
-//        int clickedIndex,
-//        double cluThreshold,
-//        int colThreshold,
-//        pcl::PointIndices::Ptr outputComponentIndices)
-//{
-//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-//  //  pcl::search::KdTree<pcl::PointXYZRGB>::Ptr kd (new pcl::search::KdTree<pcl::PointXYZRGB> ());
-//registerSourceToTarget(sourceCloud,targetCloud, registeredCloud,1,1);
-
-//pcl::PointXYZRGB clickedPoint = targetCloud->at(clickedIndex);
-//int guessedPointIndex=0;//parto dal primo punto della cloud
-//float distGuessedToRef=10000;//distanza iniziale infinita
-
-////cerca il punto della source piu' vicino (dist&color) a quello cliccato nella target
-//for (int i=0; i<sourceCloud->size();i++)
-//    {
-//    bool matchColor=colorOk(clickedPoint,sourceCloud->at(i));
-//    float distCurrentToRef=dist(clickedPoint,sourceCloud->at(i));//pcl::geometry::distance(clickedPoint,sourceCloud->at(i));
-//    if (distCurrentToRef<distGuessedToRef  && matchColor)//current piu' vicino
-//        {
-//        guessedPointIndex=i;
-//        distGuessedToRef=dist(clickedPoint,sourceCloud->at(guessedPointIndex));//pcl::geometry::distance(clickedPoint,sourceCloud->at(guessedPointIndex));
-//        }
-//    }//end for
-////component selection
-////segmentCluster(registeredCloud, ,guessedPointIndex,cluThreshold);
-//}
+#include <pcl/kdtree/io.h>
+#include <pcl/kdtree/kdtree.h>
+#include <pcl/kdtree/kdtree_flann.h>
 
 void
 componentMatch
@@ -51,47 +20,60 @@ componentMatch
 )
 {
 
+//pcl::KdTreeFLANN<pcl::PointXYZRGB> treeflann=new pcl::KdTreeFLANN<pcl::PointXYZRGB>();
+//pcl::search::KdTree <pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>);
 
-pcl::search::KdTree <pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>);
 pcl::PointXYZRGB clickedPoint = targetCloud->at(clickedIndex);
 int originalSize = registeredSource->size();
-registeredSource->push_back(clickedPoint); //aggiungo il punto cliccato, attorno al quale cerco i vicini
-pcl::PointIndices::Ptr k_indices(new pcl::PointIndices);
-vector<float> k_distances;
+registeredSource->push_back(clickedPoint); //aggiungo il punto cliccato, usandolo per la segmentazione
+
+
+
+//pcl::PointIndices::Ptr k_indices(new pcl::PointIndices);
+//vector<float> k_distances;
 
 //NON VA IL KDTREE, NON VA L'OCTREE NON VA UN CAZZO!
-//tree->nearestKSearch(registeredSource,originalSize,50,k_indices->indices,k_distances);
-//cerca il punto della source piu' vicino (dist&color) a quello cliccato nella target
-for (int i=0; i<k_indices->indices.size();i++)
-    cout << k_distances.at(i);
-    //if (colorOk(clickedPoint,registeredCloud->at(i)));
-
+//treeflann.setEpsilon(0.1);
+//treeflann.setInputCloud(registeredSource);
+//treeflann.nearestKSearch(registeredSource->at(originalSize),50,k_indices->indices,k_distances);
+////tree->nearestKSearch(registeredSource,originalSize,50,k_indices->indices,k_distances);
+////cerca il punto della source piu' vicino (dist&color) a quello cliccato nella target
+//for (int i=0; i<k_indices->indices.size();i++)
+//    if (colorOk(clickedPoint,registeredSource->at(k_indices->indices.at(i))))
+//    {
+//        cout << "Trovato punto alla distanza: "<<k_distances.at(i)<<endl;
+//        //break;
+//    }
+//    else
+//    {
+//        cout << "No! ";
+//    }
 
 
 //component selection
-//segmentCluster(registeredCloud, ,guessedPointIndex,cluThreshold);
+pcl::PointIndices::Ptr cluIndices(new pcl::PointIndices);
+cout<<cluThreshold;
+segmentCluster(registeredSource,cluIndices,originalSize,cluThreshold);
 
+pcl::PointIndices::Ptr colIndices(new pcl::PointIndices);
+segmentColor(registeredSource,colIndices,originalSize,colThreshold);
+
+intersectIndices(cluIndices,colIndices,outputComponentIndices);
+
+cout << "Size component on target cloud:"<<inputComponentIndices->indices.size()<<endl;
+cout << "Size component on source cloud:"<<outputComponentIndices->indices.size()<<endl;
 }
 
 //returns true if the color of the two points are similar (+-10 RGB)
-bool colorOk(pcl::PointXYZRGB &p1,pcl::PointXYZRGB &p2){
-    int threshold=10;
-    if
-        (
-         abs(p1.r-p2.r)<threshold &&
-         abs(p1.g-p2.g)<threshold &&
-         abs(p1.b-p2.b)<threshold
-        )
-        return true;
-    else
-        return false;
-}
-
-float dist (pcl::PointXYZRGB &p1,pcl::PointXYZRGB &p2)
-    {
-    return sqrt(
-                (p1.x-p2.x)*(p1.x-p2.x) +
-                (p1.y-p2.y)*(p1.y-p2.y) +
-                (p1.z-p2.z)*(p1.z-p2.z)
-                );
-    }
+//bool colorOk(pcl::PointXYZRGB &p1,pcl::PointXYZRGB &p2){
+//    int threshold=10;
+//    if
+//        (
+//         abs(p1.r-p2.r)<threshold &&
+//         abs(p1.g-p2.g)<threshold &&
+//         abs(p1.b-p2.b)<threshold
+//        )
+//        return true;
+//    else
+//        return false;
+//}

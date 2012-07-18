@@ -12,10 +12,13 @@ segmentCluster
     cout << "segmentCluster... " << flush;
     vector<pcl::PointIndices> cluster_indices_out;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
+//TO DO: METTERE UN KDTREE??
+//    pcl::KdTreeFLANN<pcl::PointXYZRGB> tree = new pcl::KdTreeFLANN<pcl::PointXYZRGB>;
     ec.setClusterTolerance (threshold);
     ec.setMinClusterSize (1);
     ec.setMaxClusterSize (input->size());
     ec.setInputCloud (input);
+//    ec.setSearchMethod(tree);
     ec.extract (cluster_indices_out);
 
 

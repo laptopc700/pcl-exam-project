@@ -212,12 +212,12 @@ registerSourceToTarget (
 //    pcl::transformPointCloud(*registered, *registered, final_transformation_matrix);
 //    if (verbosity) cout << "OK" << endl;
 
-    changeColor(source, 255, 0, 0);
-    changeColor(target, 0, 0, 255);
-    changeColor(registered,0, 255, 0);
-    if (verbosity) cout << "Restored "<< source->points.size() << " points source"<< endl;
-    if (verbosity) cout << "Restored "<< target->points.size() << " points target"<< endl;
-    if (verbosity) cout << "REGISTERED "<< registered->points.size() << " points"<< endl;
+//    changeColor(source, 255, 0, 0);
+//    changeColor(target, 0, 0, 255);
+//    changeColor(registered,0, 255, 0);
+//    if (verbosity) cout << "Restored "<< source->points.size() << " points source"<< endl;
+//    if (verbosity) cout << "Restored "<< target->points.size() << " points target"<< endl;
+//    if (verbosity) cout << "REGISTERED "<< registered->points.size() << " points"<< endl;
 
 
     time (&end);

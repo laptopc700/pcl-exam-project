@@ -20,7 +20,6 @@ pcl::VoxelGrid<pcl::PointXYZRGB> sor;
 sor.setInputCloud (input);
 sor.setLeafSize (leafSize,leafSize,leafSize);
 sor.filter (*cloud_filtered);
-//cout << "OK! Cloud downsampled in " << cloud_filtered->points.size() << " Voxels\n"<<flush;
 return cloud_filtered;
 }
 
@@ -28,7 +27,7 @@ void
 Pcqc::segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source,
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented)
 {
-  cout << "Plane segmentation... " << flush;
+  cout << "Plane segmentation... " <<flush;
   // fit plane and keep points above that plane
   pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
   pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
@@ -52,7 +51,6 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented)
   extract.filter (*segmented);
   vector<int> indices;
   pcl::removeNaNFromPointCloud(*segmented, *segmented, indices);
-//cout << "OK!  " << segmented->size  () << " points.\n"<<flush;
 }
 
 
@@ -64,7 +62,7 @@ sor.setInputCloud (cloud);
 sor.setMeanK (50);
 sor.setStddevMulThresh (1.0);
 sor.filter (*cloud);
-cout << "OK! " << cloud->size() << " points Loaded.\n"<<flush;
+cout << "OK! " << cloud->size() << " points Loaded."<<endl;
 }
 
 bool
@@ -138,7 +136,7 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getComponentCloud(QString component
 //SETTERS
 void Pcqc::setClusterSegThreshold(int threshold)
 {
-    cluThreshold = threshold;
+    cluThreshold = threshold/1000;
 }
 
 void Pcqc::setColorSegThreshold(int threshold)
@@ -150,7 +148,7 @@ void Pcqc::setColorSegThreshold(int threshold)
 
 void Pcqc::colorIndices(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, pcl::PointIndices::Ptr indices, int r, int g, int b)
 {
-    cout << "colorIndices... " << flush;
+  //  cout << "colorIndices... " << flush;
     for (int i =0; i<indices->indices.size();i++)
     {
                 int pointN= indices->indices.at(i);
@@ -158,12 +156,12 @@ void Pcqc::colorIndices(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, pcl::Point
                 input->at(pointN).g=g;
                 input->at(pointN).b=b;
     }
-    cout << "colored" << indices->indices.size() << flush;
+   // cout << "colored" << indices->indices.size() << flush;
 }
 
 void Pcqc::colorComponents(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, int r, int g, int b)
 { //NON FUNZIONA!! COLORA SOLO L'ULTIMO COMPONENTE INSERITO
-    cout << "colorComponents... " << flush;
+  //  cout << "colorComponents... " << flush;
     QMapIterator<QString, Component> iter(componentsList);
     Component currentComponent;
     while (iter.hasNext())
@@ -182,7 +180,7 @@ void Pcqc::componentSelection(int selectedPointIndex)
     newComponentPointIndices->indices.clear();// and a new point indices
 
     pcl::PointIndices::Ptr tempClusterIndices(new pcl::PointIndices);
-    segmentCluster(newComponentCloud, tempClusterIndices, selectedPointIndex, cluThreshold/1000 );
+    segmentCluster(newComponentCloud, tempClusterIndices, selectedPointIndex, cluThreshold );
 
     pcl::PointIndices::Ptr tempColorIndices(new pcl::PointIndices);
     segmentColor(newComponentCloud, tempColorIndices, selectedPointIndex, colThreshold );
@@ -228,7 +226,8 @@ void Pcqc::findSourceComponent()
     Component toFind=iter.next().value();
     pcl::PointIndices::Ptr toPrint (new pcl::PointIndices);
     componentMatch(registeredCloud,targetCloud,toFind.getIndices(),toFind.getGeneratingIndex(),toFind.getClusterThreshold(),toFind.getColorThreshold(),toPrint);
-    cout <<"\n\nAreo qua!! "<<toPrint->indices.size()<<endl;
+    cout <<"\n Coloro quisti punti "<<toPrint->indices.size()<<endl;
+    colorIndices(registeredCloud,toPrint,255,255,0);
 }
 
 void Pcqc::registration()
