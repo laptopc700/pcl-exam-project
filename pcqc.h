@@ -5,6 +5,7 @@
 #include "componentSelection.h"
 #include "componentMatch.h"
 #include "component.h"
+#include "segmentDifferences.h"
 #include <qiterator.h>
 #include <QMap>
 #include <QString>
@@ -50,11 +51,13 @@ public:
     void segmentation (pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr source, pcl::PointCloud<pcl::PointXYZRGB>::Ptr segmented); // performs segmentation of the main plane from the cloud.
     void removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud); // removes outliers from the cloud.
     int findSourceComponents(); // finds components in the source cloud corresponding to the componends of the target cloud specified in componentsList. Returns the number of components found.
+    void segmentDifferences();
 
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceCloud; // the new cloud to be registered and to be checked.
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud; // the reference cloud that is correct in every detail.
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredCloud; // the source cloud registered to the target cloud.
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud; //the output cloud from differences segmentation.
     int colThreshold; // the euclidean threshold for the clustering.
     int cluThreshold; // the color threshold (0-255) of tolerance for the color segmentation.
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr newComponentCloud;

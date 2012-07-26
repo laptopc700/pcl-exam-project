@@ -245,3 +245,8 @@ void Pcqc::registration()
 {
     registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 1, 0);
 }
+
+void Pcqc::segmentDifferences()
+{
+    segmentDiff(sourceCloud, targetCloud, 0.5, diffCloud);
+}

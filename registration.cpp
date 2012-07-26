@@ -204,8 +204,8 @@ registerSourceToTarget (
     if (verbosity) cout << "OK" << endl;
 
     //Final transformation
-//    Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_transformed , registered, target, verbosity);
-    pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
+    Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_transformed , registered, target, verbosity);
+//    pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
 
     //questa trasformazione non serve, la fa già registration->align riga 148
 //    if (verbosity) cout << "Source cloud final alignment..." << flush;
