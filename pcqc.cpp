@@ -53,8 +53,8 @@ void Pcqc::removeOutliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
     cout << "Removing outliers... " << flush; //DEBUG
     pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
     sor.setInputCloud (cloud);
-    sor.setMeanK (50);
-    sor.setStddevMulThresh (1.0);
+    sor.setMeanK (20);//prima 50
+    sor.setStddevMulThresh (1.0);//prima 1.0
     sor.filter (*cloud);
     cout << "OK! " << cloud->size() << " points Loaded."<<endl; //DEBUG
 }
@@ -66,7 +66,7 @@ bool Pcqc::loadTargetCloud(QString path)
     {
         vector<int> indices;
         pcl::removeNaNFromPointCloud(*targetCloud, *targetCloud, indices);
-        targetCloud=voxelCloud(targetCloud,0.4);
+        targetCloud=voxelCloud(targetCloud,0.4);//0.4
         segmentation(targetCloud,targetCloud);
         removeOutliers(targetCloud);
         return true;
@@ -243,7 +243,7 @@ int Pcqc::findSourceComponents()
 
 void Pcqc::registration()
 {
-    registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 1, 0);
+    registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 1, 1);
 }
 
 void Pcqc::segmentDifferences()

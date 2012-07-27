@@ -17,8 +17,4 @@ void componentMatch
     pcl::PointIndices::Ptr sourceComponentIndices
 );
 
-bool colorOk(pcl::PointXYZRGB &p1,pcl::PointXYZRGB &p2); // cosa fa questo metodo?
-
-float dist(pcl::PointXYZRGB &p1,pcl::PointXYZRGB &p2); // dafuq?
-
 #endif // COMPONENTMATCH_H

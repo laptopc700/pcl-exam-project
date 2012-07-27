@@ -26,7 +26,7 @@
 #include <pcl/registration/correspondence_rejection_sample_consensus.h>
 #include <pcl/common/transforms.h>
 #include <pcl/surface/grid_projection.h>
-
+#include <pcl/filters/voxel_grid.h>
 
 using namespace std;
 
@@ -40,7 +40,13 @@ registerSourceToTarget ( pcl::PointCloud<pcl::PointXYZRGB>::Ptr source ,
                          );
 
 
-
+int
+registerSourceToTarget2( pcl::PointCloud<pcl::PointXYZRGB>::Ptr source ,
+                         pcl::PointCloud<pcl::PointXYZRGB>::Ptr target,
+                         pcl::PointCloud<pcl::PointXYZRGB>::Ptr registered,
+                         int verbosity,
+                         int compute_target
+                         );
 
 
 

@@ -22,7 +22,7 @@ void detectKeypoints ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input,
 
     pcl::SIFTKeypoint<pcl::PointXYZRGB, pcl::PointXYZI>* sift3D = new pcl::SIFTKeypoint<pcl::PointXYZRGB, pcl::PointXYZI>;
     pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB> ());
-    sift3D->setScales(0.1, 3, 2);//0.1
+    sift3D->setScales(0.1, 3, 2);//0.1, 3, 2
     sift3D->setMinimumContrast(0.0);
     sift3D->setSearchMethod(tree);
     if (verbosity) cout << "Keypoint detection..." << flush;
@@ -37,7 +37,7 @@ void extractDescriptors ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input,
 {
     pcl::Feature<pcl::PointXYZRGB, pcl::FPFHSignature33>::Ptr feature_extractor_ (new pcl::FPFHEstimationOMP<pcl::PointXYZRGB, pcl::Normal, pcl::FPFHSignature33>);
     feature_extractor_->setSearchMethod (pcl::search::Search<pcl::PointXYZRGB>::Ptr (new pcl::search::KdTree<pcl::PointXYZRGB>));
-    feature_extractor_->setRadiusSearch (25);//25
+    feature_extractor_->setRadiusSearch (50);//25
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr kpts(new pcl::PointCloud<pcl::PointXYZRGB>);
     kpts->points.resize(keypoints->points.size());
@@ -51,7 +51,7 @@ void extractDescriptors ( pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input,
     pcl::PointCloud<pcl::Normal>::Ptr normals (new  pcl::PointCloud<pcl::Normal>);
     pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> normal_estimation;
     normal_estimation.setSearchMethod (pcl::search::Search<pcl::PointXYZRGB>::Ptr (new pcl::search::KdTree<pcl::PointXYZRGB>));
-    normal_estimation.setRadiusSearch (20);//20
+    normal_estimation.setRadiusSearch (50);//20
     normal_estimation.setInputCloud (kpts);//input, ho messo kpts per accelerare
     normal_estimation.compute (*normals);
     feature_from_normals->setInputNormals(normals);
@@ -130,32 +130,70 @@ Eigen::Matrix4f determineInitialTransformation (
 }
 
 Eigen::Matrix4f determineFinalTransformation (
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_transformed_ ,
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_registered_,
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_segmented_,
+        pcl::PointCloud<pcl::PointXYZI>::Ptr source_transformed_ ,
+        pcl::PointCloud<pcl::PointXYZI>::Ptr target_segmented_,
         int verbosity
         )
 {
     if (verbosity) cout << "Final matrix calculation..." << flush;
     Eigen::Matrix4f final_transformation_matrix_=Eigen::Matrix4f::Identity ();
-    pcl::Registration<pcl::PointXYZRGB, pcl::PointXYZRGB>::Ptr registration (new pcl::IterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB>);
+    //pcl::Registration<pcl::PointXYZI, pcl::PointXYZI>::Ptr registration (new pcl::Registration<pcl::PointXYZI, pcl::PointXYZI>);
+    pcl::Registration<pcl::PointXYZI, pcl::PointXYZI>::Ptr registration (new pcl::IterativeClosestPoint<pcl::PointXYZI, pcl::PointXYZI>);
+    //pcl::IterativeClosestPoint<pcl::PointXYZI, pcl::PointXYZI>::Ptr registration (new pcl::IterativeClosestPoint<pcl::PointXYZI, pcl::PointXYZI>);
     registration->setInputCloud(source_transformed_);
     registration->setInputTarget (target_segmented_);
-    registration->setMaxCorrespondenceDistance(4); //4
-    registration->setRANSACOutlierRejectionThreshold (4); //4
+    registration->setMaxCorrespondenceDistance(0.01); //4
+    registration->setRANSACOutlierRejectionThreshold (1000); //4
     registration->setTransformationEpsilon (0.0001); //0.0001
-    registration->setMaximumIterations (100); //1
-    registration->align(*source_registered_);
+    registration->setRANSACIterations(100);
+    //registration->setMaximumIterations (10000); //1
+    registration->align(*source_transformed_);
     final_transformation_matrix_ = registration->getFinalTransformation();
-    if (verbosity) cout << "OK" << endl;
+    if (verbosity) cout << "OK!" << endl;
     return final_transformation_matrix_;
 }
 
+//Eigen::Matrix4f determineFinalTransformation (
+//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_transformed_ ,
+//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_registered_,
+//        pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_segmented_,
+//        int verbosity
+//        )
+//{
+//    if (verbosity) cout << "Final matrix calculation..." << flush;
+//    Eigen::Matrix4f final_transformation_matrix_=Eigen::Matrix4f::Identity ();
+//    pcl::Registration<pcl::PointXYZRGB, pcl::PointXYZRGB>::Ptr registration (new pcl::IterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB>);
+//    registration->setInputCloud(source_transformed_);
+//    registration->setInputTarget (target_segmented_);
+//    registration->setMaxCorrespondenceDistance(4); //4
+//    registration->setRANSACOutlierRejectionThreshold (4); //4
+//    registration->setTransformationEpsilon (0.0001); //0.0001
+//    registration->setMaximumIterations (10); //1
+//    registration->align(*source_registered_);
+//    final_transformation_matrix_ = registration->getFinalTransformation();
+//    if (verbosity) cout << "OK" << endl;
+//    return final_transformation_matrix_;
+//}
+
+pcl::PointCloud<pcl::PointXYZI>::Ptr voxelCloudToKeypoints
+(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input,pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints, double leafSize)
+{
+    cout << "Voxelling and keypoints... "<<flush; //DEBUG
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::VoxelGrid<pcl::PointXYZRGB> sor;
+    sor.setInputCloud (input);
+    sor.setLeafSize (leafSize,leafSize,leafSize);
+    sor.filter (*cloud_filtered);
+    pcl::copyPointCloud(*cloud_filtered,*keypoints);
+    cout << "Cloud filtered: " << cloud_filtered->points.size()<< endl;
+    cout << "Voxel keypoints: " << keypoints->points.size()<< endl;
+    return keypoints;
+}
 //#################################################################################################
 //##############################################################   R E G I S T E R   ##############
 //#################################################################################################
-int
-registerSourceToTarget (
+int //VERSIONE ORIGINALE CON KEYPOINTS
+registerSourceToTarget2 (
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr source ,
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr target,
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr registered,
@@ -204,8 +242,8 @@ registerSourceToTarget (
     if (verbosity) cout << "OK" << endl;
 
     //Final transformation
-    Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_transformed , registered, target, verbosity);
-//    pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
+    //Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_transformed , registered, target, verbosity);
+    pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
 
     //questa trasformazione non serve, la fa già registration->align riga 148
 //    if (verbosity) cout << "Source cloud final alignment..." << flush;
@@ -214,11 +252,119 @@ registerSourceToTarget (
 
 //    changeColor(source, 255, 0, 0);
 //    changeColor(target, 0, 0, 255);
-//    changeColor(registered,0, 255, 0);
+//   changeColor(registered,0, 255, 0);
 //    if (verbosity) cout << "Restored "<< source->points.size() << " points source"<< endl;
 //    if (verbosity) cout << "Restored "<< target->points.size() << " points target"<< endl;
 //    if (verbosity) cout << "REGISTERED "<< registered->points.size() << " points"<< endl;
 
+
+    time (&end);
+    double dif = difftime (end,start);
+    if (verbosity) cout << "------------------------------------->  Registered in " << dif << " seconds"<< endl;
+}
+
+
+
+
+int //VERSIONE NO KEYPOINTS
+registerSourceToTarget (
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr source ,
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr target,
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr registered,
+        int verbosity, int compute_target)
+{
+    time_t start,end;
+    time (&start);
+
+    //per cancellare i warnings
+    pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
+
+    //sift3d keypoint detector
+    pcl::PointCloud<pcl::PointXYZI>::Ptr source_keypoints (new pcl::PointCloud<pcl::PointXYZI> ());
+    pcl::PointCloud<pcl::PointXYZI>::Ptr target_keypoints (new pcl::PointCloud<pcl::PointXYZI> ());
+
+    voxelCloudToKeypoints (source, source_keypoints, 5);
+    if(compute_target) {
+        voxelCloudToKeypoints(target, target_keypoints, 5);
+        pcl::io::savePCDFileBinary("correct/target_keypoints.pcd",*target_keypoints);}
+    else pcl::io::loadPCDFile("correct/target_keypoints.pcd",*target_keypoints);
+
+    //FPFH feature extractor
+    pcl::PointCloud<pcl::FPFHSignature33>::Ptr source_features (new pcl::PointCloud<pcl::FPFHSignature33>);
+    pcl::PointCloud<pcl::FPFHSignature33>::Ptr target_features (new pcl::PointCloud<pcl::FPFHSignature33>);
+    extractDescriptors (source, source_keypoints, source_features, verbosity);
+    if(compute_target) {
+        extractDescriptors (target, target_keypoints, target_features, verbosity);
+        pcl::io::savePCDFileBinary("correct/target_features.pcd",*target_features);}
+    else pcl::io::loadPCDFile("correct/target_features.pcd",*target_features);
+
+    //Find Correspondences
+    vector<int> source2target ;
+    vector<int> target2source ;
+    findCorrespondences (source_features, target_features, source2target, verbosity);
+    findCorrespondences (target_features, source_features, target2source, verbosity);
+
+    //Filter Correnspondences
+    pcl::CorrespondencesPtr correspondences (new pcl::Correspondences);
+    filterCorrespondences (source_keypoints, target_keypoints , source2target , target2source, correspondences, verbosity);
+
+    //Initial transformation
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr source_transformed (new pcl::PointCloud<pcl::PointXYZRGB>);
+    Eigen::Matrix4f initial_transformation_matrix = determineInitialTransformation (source_keypoints, target_keypoints, correspondences,
+                                                                                    /*source, source_transformed,*/ verbosity);
+    if (verbosity) cout << "Source cloud initial alignment..." << flush;
+    pcl::transformPointCloud(*source, *source_transformed, initial_transformation_matrix);
+    if (verbosity) cout << "OK" << endl;
+
+    //Final transformation
+    Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_keypoints, target_keypoints, verbosity);
+    pcl::transformPointCloud(*source_transformed, *registered, final_transformation_matrix);
+    //pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
+
+
+        changeColor(source, 255, 0, 0);
+        changeColor(target, 0, 0, 255);
+       changeColor(registered,0, 255, 0);
+
+    time (&end);
+    double dif = difftime (end,start);
+    if (verbosity) cout << "------------------------------------->  Registered in " << dif << " seconds"<< endl;
+}
+
+
+int //VERSIONE SOLO ICP
+registerSourceToTarget3 (
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr source ,
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr target,
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr registered,
+        int verbosity, int compute_target)
+{
+    time_t start,end;
+    time (&start);
+
+    //per cancellare i warnings
+    pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
+
+
+    pcl::PointCloud<pcl::PointXYZI>::Ptr source_keypoints (new pcl::PointCloud<pcl::PointXYZI> ());
+    pcl::PointCloud<pcl::PointXYZI>::Ptr target_keypoints (new pcl::PointCloud<pcl::PointXYZI> ());
+
+    voxelCloudToKeypoints (source, source_keypoints, 4);
+    if(compute_target) {
+        voxelCloudToKeypoints(target, target_keypoints, 4);
+        pcl::io::savePCDFileBinary("correct/target_keypoints.pcd",*target_keypoints);}
+    else pcl::io::loadPCDFile("correct/target_keypoints.pcd",*target_keypoints);
+
+
+    //Final transformation
+    Eigen::Matrix4f final_transformation_matrix = determineFinalTransformation (source_keypoints, target_keypoints, verbosity);
+    pcl::transformPointCloud(*source, *registered, final_transformation_matrix);
+    //pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
+
+
+       changeColor(source, 255, 0, 0);
+       changeColor(target, 0, 0, 255);
+       changeColor(registered,0, 255, 0);
 
     time (&end);
     double dif = difftime (end,start);
