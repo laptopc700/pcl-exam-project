@@ -73,6 +73,7 @@ private:
     static void pointPickCallback(const pcl::visualization::PointPickingEvent& event, void* cookie);
     static void pointPickCallbackSelectComponent(const pcl::visualization::PointPickingEvent& event, void* cookie);
     static QString colorToStyleSheet(QColor *color);
+    void setupSourceComboBox();
 
 // Motor object
     Pcqc *motor;

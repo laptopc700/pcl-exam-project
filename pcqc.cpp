@@ -125,6 +125,12 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetComponentCloud(QString com
     return component.getComponentCloud();
 }
 
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getSourceComponentCloud(QString componentName)
+{
+    Component component = sourceComponentsList.value(componentName);
+    return component.getComponentCloud();
+}
+
 QMap<QString, Component>* Pcqc::getTargetComponentsList()
 {
     return &targetComponentsList;

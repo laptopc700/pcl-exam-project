@@ -390,9 +390,9 @@ void Ui::start()
     // COMPONENTS CHECK
     statusBar()->showMessage("Components matching...");
     motor->findSourceComponents();
-    //TO DO: add components to sourceComponentsList ComboBox
+    setupSourceComboBox(); // fill the source components combo box with the names of the items discovered
     resultsList->append(QString("COMPONENTS MATCHING"));
-//    resultsList->append(QString("%1 of %2 components matched.").arg(sourceComponentsList->count()).arg(targetComponentsList->count()));
+    resultsList->append(QString("%1 of %2 components matched.").arg(sourceComponentsList->count()).arg(targetComponentsList->count()));
     statusBar()->showMessage("Components matching...OK");
 
     // VERIFY SOURCE COMPONENTS PROPERTIES
@@ -436,7 +436,7 @@ void Ui::showRegistered()
     {
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredWithComponents(new pcl::PointCloud<pcl::PointXYZRGB>); // DEBUG, DEVE MOSTRARE LA CLOUD "PURA" E POI PERMETTERE DI EVIDENIZIARLI
         pcl::copyPointCloud( *(motor->getRegisteredCloud()),*registeredWithComponents); // DEBUG
-        motor->colorComponents(registeredWithComponents, motor->getSourceComponentsList(), 0, 255, 0); // DEBUG
+        motor->colorComponents(registeredWithComponents, motor->getSourceComponentsList(), 0, 255, 255); // DEBUG
         pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(registeredWithComponents);
         viewer->addPointCloud<pcl::PointXYZRGB>(registeredWithComponents, rgb, "registered");
         viewer->resetCamera();
@@ -455,9 +455,9 @@ void Ui::showTargetComponent()
         pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getTargetComponentCloud(targetComponentsList->currentText()) );
         viewer->addPointCloud<pcl::PointXYZRGB>( motor->getTargetComponentCloud(targetComponentsList->currentText()), rgb, targetComponentsList->currentText().toStdString() );
         viewer->resetCamera();
-        statusBar()->showMessage(QString("%1 point cloud added to the visualizer.").arg(targetComponentsList->currentText()));
+        statusBar()->showMessage(QString("%1 point cloud removed from the visualizer.").arg(targetComponentsList->currentText()));
     }
-    else statusBar()->showMessage(QString("%1 point cloud removed from the visualizer.").arg(targetComponentsList->currentText()));
+    else statusBar()->showMessage(QString("%1 point cloud added to the visualizer.").arg(targetComponentsList->currentText()));
     qvtkVisualizer->update();
 }
 
@@ -465,22 +465,21 @@ void Ui::showSourceComponent()
 {
     if(sourceComponentsList->currentText() == "")
         return;
-    // TO DO BASING ON HOW WE ORGANISE THE SOURCE COMPONENTS ELABORATED IN PCQC
-//    if(  !viewer->removePointCloud( sourceComponentsList->currentText().toStdString() )  )
-//    {
-//        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getComponentCloud(sourceComponentsList->currentText()) );
-//        viewer->addPointCloud<pcl::PointXYZRGB>( motor->(sourceComponentsList->currentText()), rgb, sourceComponentsList->currentText().toStdString() );
-//        viewer->resetCamera();
-//        statusBar()->showMessage(QString("%1 point cloud added to the visualizer.").arg(sourceComponentsList->currentText()));
-//    }
-//    else statusBar()->showMessage(QString("%1 point cloud removed from the visualizer.").arg(sourceComponentsList->currentText()));
-//    qvtkVisualizer->update();
+    if( !viewer->removePointCloud( sourceComponentsList->currentText().toStdString() ) )
+    {
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb( motor->getSourceComponentCloud(sourceComponentsList->currentText()) );
+        viewer->addPointCloud<pcl::PointXYZRGB>( motor->getSourceComponentCloud(sourceComponentsList->currentText()), rgb, sourceComponentsList->currentText().toStdString() );
+        viewer->resetCamera();
+        statusBar()->showMessage(QString("%1 point cloud removed from the visualizer.").arg(sourceComponentsList->currentText()));
+    }
+    else statusBar()->showMessage(QString("%1 point cloud added to the visualizer.").arg(sourceComponentsList->currentText()));
+    qvtkVisualizer->update();
 }
 
 // TO DO: create slot functions for every action (every button)
-// TO DO: create slot functions for every action (every button)
-// TO DO: create slot functions for every action (every button)
-// TO DO: create slot functions for every action (every button)
+
+
+
 
 // UI FUNCTIONS
 void Ui::createActions()
@@ -623,7 +622,7 @@ void Ui::setupVisualizerCommands()
     showTargetComponentLayout->addWidget(showTComponentButton);
     showTargetComponentLayout->addWidget(targetComponentsList);
     showSComponentButton = new QPushButton(QString("Show/Hide Source Component"));
-    //connect
+    connect(showSComponentButton, SIGNAL(clicked()), this, SLOT(showSourceComponent()));
     sourceComponentsList = new QComboBox;
     showSourceComponentLayout = new QHBoxLayout;
     showSourceComponentLayout->addWidget(showSComponentButton);
@@ -713,4 +712,15 @@ QString Ui::colorToStyleSheet(QColor *color)
                                     .arg(color->green())
                                     .arg(color->blue());
     return styleSheet;
+}
+
+void Ui::setupSourceComboBox()
+{
+    QMap<QString, Component> *list = motor->getSourceComponentsList();
+    QMapIterator<QString, Component> iter(*list);
+    while (iter.hasNext())
+    {
+        iter.next(); // step to the next item
+        sourceComponentsList->addItem(iter.key()); //get the key of the item, i.e. the name of the component
+    }
 }

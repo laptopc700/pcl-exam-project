@@ -33,7 +33,7 @@ public:
 private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud; // pointer to the cloud from which the component was segmented.
     pcl::PointIndices::Ptr componentIndices; // indices of the component's points referred to "cloud" point cloud.
-    int generatingIndex; // index of the point clicked on the target/source cloud to segment this component.
+    int generatingIndex; // index of the point clicked on the target cloud to segment this component.
     double clusterThreshold; // clustering threshold used tosegment this component.
     int colorThreshold; // color threshold used to segment this component.
 };

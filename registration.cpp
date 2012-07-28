@@ -322,9 +322,9 @@ registerSourceToTarget (
     //pcl::copyPointCloud(*source_transformed, *registered);  //per non star li a cambiare le variabili se si attiva la final transformation
 
 
-        changeColor(source, 255, 0, 0);
-        changeColor(target, 0, 0, 255);
-       changeColor(registered,0, 255, 0);
+//       changeColor(source, 255, 0, 0);
+//       changeColor(target, 0, 0, 255);
+//       changeColor(registered,0, 255, 0);
 
     time (&end);
     double dif = difftime (end,start);
