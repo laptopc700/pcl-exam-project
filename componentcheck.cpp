@@ -49,3 +49,8 @@ componentCheck::CheckPlanarity(pcl::PointIndices::Ptr indices_src, pcl::PointInd
     return acos(num / (norm_src * norm_trg));
 
 }
+componentCheck::isPlanar(pcl::PointIndices::Ptr indices_src, pcl::PointIndices::Ptr indices_trg, double thr_plan, double thr_angle)
+{
+    double angle = CheckPlanarity(indices_src, indices_trg, thr_plan);
+    return (angle < thr_angle);
+}
