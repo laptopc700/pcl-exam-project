@@ -8,8 +8,9 @@ class componentCheck
 public:
     componentCheck(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_src_, pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_trg_);
 
-    double CheckPlanarity(pcl::PointIndices::Ptr indices_src, pcl::PointIndices::Ptr indices_trg, double thr);
+    bool isPlanar(pcl::PointIndices::Ptr indices_src, pcl::PointIndices::Ptr indices_trg, double thr_plan, double thr_angle);
 private:
+    double CheckPlanarity(pcl::PointIndices::Ptr indices_src, pcl::PointIndices::Ptr indices_trg, double thr);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr src_;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr trg_;
 };
