@@ -28,6 +28,7 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getRegisteredCloud();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getDiffCloud();
     QColor* getPointColor(int pointIndex); // TO DO: da modificare per renderlo utile anche su altre cloud (prendere come argomento un cloud pointer).
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getNewComponentCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetComponentCloud(QString componentName);
@@ -38,6 +39,7 @@ public:
     //SETTERS
     void setClusterSegThreshold(int threshold); // set the euclidean threshold for the clustering.
     void setColorSegThreshold(int threshold); // set the color threshold (0-255) of tolerance for the color segmentation.
+    void setSegDiffThreshold(int threshold); //set the distance threshold for differences segmentation.
 
     //FUNCTIONS
     void colorIndices(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointIndices::Ptr indices,int r,int g, int b); // color in r,g,b the specified indices of the input cloud.
@@ -60,6 +62,7 @@ private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud; //the output cloud from differences segmentation.
     int colThreshold; // the euclidean threshold for the clustering.
     int cluThreshold; // the color threshold (0-255) of tolerance for the color segmentation.
+    int segDiffThreshold; //the distance threshold for differences segmentation.
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr newComponentCloud;
     pcl::PointIndices::Ptr newComponentPointIndices;
     int lastClickedPointIndex; // the index of the last point clicked (used to define the component selection).

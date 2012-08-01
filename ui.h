@@ -40,10 +40,13 @@ private slots:
     void resetComponentDialogCallback();
     void setColorThreshold();
     void setClusterThreshold();
+    void setSegDiffThreshold();
     void segmentComponent();
     void saveComponent();
     void deleteComponent();
     void openCheckDialog();
+    void openAutoDialog();
+    void segmentDiff();
     void browseLoadSource();
 
     void start();
@@ -108,6 +111,8 @@ private:
 //    QPushButton *loadSButton;
     // results widget
     QPushButton *startButton;
+    QPushButton *autoButton;
+
     QTextEdit *resultsList;
     // visualization buttons widgets
     QPushButton *showTButton;
@@ -150,6 +155,8 @@ private:
     pcl::visualization::PCLVisualizer *dialogViewer;
 
     QDialog *addCheckDialog;
+    QDialog *autoDialog;
+
 
 };
 

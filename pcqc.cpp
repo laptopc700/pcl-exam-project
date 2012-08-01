@@ -7,8 +7,10 @@ Pcqc::Pcqc()
     newComponentCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     colThreshold = 0;
     cluThreshold = 0;
+    segDiffThreshold = 0.5;
     newComponentPointIndices.reset (new pcl::PointIndices);
     registeredCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
+    diffCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
 }
 
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize)
@@ -105,6 +107,11 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getRegisteredCloud()
     return registeredCloud;
 }
 
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getDiffCloud()
+{
+    return diffCloud;
+}
+
 QColor* Pcqc::getPointColor(int pointIndex)
 {
     QColor *color = new QColor;
@@ -150,6 +157,11 @@ void Pcqc::setClusterSegThreshold(int threshold)
 void Pcqc::setColorSegThreshold(int threshold)
 {
     colThreshold = threshold;
+}
+
+void Pcqc::setSegDiffThreshold(int threshold)
+{
+    segDiffThreshold = threshold/1000;
 }
 
 //FUNCTIONS
@@ -254,5 +266,5 @@ void Pcqc::registration()
 
 void Pcqc::segmentDifferences()
 {
-    segmentDiff(sourceCloud, targetCloud, 0.5, diffCloud);
+    segmentDiff(registeredCloud, targetCloud, 0.5, diffCloud);
 }
