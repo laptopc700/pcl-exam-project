@@ -520,19 +520,12 @@ void Ui::openAutoDialog()
 
     QVBoxLayout *slidersBox = new QVBoxLayout;
     QSlider *setSegDiffThresholdBar = new QSlider(Qt::Horizontal);
-    setSegDiffThresholdBar->setRange(0,5000);
+    setSegDiffThresholdBar->setRange(0, 5000);
     setSegDiffThresholdBar->setValue(500);
     motor->setSegDiffThreshold(500);
     setSegDiffThresholdBar->setObjectName("sliderSegDiff");
     connect(setSegDiffThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setSegDiffThreshold()));
-//    QSlider *setColThresholdBar = new QSlider(Qt::Horizontal);
-//    setColThresholdBar->setRange(0,255);
-//    setColThresholdBar->setValue(100);
-//    motor->setColorSegThreshold(100);
-//    setColThresholdBar->setObjectName("sliderColor");
-//    connect(setColThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setColorThreshold()));
     slidersBox->addWidget(setSegDiffThresholdBar);
-//    slidersBox->addWidget(setColThresholdBar);
 
 //    QPushButton *showSegButton = new QPushButton("Segment!");
 //    connect(showSegButton, SIGNAL(clicked()), this, SLOT(segmentComponent()));
@@ -550,10 +543,6 @@ void Ui::openAutoDialog()
     autoDialogLayout->addLayout(dialogControlsLayout);
     autoDialogLayout->addWidget(segmentDiffButton);
     autoDialog->setLayout(autoDialogLayout);
-
-    // DIALOG EXECUTION
-//    addComponentDialog->deleteLater(); // delete dialog when the control returns to the event loop from which deleteLater() was called (after exec i guess)
-//    causa seg fault se viene attivata la callback
 
     autoDialogLayout->deleteLater(); // delete dialog layout when the control returns to the event loop from which deleteLater() was called (after exec i guess)
     autoDialog->resize(800,600);

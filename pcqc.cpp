@@ -7,7 +7,7 @@ Pcqc::Pcqc()
     newComponentCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     colThreshold = 0;
     cluThreshold = 0;
-    segDiffThreshold = 0.5;
+    segDiffThreshold = 0;
     newComponentPointIndices.reset (new pcl::PointIndices);
     registeredCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
     diffCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -159,9 +159,10 @@ void Pcqc::setColorSegThreshold(int threshold)
     colThreshold = threshold;
 }
 
-void Pcqc::setSegDiffThreshold(int threshold)
+void Pcqc::setSegDiffThreshold(double threshold)
 {
     segDiffThreshold = threshold/1000;
+//    cout << segDiffThreshold << flush; //DEBUG
 }
 
 //FUNCTIONS
@@ -266,5 +267,5 @@ void Pcqc::registration()
 
 void Pcqc::segmentDifferences()
 {
-    segmentDiff(registeredCloud, targetCloud, 0.5, diffCloud);
+    segmentDiff(registeredCloud, targetCloud, segDiffThreshold, diffCloud);
 }
