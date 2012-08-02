@@ -486,10 +486,19 @@ void Ui::openAutoDialog()
     dialogVisualizer->SetRenderWindow(dialogViewer->getRenderWindow()); // set as render window the render window of the dialog visualizer
     dialogViewer->setupInteractor(dialogVisualizer->GetInteractor(), dialogVisualizer->GetRenderWindow()); // tells the visualizer what interactor is using now and for what window
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getRegisteredCloud();
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(temp);
-    dialogViewer->addPointCloud<pcl::PointXYZRGB>(temp, rgb, "cloud");
-    dialogViewer->setBackgroundColor(0.5, 0.5, 0.5);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr regCloud = motor->getRegisteredCloud();
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(regCloud);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud = motor->getDiffCloud();
+    pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> green(diffCloud, 0, 255, 0);
+    int v1(0); int v2(0);
+    dialogViewer->createViewPort(0.0, 0.0, 0.5, 1.0, v1);
+    dialogViewer->setBackgroundColor(0.5, 0.5, 0.5, v1);
+    dialogViewer->createViewPort(0.5, 0.0, 1.0, 1.0, v2);
+    dialogViewer->setBackgroundColor(0.5, 0.5, 0.5, v2);
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "targetCloud", v2);
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(regCloud, rgb, "sourceCloud", v1);
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(diffCloud, green, "diffCloud", v2);
+//    dialogViewer->setBackgroundColor(0.5, 0.5, 0.5);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
     componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallback, this); // callback standard non segmenta nulla
@@ -575,10 +584,10 @@ void Ui::segmentDiff()
     // DIFFERENCES SEGMENTATION
     statusBar()->showMessage("Differences segmentation...");
     motor->segmentDifferences();
-    dialogViewer->updatePointCloud(motor->getTargetCloud(),"cloud");
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp = motor->getDiffCloud();
-    pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> green(temp, 0, 255, 0);
-    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getDiffCloud(), green, "diffcloud");
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud = motor->getDiffCloud();
+    pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> green(diffCloud, 0, 255, 0);
+    dialogViewer->updatePointCloud(diffCloud, green, "diffCloud");
+//    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getDiffCloud(), green, "diffcloud");
     statusBar()->showMessage("Differences segmentation...OK");
 }
 
