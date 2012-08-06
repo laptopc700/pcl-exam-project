@@ -28,7 +28,8 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getRegisteredCloud();
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getDiffCloud();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceDiffCloud();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetDiffCloud();
     QColor* getPointColor(int pointIndex); // TO DO: da modificare per renderlo utile anche su altre cloud (prendere come argomento un cloud pointer).
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getNewComponentCloud();
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetComponentCloud(QString componentName);
@@ -59,7 +60,8 @@ private:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceCloud; // the new cloud to be registered and to be checked.
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetCloud; // the reference cloud that is correct in every detail.
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr registeredCloud; // the source cloud registered to the target cloud.
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud; //the output cloud from differences segmentation.
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr sourceDiffCloud; //the output cloud from target to source differences segmentation.
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr targetDiffCloud; //the output cloud from source to target differences segmentation.
     int colThreshold; // the euclidean threshold for the clustering.
     int cluThreshold; // the color threshold (0-255) of tolerance for the color segmentation.
     double segDiffThreshold; //the distance threshold for differences segmentation.

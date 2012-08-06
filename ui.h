@@ -45,7 +45,7 @@ private slots:
     void saveComponent();
     void deleteComponent();
     void openCheckDialog();
-    void openAutoDialog();
+    void openDiffDialog();
     void segmentDiff();
     void browseLoadSource();
 
@@ -111,7 +111,7 @@ private:
 //    QPushButton *loadSButton;
     // results widget
     QPushButton *startButton;
-    QPushButton *autoButton;
+    QPushButton *diffButton;
 
     QTextEdit *resultsList;
     // visualization buttons widgets
@@ -155,7 +155,7 @@ private:
     pcl::visualization::PCLVisualizer *dialogViewer;
 
     QDialog *addCheckDialog;
-    QDialog *autoDialog;
+    QDialog *diffDialog;
 
 
 };

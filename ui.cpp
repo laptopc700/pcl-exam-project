@@ -476,10 +476,10 @@ void Ui::showSourceComponent()
     qvtkVisualizer->update();
 }
 
-void Ui::openAutoDialog()
+void Ui::openDiffDialog()
 {
-    autoDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
-    QVBoxLayout *autoDialogLayout = new QVBoxLayout; // create vertical layout
+    diffDialog = new QDialog(this); // set as child of Ui, to be sure that it will be deleted in the end.
+    QVBoxLayout *diffDialogLayout = new QVBoxLayout; // create vertical layout
 
     QVTKWidget *dialogVisualizer = new QVTKWidget; // create qvtk widget
     dialogViewer = new pcl::visualization::PCLVisualizer("Dialog Viewer", false);
@@ -488,44 +488,33 @@ void Ui::openAutoDialog()
     dialogViewer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT); // ripristina input system of original visualizer (shift+click for points)
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr regCloud = motor->getRegisteredCloud();
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(regCloud);
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud = motor->getDiffCloud();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud = motor->getSourceDiffCloud();
     pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> green(diffCloud, 0, 255, 0);
+    pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> red(diffCloud, 255, 0, 0);
     int v1(0); int v2(0);
     dialogViewer->createViewPort(0.0, 0.0, 0.5, 1.0, v1);
     dialogViewer->setBackgroundColor(0.5, 0.5, 0.5, v1);
+    dialogViewer->addText("TARGET CLOUD", 30, 20,"TARGET CLOUD",v1);
     dialogViewer->createViewPort(0.5, 0.0, 1.0, 1.0, v2);
     dialogViewer->setBackgroundColor(0.5, 0.5, 0.5, v2);
-    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "targetCloud", v2);
-    dialogViewer->addPointCloud<pcl::PointXYZRGB>(regCloud, rgb, "sourceCloud", v1);
-    dialogViewer->addPointCloud<pcl::PointXYZRGB>(diffCloud, green, "diffCloud", v2);
-//    dialogViewer->setBackgroundColor(0.5, 0.5, 0.5);
+    dialogViewer->addText("SOURCE CLOUD", 30, 20,"SOURCE CLOUD",v2);
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getTargetCloud(), rgb, "targetCloud", v1);
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(diffCloud, red, "targetDiffCloud", v1);
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(regCloud, rgb, "sourceCloud", v2);
+    dialogViewer->addPointCloud<pcl::PointXYZRGB>(diffCloud, green, "sourceDiffCloud", v2);
     dialogViewer->initCameraParameters();
     dialogViewer->resetCamera();
     componentCallbackConnection = dialogViewer->registerPointPickingCallback(&pointPickCallback, this); // callback standard non segmenta nulla
 
     QHBoxLayout *dialogControlsLayout = new QHBoxLayout;
 
-//    QVBoxLayout *buttonsBox = new QVBoxLayout;
-//    QPushButton *selectPointButton = new QPushButton("Select Component");
-//    connect(selectPointButton, SIGNAL(clicked()), this, SLOT(setComponentDialogCallback()));
-//    QPushButton *resetButton = new QPushButton("Reset Selection");
-//    connect(resetButton, SIGNAL(clicked()), this, SLOT(resetComponentDialogCallback()));
-//    buttonsBox->addWidget(selectPointButton);
-//    buttonsBox->addWidget(resetButton);
-
     QVBoxLayout *numbersBox = new QVBoxLayout;
-//    QColor *selectedColor = new QColor(0, 0, 0, 255); // initialize color at black
-//    QPushButton *colorBox = new QPushButton("+-100");
-//    colorBox->setObjectName("colorbox");
-//    colorBox->setStyleSheet(colorToStyleSheet(selectedColor));
-//    colorBox->setMaximumWidth(50);
     QLineEdit *segDiffBox = new QLineEdit("0.5");
     segDiffBox->setReadOnly(true);
     segDiffBox->setObjectName("segdiffbox");
     segDiffBox->setMaxLength(5);
     segDiffBox->setMaximumWidth(50);
     numbersBox->addWidget(segDiffBox);
-//    numbersBox->addWidget(colorBox);
 
     QVBoxLayout *slidersBox = new QVBoxLayout;
     QSlider *setSegDiffThresholdBar = new QSlider(Qt::Horizontal);
@@ -536,35 +525,30 @@ void Ui::openAutoDialog()
     connect(setSegDiffThresholdBar, SIGNAL(sliderReleased()), this, SLOT(setSegDiffThreshold()));
     slidersBox->addWidget(setSegDiffThresholdBar);
 
-//    QPushButton *showSegButton = new QPushButton("Segment!");
-//    connect(showSegButton, SIGNAL(clicked()), this, SLOT(segmentComponent()));
-
-//    dialogControlsLayout->addLayout(buttonsBox);
     dialogControlsLayout->addLayout(numbersBox);
     dialogControlsLayout->addLayout(slidersBox);
-//    dialogControlsLayout->addWidget(showSegButton);
 
     QPushButton *segmentDiffButton = new QPushButton("Segment differences");
     segmentDiffButton->setDefault(true); // default button, pressed if enter is pressed
     connect(segmentDiffButton, SIGNAL(clicked()), this, SLOT(segmentDiff()));
 
-    autoDialogLayout->addWidget(dialogVisualizer);
-    autoDialogLayout->addLayout(dialogControlsLayout);
-    autoDialogLayout->addWidget(segmentDiffButton);
-    autoDialog->setLayout(autoDialogLayout);
+    diffDialogLayout->addWidget(dialogVisualizer);
+    diffDialogLayout->addLayout(dialogControlsLayout);
+    diffDialogLayout->addWidget(segmentDiffButton);
+    diffDialog->setLayout(diffDialogLayout);
 
-    autoDialogLayout->deleteLater(); // delete dialog layout when the control returns to the event loop from which deleteLater() was called (after exec i guess)
-    autoDialog->resize(800,600);
-    autoDialog->exec();
+    diffDialogLayout->deleteLater(); // delete dialog layout when the control returns to the event loop from which deleteLater() was called (after exec i guess)
+    diffDialog->resize(800,600);
+    diffDialog->exec();
     componentCallbackConnection.disconnect(); // disconnect the callback function from the viewer
     delete dialogViewer; // finita l'esecuzione, deallocare il viewer (deallocare altra eventuale memoria non indirizzata nel QObject tree).
 }
 
 void Ui::setSegDiffThreshold()
 {
-    QSlider *slider= autoDialog->findChild<QSlider *>("sliderSegDiff");
+    QSlider *slider= diffDialog->findChild<QSlider *>("sliderSegDiff");
     motor->setSegDiffThreshold(slider->value());
-    QLineEdit *segdiffbox = autoDialog->findChild<QLineEdit *>("segdiffbox");
+    QLineEdit *segdiffbox = diffDialog->findChild<QLineEdit *>("segdiffbox");
     segdiffbox->setText(QString("%1").arg((float)slider->value() / 1000));
 }
 
@@ -581,13 +565,16 @@ void Ui::segmentDiff()
         statusBar()->showMessage(QString("Load an sample cloud before starting."));
         return;
     }
+
     // DIFFERENCES SEGMENTATION
     statusBar()->showMessage("Differences segmentation...");
     motor->segmentDifferences();
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud = motor->getDiffCloud();
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr diffCloud = motor->getSourceDiffCloud();
     pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> green(diffCloud, 0, 255, 0);
-    dialogViewer->updatePointCloud(diffCloud, green, "diffCloud");
-//    dialogViewer->addPointCloud<pcl::PointXYZRGB>(motor->getDiffCloud(), green, "diffcloud");
+    dialogViewer->updatePointCloud(diffCloud, green, "sourceDiffCloud");
+    diffCloud = motor->getTargetDiffCloud();
+    pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> red(diffCloud, 255, 0, 0);
+    dialogViewer->updatePointCloud(diffCloud, red, "targetDiffCloud");
     statusBar()->showMessage("Differences segmentation...OK");
 }
 
@@ -718,8 +705,8 @@ void Ui::setupResultsBox()
     resultsLayout->addWidget(startButton);
     resultsLayout->addWidget(resultsList);
     resultsBox->setLayout(resultsLayout);
-    autoButton = new QPushButton(QString("AUTO-CHECK"));
-    connect(autoButton, SIGNAL(clicked()), this, SLOT(openAutoDialog()));
+    diffButton = new QPushButton(QString("Check Differences"));
+    connect(diffButton, SIGNAL(clicked()), this, SLOT(openDiffDialog()));
 }
 
 void Ui::setupVisualizerCommands()
@@ -768,7 +755,7 @@ void Ui::setupMainLayout()
 
     viewerLayout->addWidget(qvtkVisualizer);
     viewerLayout->addWidget(resultsBox);
-    viewerLayout->addWidget(autoButton);
+    viewerLayout->addWidget(diffButton);
     viewerLayout->addWidget(showTButton);
     viewerLayout->addWidget(showSButton);
     viewerLayout->addWidget(showRButton);

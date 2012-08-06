@@ -10,7 +10,8 @@ Pcqc::Pcqc()
     segDiffThreshold = 0;
     newComponentPointIndices.reset (new pcl::PointIndices);
     registeredCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
-    diffCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
+    sourceDiffCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
+    targetDiffCloud.reset (new pcl::PointCloud<pcl::PointXYZRGB>);
 }
 
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::voxelCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr input, double leafSize)
@@ -107,9 +108,14 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getRegisteredCloud()
     return registeredCloud;
 }
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getDiffCloud()
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getSourceDiffCloud()
 {
-    return diffCloud;
+    return sourceDiffCloud;
+}
+
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Pcqc::getTargetDiffCloud()
+{
+    return targetDiffCloud;
 }
 
 QColor* Pcqc::getPointColor(int pointIndex)
@@ -262,10 +268,11 @@ int Pcqc::findSourceComponents()
 
 void Pcqc::registration()
 {
-    registerSourceToTarget(sourceCloud, targetCloud, registeredCloud, 1, 1);
+    registerSourceToTarget2(sourceCloud, targetCloud, registeredCloud, 1, 1);
 }
 
 void Pcqc::segmentDifferences()
 {
-    segmentDiff(registeredCloud, targetCloud, segDiffThreshold, diffCloud);
+    segmentDiff(registeredCloud, targetCloud, segDiffThreshold, sourceDiffCloud);
+    segmentDiff(targetCloud, registeredCloud, segDiffThreshold, targetDiffCloud);
 }
